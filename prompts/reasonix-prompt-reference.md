@@ -495,3 +495,224 @@ Explore: How does the request flow from entry point to database?
 → then:
 Draw a Mermaid sequence diagram of the request lifecycle based on the exploration.
 ```
+
+---
+
+## pr follow-up
+
+Pull request review, security audit, and post-merge workflows.
+
+### Review a PR before merging
+```
+Review the current branch diff.
+Focus on: {auth changes / error handling / new API / general}.
+→ Returns per-file:line findings with correctness, security, missing-tests flags.
+```
+
+**Example:**
+```
+Review the current branch diff.
+Focus on: the auth changes in internal/auth/.
+```
+
+### Security-focused review
+```
+Security review the current branch diff.
+Focus on: {token handling / input parsing / file IO / auth / full}.
+→ Returns severity-tagged findings: injection, authz, secrets, deserialization, path-traversal, crypto.
+```
+
+**Example:**
+```
+Security review the current branch diff.
+Focus on: token handling in internal/auth/.
+```
+
+### PR checklist (pre-submit)
+```
+Before opening this PR, check:
+[ ] All tests pass locally
+[ ] No secrets in the diff (run security review)
+[ ] New code has tests
+[ ] Documentation updated
+[ ] Breaking changes noted in commit body
+[ ] Branch rebased on main
+```
+
+### Post-merge follow-up
+```
+Goal: Post-merge cleanup for PR #{number}.
+- Delete the feature branch
+- Update any stale memories related to the changed code
+- Verify the deployment succeeded
+- Close linked issues
+```
+
+### Review-then-fix loop
+```
+1. Review the current branch diff.
+2. → apply fixes for the findings
+3. Security review the current branch diff.
+4. → apply fixes for any high/medium findings
+5. Re-run tests
+6. Merge
+```
+
+### PR review prompts for common scenarios
+
+| Scenario | Prompt |
+|----------|--------|
+| General review | `Review the current branch diff.` |
+| Auth changes | `Security review the current branch diff. Focus on token handling.` |
+| New API endpoint | `Review the current branch diff. Focus on input validation and error handling.` |
+| Refactor | `Review the current branch diff. Focus on behavioral changes and regressions.` |
+| Config changes | `Review the current branch diff. Focus on defaults and environment-specific values.` |
+| SQL/database | `Review the current branch diff. Focus on query safety and migration correctness.` |
+
+### Branch-diff summary for PR description
+```
+Summarize the recent git changes into a PR description.
+Include: what changed, why, testing done, breaking changes.
+```
+
+---
+
+## skills
+
+Reasonix skills ecosystem — built-in, custom, install, discover.
+
+### Discover available skills
+```
+List available skills.
+→ or: /list
+```
+
+### Built-in skills (always available)
+
+| Skill | Type | Use for |
+|-------|------|---------|
+| `init` | inline | Bootstrap AGENTS.md from codebase |
+| `explore` | subagent | Deep codebase investigation, returns distilled answer |
+| `research` | subagent | Web + code combined research, returns synthesis |
+| `review` | subagent | Code review of current branch diff |
+| `security_review` | subagent | Security-focused review, severity-tagged |
+| `test` | inline | Generate and run tests |
+| `install-capability` | inline | Install MCP servers and skills |
+| `azure-prepare` | inline | Generate Bicep/Terraform, Dockerfile, azure.yaml |
+| `azure-deploy` | inline | Execute .azure/deployment-plan.md |
+| `azure-validate` | inline | Pre-deployment readiness checks |
+| `azure-kubernetes` | inline | Plan and create AKS clusters |
+| `azure-diagnostics` | inline | Debug production Azure issues |
+| `azure-cost` | inline | Query, forecast, and optimize Azure costs |
+| `azure-rbac` | inline | Find least-privilege RBAC roles |
+| `azure-quotas` | inline | Check/manage Azure quotas |
+| `azure-resource-lookup` | inline | List/find/show Azure resources |
+| `azure-resource-visualizer` | inline | Generate Mermaid architecture from resource groups |
+| `azure-storage` | inline | Blob, File Shares, Queue, Table, Data Lake |
+| `azure-messaging` | inline | Event Hubs and Service Bus troubleshooting |
+| `azure-ai` | inline | Azure AI: Search, Speech, OpenAI, Document Intelligence |
+| `entra-app-registration` | inline | Microsoft Entra ID app registration and OAuth |
+| `entra-agent-id` | inline | Entra Agent Identity provisioning |
+| `appinsights-instrumentation` | inline | Application Insights telemetry patterns |
+
+### Skill types
+
+| Type | Behavior |
+|------|----------|
+| **inline** | Body folds into current turn — you read and act on it immediately |
+| **subagent** | Spawns isolated child loop — only the distilled answer returns |
+
+### When to use subagent vs inline
+- **subagent**: Context-heavy work (deep exploration, multi-step research, reviews). Use when you only need the conclusion.
+- **inline**: Lightweight playbooks (config, checklist, setup). Use when you need to follow step-by-step instructions.
+
+### Install a skill from a URL
+```
+Install skill from: {https://raw.githubusercontent.com/user/repo/main/skill-name/SKILL.md}
+```
+
+### Install a local skill folder
+```
+Install skill from: {C:\path\to\skill-folder}
+Mode: copy | link | register
+```
+
+### Install an MCP server
+```
+Install MCP server from: {URL / .mcp.json / npm-package / executable}
+Scope: project | global
+```
+
+### Uninstall a skill or MCP server
+```
+Uninstall skill: {skill-name}
+→ or:
+Uninstall MCP server: {server-name}
+```
+
+### Create a custom skill
+```
+Create skill: {skill-name}
+Description: {≤120 chars}
+Body:
+
+# {Skill Title}
+
+## When to use
+{trigger conditions}
+
+## Steps
+1. {step}
+2. {step}
+
+## Output
+{expected result}
+
+Run as: inline | subagent
+Scope: project | global
+```
+
+**Example — custom release skill:**
+```
+Create skill: cut-release
+Description: Version bump, changelog, tag, and push a new release.
+
+Body:
+
+# Cut Release
+
+## When to use
+User says "release", "cut a release", "ship it".
+
+## Steps
+1. Read current version from package.json
+2. Prompt: major, minor, or patch?
+3. Bump version, update CHANGELOG.md
+4. git add, git commit -m "Release v{version}"
+5. git tag v{version} && git push --follow-tags
+
+## Output
+New version on remote with tag.
+
+Scope: project
+```
+
+### Skill discovery workflow
+```
+1. /list → see all available slash commands and skills
+2. Read skill: {skill-name} → preview without running
+3. /{skill-name} {args} → run it
+4. Install skill from: {source} → add new capabilities
+```
+
+### Composing skills into workflows
+```
+Goal: Audit and deploy.
+
+1. /security-review → find vulnerabilities
+2. → fix findings
+3. /azure-prepare → generate deployment files
+4. /azure-validate → check readiness
+5. /azure-deploy → ship it
+6. Remember: deploy-{date} → save context
+```
