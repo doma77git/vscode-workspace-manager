@@ -29,7 +29,7 @@ $stats = @{
     TestCount    = 34  # hardcoded for now; could read from Run-Tests output
     MenuOptions  = 15
     MakeTargets  = (Select-String -Path (Join-Path $root "Makefile") -Pattern "^## ").Count
-    NpmScripts   = ((Get-Content (Join-Path $root "package.json") -Raw | ConvertFrom-Json).scripts.PSObject.Properties).Count
+    NpmScripts   = (Select-String -Path (Join-Path $root "package.json") -Pattern '^\s+"[^"]+"\s*:' | Measure-Object).Count
     PSVersion    = $PSVersionTable.PSVersion.ToString()
 }
 
