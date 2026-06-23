@@ -1,158 +1,123 @@
-# Landing — VS Code Workspace Manager
+# 🏠 VS Code Workspace Manager — Dashboard
 
 > **One repository. Every workspace. Zero trust surprises.**
 
-VS Code Workspace Manager gives you a single source of truth for:
-- **Workspace templates** — reusable `.code-workspace` files with variable substitution
-- **Profiles** — portable VS Code settings, extensions, and keybindings
-- **Terminal setup** — pre-configured profiles, shell integration, and tasks
-- **Workspace Trust** — security boundaries that protect you from malicious code
-- **BYOK metadata** — DeepSeek key references without storing secrets
-- **Convenience** — npm scripts, Makefile, and standalone runners for CI/CD
-
 ---
 
-## Why This Exists
+## 📊 Live Project Snapshot
 
-| Problem | Solution |
-|---------|----------|
-| Workspaces scattered across disk, no version control | All templates in `templates/`, git-tracked |
-| Profiles are tied to one machine | Export to `profiles/`, sync anywhere |
-| "Do I trust this repo?" — unsure every time | `meta/trust.json` records your decisions |
-| Secret keys accidentally committed | Pre-commit hook + `.gitignore` + CI scan |
-| Onboarding new team members takes hours | One `git clone` + `Init-TemplatesRepo.ps1` = ready |
-| No standard way to open workspaces with profiles | `code --profile <name> <workspace>` — one command |
-
----
-
-## Quick Start
-
-```powershell
-# 1. Clone (or initialize from scratch)
-git clone <your-remote> C:\VSCode\Templates
-cd C:\VSCode\Templates
-
-# 2. One-time setup
-pwsh -NoProfile -ExecutionPolicy Bypass -File "scripts\Init-TemplatesRepo.ps1"
-
-# 3. Launch the manager
-pwsh -NoProfile -ExecutionPolicy Bypass -File "scripts\WorkspaceManager.ps1"
+```
+╔══════════════════════════════════════════════════════════╗
+║  v1.1.0  ·  112 files  ·  24 scripts  ·  53 tests       ║
+╠══════════════════════════════════════════════════════════╣
+║                                                          ║
+║  📁 8 templates   │  Python · Node · Go · Rust · Java   ║
+║                    │  C++ · .NET · Base                  ║
+║  📋 6 profiles    │  python-dev · web-dev · go-dev      ║
+║                    │  rust-dev · sample · template       ║
+║  ⚡ 24 scripts     │  runners · checkers · helpers       ║
+║                    │  backup · scheduler · compiler      ║
+║  📖 18 docs        │  guides · UML · PRD · HOWTO         ║
+║  💬 13 prompts     │  goals · flows · gists · recipes    ║
+║  🧠 3 skills       │  deepseek-byok · deepseek-reasonix  ║
+║                    │  workspace-manager                  ║
+║  ⚙️ 4 CI workflows  │  validate · release · scheduled     ║
+║                    │  auto-changelog                     ║
+║                                                          ║
+║  ✅ 53/53 tests pass  ·  2.8s runtime  ·  28ms scan     ║
+║  🔒 No secrets  ·  🛡️ 3 git hooks  ·  🌍 Cross-platform ║
+║                                                          ║
+╚══════════════════════════════════════════════════════════╝
 ```
 
 ---
 
-## What's Inside
+## 🚀 Quick Start
+
+```powershell
+# One-liner
+irm https://raw.githubusercontent.com/doma77git/vscode-workspace-manager/main/install.ps1 | iex
+
+# Or manual
+git clone https://github.com/doma77git/vscode-workspace-manager.git C:\VSCode\Templates
+cd C:\VSCode\Templates && make install && make manager
+```
+
+---
+
+## ⚡ Quick Commands
+
+| Action | Command |
+|--------|---------|
+| Launch menu | `make manager` |
+| Run tests | `make test` |
+| Full pipeline | `make all` |
+| Self-update | `make update` |
+| Backup | `make backup` |
+| Repair | `make repair` |
+| Compile | `make compile` |
+| Export .vscode/ | `make export` |
+| Health check | `make doctor` |
+
+---
+
+## 📂 Directory
 
 ```
 C:\VSCode\Templates\
-├── scripts/
-│   ├── WorkspaceManager.ps1      ← Interactive menu (14 options)
-│   ├── Init-TemplatesRepo.ps1    ← One-time git + hook setup
-│   ├── Run-Validate.ps1          ← Standalone JSON validator
-│   ├── Run-Checks.ps1            ← Meta-runner (validate + secret scan)
-│   ├── Run-Tests.ps1             ← PowerShell AST + JSON syntax tests
-│   └── Open-WithProfile.ps1      ← Auto-detect profile and open in VS Code
-├── templates/                    ← .code-workspace files
-├── profiles/                     ← VS Code profile exports + metadata template
-├── meta/
-│   ├── trust.json                ← Workspace trust decisions
-│   ├── deepseek-byok.json        ← BYOK metadata (no keys)
-│   └── deepseek-keys.json        ← Key reference placeholder
-├── docs/                         ← Full documentation (9 guides)
-├── skills/                       ← Installable Reasonix skills
-├── prompts/                      ← Copy-paste Reasonix prompts
-├── .vscode/
-│   └── settings.json             ← This repo eats its own dogfood
-├── .github/
-│   ├── workflows/validate.yml    ← CI pipeline
-│   ├── dependabot.yml            ← Auto-update GitHub Actions
-│   ├── ISSUE_TEMPLATE/           ← Bug + feature templates
-│   └── PULL_REQUEST_TEMPLATE.md  ← PR checklist
-├── .editorconfig
-├── .markdownlint.json            ← Consistent Markdown rules
-├── SECURITY.md
-├── CONTRIBUTING.md
-├── LICENSE                       ← MIT
-├── Makefile                      ← make validate / checks / test / install
-├── package.json                  ← npm run validate / checks / test / open
-├── deploy-instructions.txt
-├── CHANGELOG.md
-├── RECOMMENDATIONS.md
-├── ONBOARDING.md
-├── HELP.md
-├── LANDING.md
-└── README.md
+├── install.ps1              ← One-line installer
+├── scripts/ (24 files)      ← Runners, checkers, helpers
+├── templates/ (8 files)     ← .code-workspace templates
+├── profiles/ (6 files)      ← VS Code profile exports
+├── meta/                    ← Trust + BYOK metadata
+├── docs/ (18 files)         ← Full documentation
+├── prompts/ (13 files)      ← AI agent library
+├── skills/ (3 skills)       ← Reasonix installable
+└── .github/workflows/ (4)   ← CI/CD pipelines
 ```
 
 ---
 
-## Key Features
+## 🧭 Navigation
 
-### Workspace Templates
-Create new templates interactively — variables `${PROJECT_NAME}` and `${GIT_REMOTE}` are replaced on the fly. Save existing workspaces as timestamped templates.
-
-### Profile Management
-Export from VS Code → drop into `profiles/` → assign to templates → open with `code --profile`. Bulk export all profiles with `Export-AllProfiles`.
-
-### Workspace Trust (VS Code Security)
-Based on the [official VS Code Workspace Trust](https://code.visualstudio.com/docs/editing/workspaces/workspace-trust) system:
-- **Restricted Mode** blocks AI agents, terminals, tasks, debugging, and extensions
-- **Parent folder inheritance** — trust `C:\TrustedRepos` once, all subfolders trusted
-- **Shared with Agents window** — trust state applies everywhere
-- Our `meta/trust.json` records your decisions with rationale
-
-### DeepSeek BYOK
-Metadata-only key management. Choose Azure Key Vault, AWS KMS, or HashiCorp Vault. No real keys ever touch disk.
-
-### Terminal Profiles & Tasks
-6 pre-configured Windows terminal profiles (PowerShell 7 fast/full, Windows PowerShell, Git Bash, cmd, WSL). 7 VS Code tasks (JSON validation, CI checks, compound Full Validation). Shell integration with command decorations, sticky scroll, and IntelliSense enabled by default.
-
-### Project Scanning & Auto-Open
-Scan any project for language/framework indicators (`package.json`, `pyproject.toml`, `go.mod`, etc.) and get a suggested matching profile. Use `Open-WithProfile.ps1` to auto-detect and open projects in VS Code with the right profile — no manual guessing.
-
-### Convenience Commands
-```powershell
-# PowerShell
-pwsh -File scripts/Run-Tests.ps1        # Full test suite
-pwsh -File scripts/Open-WithProfile.ps1 . # Auto-open
-
-# npm
-npm run validate    # Validate JSON
-npm run test        # Run tests
-npm run open -- .   # Auto-open
-
-# Make
-make validate       # Validate JSON
-make test           # Run tests
-```
-
-### Security Pipeline
-```
-pre-commit hook → blocks secrets locally
-        ↓
-git push → GitHub CI validates JSON + scans secrets
-        ↓
-standalone scripts → Run-Validate.ps1 + Run-Checks.ps1 for local checks
-        ↓
-.gitignore → excludes BYOK files, .vscode/, workspaceStorage/
-```
-
----
-
-## Documentation Map
-
-| Need | Read |
-|------|------|
-| I'm new, get me started | [`ONBOARDING.md`](./ONBOARDING.md) |
+| I want to... | Go here |
+|-------------|---------|
+| Get started | [`ONBOARDING.md`](./ONBOARDING.md) |
+| Understand architecture | [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) |
+| See UML diagrams | [`docs/UML.md`](./docs/UML.md) |
+| Product requirements | [`docs/PRD.md`](./docs/PRD.md) |
+| Roadmap | [`ROADMAP.md`](./ROADMAP.md) |
 | Common questions | [`docs/FAQ.md`](./docs/FAQ.md) |
-| Something is broken | [`HELP.md`](./HELP.md) |
-| Understand the architecture | [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) |
-| Set up terminal + tasks | [`docs/TERMINAL.md`](./docs/TERMINAL.md) |
-| DeepSeek best practices | [`docs/DEEPSEEK-RECOMMENDATIONS.md`](./docs/DEEPSEEK-RECOMMENDATIONS.md) |
-| VS Code trust deep-dive | [`docs/WORKSPACE-TRUST.md`](./docs/WORKSPACE-TRUST.md) |
-| Step-by-step setup | [`docs/SETUP.md`](./docs/SETUP.md) |
-| Day-to-day usage | [`docs/WORKFLOW.md`](./docs/WORKFLOW.md) |
-| BYOK explained | [`docs/BYOK-GUIDE.md`](./docs/BYOK-GUIDE.md) |
-| CI pipeline details | [`docs/CI-CD.md`](./docs/CI-CD.md) |
-| General best practices | [`RECOMMENDATIONS.md`](./RECOMMENDATIONS.md) |
-| Reasonix prompt library | [`prompts/`](./prompts/) |
+| How-to recipes | [`docs/HOWTO.md`](./docs/HOWTO.md) |
+| Agent best practices | [`docs/AGENT-BEST-PRACTICES.md`](./docs/AGENT-BEST-PRACTICES.md) |
+| Agents Window setup | [`docs/AGENTS-WINDOW.md`](./docs/AGENTS-WINDOW.md) |
+| Terminal + tasks | [`docs/TERMINAL.md`](./docs/TERMINAL.md) |
+| Something broken? | [`HELP.md`](./HELP.md) |
+| Prompt library | [`prompts/`](./prompts/) |
+| Agent flows | [`prompts/agent-flows.md`](./prompts/agent-flows.md) |
+| Run cookbook | [`prompts/run-cookbook.md`](./prompts/run-cookbook.md) |
+| Workspace recipes | [`prompts/workspace-recipes.md`](./prompts/workspace-recipes.md) |
+
+---
+
+## ✅ Stack Coverage
+
+| Stack | Template | Profile | Tasks |
+|-------|----------|---------|-------|
+| **Python** | `python-dev.code-workspace` | `python-dev.json` | pytest · black · ruff |
+| **Node.js** | `node-dev.code-workspace` | `web-dev.json` | dev · test · lint · build |
+| **Go** | `go-dev.code-workspace` | `go-dev.json` | run · test · lint · build |
+| **Rust** | `rust-dev.code-workspace` | `rust-dev.json` | run · test · clippy · release |
+| **Java** | `java-dev.code-workspace` | — | Maven · Gradle |
+| **C/C++** | `cpp-dev.code-workspace` | — | CMake · CTest |
+| **.NET** | `dotnet-dev.code-workspace` | — | dotnet build · test · run |
+| **Base** | `sample-project.code-workspace` | `sample-profile.json` | JSON validate · CI |
+
+---
+
+## 🔗 Links
+
+- **GitHub:** [doma77git/vscode-workspace-manager](https://github.com/doma77git/vscode-workspace-manager)
+- **License:** MIT
+- **PowerShell:** 97%
+- **Status:** 🟢 All systems operational
