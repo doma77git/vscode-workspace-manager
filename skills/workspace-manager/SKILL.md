@@ -19,12 +19,12 @@ Full toolkit for managing VS Code workspaces, profiles, terminal settings, and a
 ## Quick Commands
 
 ```powershell
-make test       # 41 checks (23 PS AST + 10 JSON + 6 YAML + 2 Integration)
+make test       # 53 checks (24 PS AST + 21 JSON + 6 YAML + 2 Integration)
 make validate   # JSON + workspace file validation
 make checks     # Validation + secret scan
 make all        # Full pipeline: test + validate + checks + doctor
 make doctor     # Environment health check
-make manager    # Launch the 15-option menu
+make manager    # Launch the 15-option modern menu
 make update     # Self-update from git remote
 make backup     # Back up templates/profiles/meta
 make repair     # Auto-fix JSON, line endings, dirs, hooks
@@ -37,12 +37,12 @@ make docs-gen   # Auto-generate fresh stats
 ## Project Structure
 
 ```
-scripts/   → 23 PowerShell scripts (runners, checkers, helpers, backup, scheduler, reco, navigator, compiler, exporter)
-templates/ → .code-workspace files (with ${PROJECT_NAME} / ${GIT_REMOTE} variables)
-profiles/  → VS Code profile JSON exports (+ profile-template.json metadata)
+scripts/   → 24 PowerShell scripts (runners, checkers, helpers, backup, scheduler, reco, navigator, compiler, exporter)
+templates/ → 8 .code-workspace files (Python, Node, Go, Rust, Java, C++, .NET, Base)
+profiles/  → 6 VS Code profile JSON exports (python-dev, web-dev, go-dev, rust-dev, sample, template)
 meta/      → trust.json + deepseek-byok.json + <template>.meta.json
-docs/      → 16 guides (INDEX.md for the portal)
-prompts/   → 11 agent instruction files (agent-flows, goals, run-cookbook, gists, etc.)
+docs/      → 18 guides (INDEX.md for the portal)
+prompts/   → 13 agent instruction files (agent-flows, goals, run-cookbook, gists, workspace-recipes, etc.)
 skills/    → 3 Reasonix skills (deepseek-byok, deepseek-reasonix, workspace-manager)
 ```
 

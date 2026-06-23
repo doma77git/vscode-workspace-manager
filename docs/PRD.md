@@ -83,18 +83,19 @@ Product Requirements Document · v1.1.0 · June 2026
 - ✅ Auto-update check on menu launch
 
 ### 4.6 Developer Experience
-- ✅ 23 PowerShell scripts (runners, checkers, helpers, scheduler, etc.)
-- ✅ 16 documentation guides
-- ✅ 11 prompt files for AI agents
+- ✅ 24 PowerShell scripts (runners, checkers, helpers, scheduler, etc.)
+- ✅ 18 documentation guides
+- ✅ 13 prompt files for AI agents
 - ✅ 3 Reasonix skills (deepseek-byok, deepseek-reasonix, workspace-manager)
-- ✅ 20 Makefile targets + 19 npm scripts
-- ✅ `.vscode/` exporter from template
+- ✅ 19 Makefile targets + 14 npm scripts
+- ✅ 8 workspace templates (Python, Node, Go, Rust, Java, C++, .NET, Base)
+- ✅ 6 VS Code profiles (python-dev, web-dev, go-dev, rust-dev, sample, template)
 - ✅ Extension health checker (VS Code Marketplace API)
 - ✅ Environment health check (prerequisites, structure, git, validation)
 - ✅ Project navigator (9-option interactive browser)
 
 ### 4.7 Testing
-- ✅ 41 automated checks: 23 PS AST + 10 JSON syntax + 6 YAML syntax + 2 integration
+- ✅ 53 automated checks: 24 PS AST + 21 JSON syntax + 6 YAML syntax + 2 integration
 - ✅ Performance benchmark (file scan ms)
 - ✅ `--json` flag on all scripts for CI/automation
 - ✅ `--quiet` flag for silent operation
