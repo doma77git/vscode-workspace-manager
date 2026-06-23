@@ -644,8 +644,13 @@ function Invoke-UpdateCheck {
 
 # Main Menu
 # ========================
+$script:lastAction = ""
 do {
     Clear-Host
+
+    # Terminal width detection
+    $termWidth = if ($host.UI.RawUI.WindowSize.Width -gt 0) { $host.UI.RawUI.WindowSize.Width } else { 80 }
+    $boxWidth = [Math]::Min($termWidth - 2, 70)
 
     # Auto-update check (once per session)
     if (-not $script:updateChecked) {
@@ -659,7 +664,7 @@ do {
                         & git -C $TemplatesRoot fetch origin 2>$null
                         $behind = & git -C $TemplatesRoot rev-list --count HEAD..@{u} 2>$null
                         if ($behind -and [int]$behind -gt 0) {
-                            Write-Host "  ⚡ $behind update(s) available — select [14]" -ForegroundColor Yellow
+                            Write-Host "  ⚡ $behind update(s) available" -ForegroundColor Yellow
                         }
                     }
                 }
@@ -674,54 +679,79 @@ do {
     $sCount = (Get-ChildItem -Path (Join-Path $TemplatesRoot "scripts") -Filter "*.ps1" -ErrorAction SilentlyContinue).Count
     $time = Get-Date -Format "HH:mm"
 
-    # Header
-    Write-Host "╔══════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
+    # Git status
+    $gitStatus = ""
+    try {
+        $dirty = & git -C $TemplatesRoot diff --quiet 2>$null
+        if ($LASTEXITCODE -ne 0) { $gitStatus = " • modified" }
+        $branch = & git -C $TemplatesRoot rev-parse --abbrev-ref HEAD 2>$null
+    } catch { $branch = "" }
+
+    # Dynamic box width
+    $line = "━" * ($boxWidth - 2)
+
+    Write-Host "╔$line╗" -ForegroundColor Cyan
     Write-Host "║" -NoNewline -ForegroundColor Cyan
-    Write-Host "  ⚙️  VS Code Workspace Manager  v1.1.0" -ForegroundColor White -NoNewline
-    Write-Host "                     ⏰ $time ║" -ForegroundColor DarkGray
-    Write-Host "╠══════════════════════════════════════════════════════════╣" -ForegroundColor Cyan
+    $title = "  ⚙️  VS Code Workspace Manager  v1.1.0"
+    Write-Host $title -ForegroundColor White -NoNewline
+    $right = "⏰ $time"
+    $pad = $boxWidth - $title.Length - $right.Length - 3
+    if ($pad -gt 0) { Write-Host (" " * $pad) -NoNewline }
+    Write-Host " $right ║" -ForegroundColor DarkGray
+    Write-Host "╠$line╣" -ForegroundColor Cyan
     Write-Host "║" -NoNewline -ForegroundColor Cyan
-    Write-Host ("  📁 {0} templates  │  📋 {1} profiles  │  ⚡ {2} scripts" -f $tCount, $pCount, $sCount) -ForegroundColor White -NoNewline
-    Write-Host (" " * (16 - "$tCount$pCount$sCount".Length)) -NoNewline
-    Write-Host "║" -ForegroundColor Cyan
-    Write-Host "╚══════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+    $stats = "  📁 $tCount templates  │  📋 $pCount profiles  │  ⚡ $sCount scripts"
+    Write-Host $stats -ForegroundColor White -NoNewline
+    $gStat = if ($branch) { "$branch$gitStatus" } else { "" }
+    $pad = $boxWidth - $stats.Length - $gStat.Length - 4
+    if ($pad -gt 0) { Write-Host (" " * $pad) -NoNewline }
+    if ($gStat) { Write-Host " $gStat ║" -ForegroundColor $(if ($gitStatus) { "Yellow" } else { "Green" }) }
+    else { Write-Host " ║" -ForegroundColor Cyan }
+    Write-Host "╚$line╝" -ForegroundColor Cyan
     Write-Host ""
 
-    # Menu body with keyboard shortcuts
-    Write-Host "  ── Workspace ───────────────────────────────────────────" -ForegroundColor DarkGray
+    # Menu body — color-coded sections
+    Write-Host "  ──── ⚒️  Workspace ────" -ForegroundColor Blue -NoNewline
+    Write-Host (" " * ($boxWidth - 23)) -ForegroundColor Blue
     Write-Host "  [1] 📄 Check settings       [2] 🆕 New template"
     Write-Host "  [3] 💾 Save template         [6] 🚀 Open workspace"
-    Write-Host "  [9] 🔍 Search templates"
+    Write-Host "  [9] 🔍 Search templates [$tCount]"
     Write-Host ""
 
-    Write-Host "  ── Profiles ────────────────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "  ──── 👤 Profiles ────" -ForegroundColor Magenta -NoNewline
+    Write-Host (" " * ($boxWidth - 20)) -ForegroundColor Magenta
     Write-Host "  [7] 👤 Profile management    [13] 🔬 Scan project"
     Write-Host ""
 
-    Write-Host "  ── Security ────────────────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "  ──── 🛡️  Security ────" -ForegroundColor Red -NoNewline
+    Write-Host (" " * ($boxWidth - 20)) -ForegroundColor Red
     Write-Host "  [4] 🔑 DeepSeek BYOK         [5] 🛡️  Workspace Trust"
     Write-Host ""
 
-    Write-Host "  ── Tools ───────────────────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "  ──── 🔧 Tools ────" -ForegroundColor Green -NoNewline
+    Write-Host (" " * ($boxWidth - 16)) -ForegroundColor Green
     Write-Host "  [8] 🏗️  Init repo             [10] ✅ Validate"
     Write-Host "  [11] 📖 Open docs             [12] ℹ️  About"
     Write-Host "  [14] 🔄 Check updates         [15] ⏰ Schedule"
     Write-Host ""
 
-    Write-Host "  ════════════════════════════════════════════════════════" -ForegroundColor DarkGray
-    Write-Host "  [0] Exit    │  R: Repair    │  T: Run Tests    │  ?: Help" -ForegroundColor DarkGray
+    # Bottom bar
+    Write-Host "  $(('═' * ($boxWidth - 2)))" -ForegroundColor DarkGray
+    $lastMsg = if ($script:lastAction) { "← $($script:lastAction)" } else { "" }
+    Write-Host "  [0] Exit  │  R: Repair  │  T: Tests  │  ?: Help  $lastMsg" -ForegroundColor DarkGray
     Write-Host ""
 
     $choice = Read-Host "Select"
 
     switch ($choice) {
-        "1" { Check-VSCodeSettings }
-        "2" { New-WorkspaceTemplate }
-        "3" { Save-WorkspaceTemplate }
-        "4" { Set-DeepSeekBYOK }
-        "5" { Set-EmptyWorkspaceTrust }
-        "6" { Open-Workspace }
+        "1" { $script:lastAction = "Checked settings"; Check-VSCodeSettings }
+        "2" { $script:lastAction = "Created template"; New-WorkspaceTemplate }
+        "3" { $script:lastAction = "Saved template"; Save-WorkspaceTemplate }
+        "4" { $script:lastAction = "Set BYOK"; Set-DeepSeekBYOK }
+        "5" { $script:lastAction = "Set trust"; Set-EmptyWorkspaceTrust }
+        "6" { $script:lastAction = "Opened workspace"; Open-Workspace }
         "7" {
+            $script:lastAction = "Profiles"
             do {
                 Clear-Host
                 Write-Host "=== Profiles Management ===" -ForegroundColor Cyan
@@ -742,31 +772,33 @@ do {
                 }
             } while ($pChoice -ne "0")
         }
-        "8" { Init-TemplatesRepo }
-        "9" { Search-Templates }
-        "10" { Invoke-ValidateChecks }
-        "11" { Invoke-OpenDocs }
-        "12" { Invoke-About }
-        "13" { Invoke-ScanProject }
-        "14" { Invoke-UpdateCheck }
-        "15" { Invoke-ScheduleTasks }
-        "R" { Invoke-ValidateChecks }
-        "r" { Invoke-ValidateChecks }
+        "8" { $script:lastAction = "Init repo"; Init-TemplatesRepo }
+        "9" { $script:lastAction = "Searched templates"; Search-Templates }
+        "10" { $script:lastAction = "Validation"; Invoke-ValidateChecks }
+        "11" { $script:lastAction = "Opened docs"; Invoke-OpenDocs }
+        "12" { $script:lastAction = "About"; Invoke-About }
+        "13" { $script:lastAction = "Scanned project"; Invoke-ScanProject }
+        "14" { $script:lastAction = "Checked updates"; Invoke-UpdateCheck }
+        "15" { $script:lastAction = "Scheduled tasks"; Invoke-ScheduleTasks }
+        "R" { $script:lastAction = "Repair"; Invoke-ValidateChecks }
+        "r" { $script:lastAction = "Repair"; Invoke-ValidateChecks }
         "T" {
+            $script:lastAction = "Tests"
             $testScript = Join-Path $TemplatesRoot "scripts\Run-All.ps1"
             if (Test-Path $testScript) { & pwsh -NoProfile -File $testScript -Quick }
             else { Write-Host "Run-All.ps1 not found" -ForegroundColor Red }
             Pause
         }
         "t" {
+            $script:lastAction = "Tests"
             $testScript = Join-Path $TemplatesRoot "scripts\Run-All.ps1"
             if (Test-Path $testScript) { & pwsh -NoProfile -File $testScript -Quick }
             else { Write-Host "Run-All.ps1 not found" -ForegroundColor Red }
             Pause
         }
-        "?" { Invoke-OpenDocs }
-        "h" { Invoke-OpenDocs }
-        "H" { Invoke-OpenDocs }
+        "?" { $script:lastAction = "Help"; Invoke-OpenDocs }
+        "h" { $script:lastAction = "Help"; Invoke-OpenDocs }
+        "H" { $script:lastAction = "Help"; Invoke-OpenDocs }
         "0" { Write-Host "Goodbye." -ForegroundColor Green }
         default { Write-Host "Invalid option." -ForegroundColor Red; Start-Sleep -Seconds 1 }
     }
