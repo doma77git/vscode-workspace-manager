@@ -80,6 +80,18 @@ schedule:
 recommend:
 	@pwsh -NoProfile -File scripts/Recommend-Extensions.ps1 -Path $(or $(PATH),.)
 
+## maintain    Full maintenance: test → repair → backup → docs → clean
+maintain:
+	@pwsh -NoProfile -File scripts/Maintain-Project.ps1
+
+## auto-launch Register auto-start on system boot
+auto-launch:
+	@pwsh -NoProfile -File scripts/Auto-Launch.ps1 -Action status
+
+## reasonix    Launch with Reasonix context pre-loaded
+reasonix:
+	@pwsh -NoProfile -File scripts/Launch-Reasonix.ps1
+
 ## runner      Universal launcher — interactive or by task name
 runner:
 	@pwsh -NoProfile -File scripts/Runner.ps1
