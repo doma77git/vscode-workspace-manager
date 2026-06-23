@@ -84,6 +84,14 @@ recommend:
 maintain:
 	@pwsh -NoProfile -File scripts/Maintain-Project.ps1
 
+## full-check   Run every checker in sequence
+full-check:
+	@pwsh -NoProfile -File scripts/Full-Check.ps1
+
+## full-update  Update everything (self + repair + docs + gists + validate)
+full-update:
+	@pwsh -NoProfile -File scripts/Full-Update.ps1
+
 ## auto-launch Register auto-start on system boot
 auto-launch:
 	@pwsh -NoProfile -File scripts/Auto-Launch.ps1 -Action status
