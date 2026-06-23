@@ -1,40 +1,40 @@
-# Onboarding — VS Code Workspace Manager
+# Onboarding — 5 Minutes to Productive
 
-Welcome. This page gets you from zero to productive in under 5 minutes.
+> New here? Follow these steps. You'll be managing workspaces like a pro.
 
 ---
 
-## Step 1 — Prerequisites (30 seconds)
-
-Open a terminal and check:
+## Minute 0 — Prerequisites
 
 ```powershell
-pwsh --version        # Must be 7+
-git --version         # Any recent version
+pwsh --version        # 7+
+git --version         # any recent
 code --version        # VS Code CLI
 ```
 
-If `code` is missing: open VS Code → `Ctrl+Shift+P` → `Shell Command: Install 'code' command in PATH`.
+Missing `code`? Open VS Code → `Ctrl+Shift+P` → `Shell Command: Install 'code' command in PATH`.
 
 ---
 
-## Step 2 — Initialize (10 seconds)
+## Minute 1 — Clone & Init
 
 ```powershell
-pwsh -NoProfile -ExecutionPolicy Bypass -File "C:\VSCode\Templates\scripts\Init-TemplatesRepo.ps1"
+git clone <your-remote> C:\VSCode\Templates
+cd C:\VSCode\Templates
+pwsh -NoProfile -ExecutionPolicy Bypass -File "scripts\Init-TemplatesRepo.ps1"
 ```
 
-This creates the git repo, stages everything, makes the first commit, and installs the pre-commit hook. Run once.
+This creates the git repo, makes first commit, and installs the pre-commit hook. ⌛ Done.
 
 ---
 
-## Step 3 — Launch the Manager
+## Minute 2 — Launch & Explore
 
 ```powershell
-pwsh -NoProfile -ExecutionPolicy Bypass -File "C:\VSCode\Templates\scripts\WorkspaceManager.ps1"
+pwsh -NoProfile -ExecutionPolicy Bypass -File "scripts\WorkspaceManager.ps1"
 ```
 
-You'll see:
+You see:
 
 ```
 ========================================
@@ -50,113 +50,77 @@ You'll see:
   6) Open workspace
   7) Profiles management
   8) Init repo
+  9) Search templates
   0) Exit
 ```
 
----
-
-## Step 4 — First Workflow
-
-### Create your first template
-
-1. Select **2) New workspace template**
-2. Enter a name: `my-project`
-3. Enter project name: `My App`
-4. Enter Git remote (or leave blank)
-5. Multi-root? `n` for now
-6. Assign a profile? Skip for now
-
-Your template is saved to `templates\my-project.code-workspace`.
-
-### Open it
-
-1. Select **6) Open workspace**
-2. Choose `my-project.code-workspace`
-3. VS Code opens with your workspace
+Pick **1** — it shows your VS Code environment health.
 
 ---
 
-## Step 5 — Add a Profile (optional)
+## Minute 3 — Create Your First Template
 
-1. In VS Code, configure your settings, extensions, and keybindings
-2. `Ctrl+Shift+P` → `Profiles: Export Profile` → save the JSON to `C:\VSCode\Templates\profiles\`
-3. In Workspace Manager: **7) Profiles management** → **2) Import profile**
-4. Pick the file you exported
-5. Next time you create a template, assign the profile to it
-
----
-
-## Step 6 — BYOK (Bring Your Own Key)
-
-The DeepSeek BYOK file at `meta\deepseek-byok.json` is a **placeholder** — no real keys. When you're ready:
-
-1. Choose a KMS provider (Azure Key Vault, AWS KMS, HashiCorp Vault)
-2. Run Workspace Manager → **4) Set DeepSeek BYOK**
-3. Follow the prompts — only metadata is stored, never the key itself
-4. At runtime, your app calls the KMS API to retrieve the real key
-
-Full guide: `docs/BYOK-GUIDE.md`
-
----
-
-## Security That Works
-
-### Pre-commit hook
-
-Try committing a file containing `password = xyz` — it will be blocked. The hook scans for:
+Select **2 → New workspace template**:
 
 ```
-password | secret | api_key | api-key | token | private_key
+Template name: quick-test
+Project name: Quick Test App
+Git remote (optional): https://github.com/me/quick-test.git
+Multi-root? (y/n): n
+Assign a profile? (y/n): n
 ```
 
-If you need to bypass for documentation files: `git commit --no-verify`
-
-### CI pipeline
-
-Push to GitHub and `.github/workflows/validate.yml` runs automatically:
-- Lints every `.json` and `.code-workspace` file
-- Scans every file for secrets
-- Fails the build if anything is wrong
-
-Run locally: `act -W .github/workflows/validate.yml`
+Saved to `templates\quick-test.code-workspace`. Open it: select **6 → quick-test**.
 
 ---
 
-## Files You Should Know
+## Minute 4 — Set Workspace Trust
 
-| File | Why |
-|------|-----|
-| `templates/*.code-workspace` | Your workspace templates — edit, share, version |
-| `profiles/*.json` | Exported VS Code profiles — portable settings |
-| `meta/trust.json` | Toggle `emptyWorkspaceTrust` for all workspaces |
-| `meta/deepseek-byok.json` | BYOK metadata (excluded from git) |
-| `.git/hooks/pre-commit` | Secret scanner — blocks bad commits |
-| `.github/workflows/validate.yml` | CI that runs on push |
+Select **5 → Set Empty Workspace Trust**. Choose:
+- `true` — empty windows trusted (default, convenient)
+- `false` — empty windows Restricted Mode (safer)
+
+Trust decisions are recorded in `meta/trust.json`.
 
 ---
 
-## Quick Reference
+## Minute 5 — Export Your Profile
+
+1. In VS Code, configure settings, extensions, keybindings as you like
+2. `Ctrl+Shift+P` → `Profiles: Export Profile`
+3. Save the JSON to `C:\VSCode\Templates\profiles\`
+4. In WorkspaceManager: **7 → Import profile** → pick your file
+5. Next template: assign this profile to it
+
+---
+
+## You're Done. What's Next?
+
+| Want to... | Read |
+|------------|------|
+| Understand architecture | [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) |
+| Tune DeepSeek | [`docs/DEEPSEEK-RECOMMENDATIONS.md`](./docs/DEEPSEEK-RECOMMENDATIONS.md) |
+| Dive into trust | [`docs/WORKSPACE-TRUST.md`](./docs/WORKSPACE-TRUST.md) |
+| See daily workflows | [`docs/WORKFLOW.md`](./docs/WORKFLOW.md) |
+| Something broken? | [`HELP.md`](./HELP.md) |
+| Detailed setup | [`docs/SETUP.md`](./docs/SETUP.md) |
+| Use Reasonix prompts | [`prompts/`](./prompts/) |
+| BYOK configuration | [`docs/BYOK-GUIDE.md`](./docs/BYOK-GUIDE.md) |
+
+---
+
+## Cheat Sheet
 
 ```powershell
-# Create a template
+# Daily driver
 pwsh -NoProfile -ExecutionPolicy Bypass -File "C:\VSCode\Templates\scripts\WorkspaceManager.ps1"
-# → Select 2
 
-# Open a workspace with a profile
-pwsh -NoProfile -ExecutionPolicy Bypass -File "C:\VSCode\Templates\scripts\WorkspaceManager.ps1"
-# → Select 6
+# Quick create and open
+# → 2 → enter name → enter → enter → 6 → choose template → done
 
-# Export your current VS Code profile
-# VS Code → Ctrl+Shift+P → Profiles: Export Profile → Save to C:\VSCode\Templates\profiles\
+# Export profile from VS Code
+# Ctrl+Shift+P → Profiles: Export Profile → save to C:\VSCode\Templates\profiles\
 
-# Rebuild everything from scratch
-pwsh -NoProfile -ExecutionPolicy Bypass -File "C:\VSCode\Templates\scripts\Init-TemplatesRepo.ps1"
+# Open with specific profile
+code --profile python-dev C:\VSCode\Templates\templates\my-app.code-workspace
 ```
-
----
-
-## Next
-
-- `docs/WORKFLOW.md` — daily usage patterns
-- `docs/BYOK-GUIDE.md` — KMS integration details
-- `prompts/usage-prompts.md` — Reasonix prompt snippets
