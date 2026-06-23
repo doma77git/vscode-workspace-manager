@@ -1,0 +1,51 @@
+{
+    "folders": [{ "path": "..", "name": "${PROJECT_NAME}" }],
+    "settings": {
+        "editor.formatOnSave": true,
+        "editor.tabSize": 4,
+        "editor.rulers": [120],
+        "files.exclude": { "**/.git": true, "**/build": true, "**/out": true },
+        "search.exclude": { "**/build": true },
+        "C_Cpp.default.cppStandard": "c++20",
+        "C_Cpp.default.cStandard": "c17",
+        "C_Cpp.clang_format_fallbackStyle": "Google",
+        "cmake.configureOnOpen": true,
+        "terminal.integrated.defaultProfile.windows": "PowerShell 7 (full)",
+        "terminal.integrated.shellIntegration.enabled": true
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-vscode.cpptools",
+            "ms-vscode.cmake-tools",
+            "twxs.cmake",
+            "ms-vscode.cpptools-extension-pack",
+            "eamodio.gitlens",
+            "editorconfig.editorconfig"
+        ]
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Configure (CMake)",
+                "type": "shell", "command": "cmake", "args": ["-B", "build", "-S", "."],
+                "group": "none",
+                "presentation": { "reveal": "always", "panel": "new" }
+            },
+            {
+                "label": "Build",
+                "type": "shell", "command": "cmake", "args": ["--build", "build"],
+                "group": "build",
+                "presentation": { "reveal": "always", "panel": "new" },
+                "problemMatcher": ["$gcc"]
+            },
+            {
+                "label": "Test (CTest)",
+                "type": "shell", "command": "ctest", "args": ["--test-dir", "build"],
+                "group": "test",
+                "presentation": { "reveal": "always", "panel": "new" }
+            }
+        ]
+    },
+    "git.remote": "${GIT_REMOTE}"
+}

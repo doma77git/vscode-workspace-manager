@@ -1,0 +1,51 @@
+{
+    "folders": [{ "path": "..", "name": "${PROJECT_NAME}" }],
+    "settings": {
+        "editor.formatOnSave": true,
+        "editor.tabSize": 4,
+        "editor.rulers": [120],
+        "files.exclude": { "**/.git": true, "**/target": true, "**/.gradle": true },
+        "search.exclude": { "**/target": true },
+        "java.format.settings.url": ".vscode/java-formatter.xml",
+        "java.saveActions.organizeImports": true,
+        "java.configuration.updateBuildConfiguration": "automatic",
+        "terminal.integrated.defaultProfile.windows": "PowerShell 7 (full)",
+        "terminal.integrated.shellIntegration.enabled": true
+    },
+    "extensions": {
+        "recommendations": [
+            "redhat.java",
+            "vscjava.vscode-java-debug",
+            "vscjava.vscode-java-test",
+            "vscjava.vscode-maven",
+            "vscjava.vscode-gradle",
+            "sonarsource.sonarlint-vscode",
+            "eamodio.gitlens",
+            "editorconfig.editorconfig"
+        ]
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Build (Maven)",
+                "type": "shell", "command": "mvn", "args": ["compile"],
+                "group": "build",
+                "presentation": { "reveal": "always", "panel": "new" }
+            },
+            {
+                "label": "Test (Maven)",
+                "type": "shell", "command": "mvn", "args": ["test"],
+                "group": "test",
+                "presentation": { "reveal": "always", "panel": "new" }
+            },
+            {
+                "label": "Build (Gradle)",
+                "type": "shell", "command": "gradle", "args": ["build"],
+                "group": "build",
+                "presentation": { "reveal": "always", "panel": "new" }
+            }
+        ]
+    },
+    "git.remote": "${GIT_REMOTE}"
+}
