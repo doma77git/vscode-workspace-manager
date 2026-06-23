@@ -1,0 +1,42 @@
+{
+    "profiles": {
+        "list": [
+            {
+                "guid": "{a1b2c3d4-e5f6-7890-abcd-ef1234567891}",
+                "name": "VS Code Workspace Manager",
+                "commandline": "pwsh -NoProfile -NoExit -Command \"cd C:\\VSCode\\Templates; Write-Host '╔══════════════════════════════════════╗' -F Cyan; Write-Host '║  ⚙️  VS Code Workspace Manager v1.1.0  ║' -F Cyan; Write-Host '╚══════════════════════════════════════╝' -F Cyan; Write-Host ''; Write-Host '  Quick: make test | make manager | make all' -F DarkGray; Write-Host ''\"",
+                "startingDirectory": "C:\\VSCode\\Templates",
+                "icon": "ms-appx:///ProfileIcons/{61c54bb5-c2c6-5271-96e7-009a87ff44bf}.png",
+                "colorScheme": "One Half Dark",
+                "font": {
+                    "face": "CaskaydiaCove Nerd Font",
+                    "size": 13
+                },
+                "opacity": 95,
+                "useAcrylic": false,
+                "suppressApplicationTitle": true,
+                "tabTitle": "WS Manager"
+            },
+            {
+                "guid": "{a1b2c3d4-e5f6-7890-abcd-ef1234567892}",
+                "name": "WS Manager — Validate",
+                "commandline": "pwsh -NoProfile -NoExit -Command \"cd C:\\VSCode\\Templates; pwsh -File scripts\\Run-All.ps1 -Quick\"",
+                "startingDirectory": "C:\\VSCode\\Templates",
+                "icon": "ms-appx:///ProfileIcons/{61c54bb5-c2c6-5271-96e7-009a87ff44bf}.png",
+                "hidden": false,
+                "font": {
+                    "face": "CaskaydiaCove Nerd Font",
+                    "size": 13
+                }
+            },
+            {
+                "guid": "{a1b2c3d4-e5f6-7890-abcd-ef1234567893}",
+                "name": "WS Manager — Menu",
+                "commandline": "pwsh -NoProfile -ExecutionPolicy Bypass -NoExit -File C:\\VSCode\\Templates\\scripts\\WorkspaceManager.ps1",
+                "startingDirectory": "C:\\VSCode\\Templates",
+                "icon": "ms-appx:///ProfileIcons/{61c54bb5-c2c6-5271-96e7-009a87ff44bf}.png",
+                "hidden": false
+            }
+        ]
+    }
+}

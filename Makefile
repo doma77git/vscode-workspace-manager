@@ -92,8 +92,13 @@ parallel:
 repair:
 	$(REPAIR_CMD)
 
+## update-gists Auto-update prompt files with live stats
+update-gists:
+	@pwsh -NoProfile -File scripts/Update-Gists.ps1
+
 ## docs-gen    Generate fresh PROJECT-STATS.md and stats summary
 docs-gen:
+	@pwsh -NoProfile -File scripts/Generate-Docs.ps1
 	@pwsh -NoProfile -File scripts/Generate-Docs.ps1
 
 ## compile     Compile all scripts into deployable module (+ zip)
