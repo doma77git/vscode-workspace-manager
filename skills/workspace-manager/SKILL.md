@@ -19,24 +19,31 @@ Full toolkit for managing VS Code workspaces, profiles, terminal settings, and a
 ## Quick Commands
 
 ```powershell
-make test       # Full test suite (PowerShell AST + JSON)
+make test       # 41 checks (23 PS AST + 10 JSON + 6 YAML + 2 Integration)
 make validate   # JSON + workspace file validation
 make checks     # Validation + secret scan
+make all        # Full pipeline: test + validate + checks + doctor
 make doctor     # Environment health check
 make manager    # Launch the 15-option menu
 make update     # Self-update from git remote
 make backup     # Back up templates/profiles/meta
+make repair     # Auto-fix JSON, line endings, dirs, hooks
+make compile    # Compile all scripts into deployable module
+make export     # Export .vscode/ files from template
+make ext-check  # Verify all recommended extensions exist
+make docs-gen   # Auto-generate fresh stats
 ```
 
 ## Project Structure
 
 ```
-scripts/   → 13 PowerShell scripts (runners, checkers, helpers, backup, scheduler, reco, navigator)
+scripts/   → 23 PowerShell scripts (runners, checkers, helpers, backup, scheduler, reco, navigator, compiler, exporter)
 templates/ → .code-workspace files (with ${PROJECT_NAME} / ${GIT_REMOTE} variables)
-profiles/  → VS Code profile JSON exports
+profiles/  → VS Code profile JSON exports (+ profile-template.json metadata)
 meta/      → trust.json + deepseek-byok.json + <template>.meta.json
-docs/      → 15+ guides (INDEX.md for the portal)
-prompts/   → 10 agent instruction files (agent-flows, goals, run-cookbook, etc.)
+docs/      → 16 guides (INDEX.md for the portal)
+prompts/   → 11 agent instruction files (agent-flows, goals, run-cookbook, gists, etc.)
+skills/    → 3 Reasonix skills (deepseek-byok, deepseek-reasonix, workspace-manager)
 ```
 
 ## Common Tasks
