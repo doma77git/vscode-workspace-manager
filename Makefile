@@ -4,8 +4,30 @@
 
 # Detect PowerShell
 PWSH := $(shell command -v pwsh 2>/dev/null)
-ifeq ($(PWSH),)
-$(error PowerShell 7+ (pwsh) is required but not found. Install: https://github.com/PowerShell/PowerShell)
+BASH_RUNNER := scripts/bash-runner.sh
+
+# Fallback to bash runner if pwsh not found
+ifneq ($(PWSH),)
+  VALIDATE_CMD = @$(PWSH) -NoProfile -File scripts/Run-Validate.ps1
+  CHECKS_CMD   = @$(PWSH) -NoProfile -File scripts/Run-Checks.ps1
+  TEST_CMD     = @$(PWSH) -NoProfile -File scripts/Run-Tests.ps1
+  ALL_CMD      = @$(PWSH) -NoProfile -File scripts/Run-All.ps1
+  INSTALL_CMD  = @$(PWSH) -NoProfile -ExecutionPolicy Bypass -File scripts/Init-TemplatesRepo.ps1
+  DOCTOR_CMD   = @$(PWSH) -NoProfile -File scripts/Check-Environment.ps1
+  REPAIR_CMD   = @$(PWSH) -NoProfile -File scripts/Repair-Project.ps1 -Force
+  BACKUP_CMD   = @$(PWSH) -NoProfile -File scripts/Auto-Backup.ps1
+  UPDATE_CMD   = @$(PWSH) -NoProfile -File scripts/Update-Self.ps1 -Force
+else
+  $(warning PowerShell (pwsh) not found — using bash fallback. Install pwsh for full features.)
+  VALIDATE_CMD = @bash $(BASH_RUNNER) validate
+  CHECKS_CMD   = @bash $(BASH_RUNNER) checks
+  TEST_CMD     = @echo "[SKIP] pwsh required for tests — using bash validate only" && bash $(BASH_RUNNER) validate
+  ALL_CMD      = @bash $(BASH_RUNNER) checks
+  INSTALL_CMD  = @echo "[SKIP] pwsh required for full install"
+  DOCTOR_CMD   = @bash $(BASH_RUNNER) stats
+  REPAIR_CMD   = @echo "[SKIP] pwsh required for repair"
+  BACKUP_CMD   = @echo "[SKIP] pwsh required for backup"
+  UPDATE_CMD   = @echo "[SKIP] pwsh required for self-update"
 endif
 
 .PHONY: help validate checks install clean deps doctor
@@ -20,27 +42,27 @@ help:
 
 ## validate    Validate all JSON and .code-workspace files
 validate:
-	@pwsh -NoProfile -File scripts/Run-Validate.ps1
+	$(VALIDATE_CMD)
 
 ## checks      Run full checks (validate + secret scan)
 checks:
-	@pwsh -NoProfile -File scripts/Run-Checks.ps1
+	$(CHECKS_CMD)
 
 ## test         Run tests (PowerShell syntax + JSON validation)
 test:
-	@pwsh -NoProfile -File scripts/Run-Tests.ps1
+	$(TEST_CMD)
 
 ## all          Run all operations (test + validate + checks + doctor)
 all:
-	@pwsh -NoProfile -File scripts/Run-All.ps1
+	$(ALL_CMD)
 
 ## install     Initialize the repo (one-time) and install pre-commit hook
 install:
-	@pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/Init-TemplatesRepo.ps1
+	$(INSTALL_CMD)
 
 ## doctor      Full environment health check + prerequisites
 doctor:
-	@pwsh -NoProfile -File scripts/Check-Environment.ps1
+	$(DOCTOR_CMD)
 
 ## clean       Remove export archives
 clean:
@@ -48,7 +70,7 @@ clean:
 
 ## backup      Back up templates, profiles, and meta to timestamped zip
 backup:
-	@pwsh -NoProfile -File scripts/Auto-Backup.ps1
+	$(BACKUP_CMD)
 
 ## schedule    Show or manage scheduled tasks
 schedule:
@@ -62,9 +84,13 @@ recommend:
 runner:
 	@pwsh -NoProfile -File scripts/Runner.ps1
 
+## parallel    Run validate + scan + stats in parallel (bash)
+parallel:
+	@bash scripts/bash-runner.sh parallel
+
 ## repair      Auto-repair common issues (JSON, line endings, dirs, hooks)
 repair:
-	@pwsh -NoProfile -File scripts/Repair-Project.ps1 -Force
+	$(REPAIR_CMD)
 
 ## docs-gen    Generate fresh PROJECT-STATS.md and stats summary
 docs-gen:
@@ -88,4 +114,4 @@ deps:
 
 ## update       Self-update from git remote (pull + validate)
 update:
-	@pwsh -NoProfile -File scripts/Update-Self.ps1 -Force
+	$(UPDATE_CMD)
