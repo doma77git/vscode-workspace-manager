@@ -27,11 +27,14 @@
 ## 30-Second Start
 
 ```powershell
-# 1. Initialize (one time only)
-pwsh -NoProfile -ExecutionPolicy Bypass -File "C:\VSCode\Templates\scripts\Init-TemplatesRepo.ps1"
+# Option A: One-liner from the web (Windows/Linux/macOS)
+irm https://raw.githubusercontent.com/doma77git/vscode-workspace-manager/main/install.ps1 | iex
 
-# 2. Launch the manager
-pwsh -NoProfile -ExecutionPolicy Bypass -File "C:\VSCode\Templates\scripts\WorkspaceManager.ps1"
+# Option B: From local clone
+git clone https://github.com/doma77git/vscode-workspace-manager.git C:\VSCode\Templates
+cd C:\VSCode\Templates
+make install
+make manager
 ```
 
 ## Project Map
