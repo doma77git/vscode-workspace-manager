@@ -1,6 +1,6 @@
 # Project Stats — Auto-Generated
 
-> Generated: 2026-06-24 00:47:51
+> Generated: 2026-06-24 00:59:00
 > Script: scripts/Generate-Docs.ps1
 
 ## Project Stats (auto-generated)
@@ -19,5 +19,5 @@
 | Menu options | 15 |
 | Makefile targets | 20 |
 | npm scripts | 29 |
-| Total tracked files | 121 |
+| Total tracked files | 122 |
 | PowerShell version | 7.6.2 |
