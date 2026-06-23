@@ -19,3 +19,6 @@ deepseek-keys.json
 # Temp files
 *.tmp
 *.temp
+
+# Profile exports — created by Export-AllProfiles
+exports/

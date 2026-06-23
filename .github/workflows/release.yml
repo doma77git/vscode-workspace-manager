@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up jq
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq jq
+
+      - name: Validate release
+        run: |
+          find . -name "*.json" -not -path "./.git/*" | while read f; do
+            jq . "$f" > /dev/null || { echo "INVALID JSON: $f"; exit 1; }
+          done
+          find . -name "*.code-workspace" -not -path "./.git/*" | while read f; do
+            jq . "$f" > /dev/null || { echo "INVALID JSON: $f"; exit 1; }
+          done
+          echo "All JSON and workspace files valid."
+
+      - name: Extract changelog
+        id: changelog
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          # Extract section between this tag and the next heading
+          CHANGELOG=$(sed -n "/^## \[${TAG#v}\]/,/^## \[/p" CHANGELOG.md | sed '$d')
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ steps.changelog.outputs.tag }}
+          body: ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
+          generate_release_notes: false

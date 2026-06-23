@@ -1,7 +1,24 @@
-$TemplatesRoot = "C:\VSCode\Templates"
+# Cross-platform root detection
+if (-not (Test-Path env:TEMPLATES_ROOT)) {
+    if ($IsWindows -or (-not (Test-Path variable:IsWindows))) {
+        $TemplatesRoot = "C:\VSCode\Templates"
+    } elseif ($IsLinux) {
+        $TemplatesRoot = "$env:HOME/vscode/Templates"
+    } elseif ($IsMacOS) {
+        $TemplatesRoot = "$env:HOME/vscode/Templates"
+    }
+} else {
+    $TemplatesRoot = $env:TEMPLATES_ROOT
+}
 $TemplatesDir  = Join-Path $TemplatesRoot "templates"
 $ProfilesDir   = Join-Path $TemplatesRoot "profiles"
 $MetaDir       = Join-Path $TemplatesRoot "meta"
+
+# Dot-source module functions
+. "$PSScriptRoot\Invoke-ValidateChecks.ps1"
+. "$PSScriptRoot\Invoke-OpenDocs.ps1"
+. "$PSScriptRoot\Invoke-About.ps1"
+. "$PSScriptRoot\Invoke-ScheduleTasks.ps1"
 
 function Validate-JsonFile {
     param([string]$Path)
@@ -484,26 +501,218 @@ function Init-TemplatesRepo {
     Pause
 }
 
-# ========================
+function Invoke-ScanProject {
+    Write-Host "`n=== Scan Project for Recommendations ===" -ForegroundColor Cyan
+    $scanPath = Read-Host "Enter project path to scan (or blank for current directory .)"
+    if ([string]::IsNullOrWhiteSpace($scanPath)) { $scanPath = "." }
+
+    if (-not (Test-Path $scanPath)) {
+        Write-Host "[ERROR] Path not found: $scanPath" -ForegroundColor Red
+        Pause
+        return
+    }
+
+    $scanPath = Resolve-Path $scanPath
+    Write-Host "`nScanning: $scanPath" -ForegroundColor White
+    Write-Host ("-" * 50)
+
+    $indicators = @()
+    $indicators += @{ File = "package.json";        Stack = "Node.js / Web";    Profile = "web-dev" }
+    $indicators += @{ File = "tsconfig.json";        Stack = "TypeScript";        Profile = "web-dev" }
+    $indicators += @{ File = "requirements.txt";     Stack = "Python";           Profile = "python-dev" }
+    $indicators += @{ File = "pyproject.toml";       Stack = "Python";           Profile = "python-dev" }
+    $indicators += @{ File = "Pipfile";              Stack = "Python";           Profile = "python-dev" }
+    $indicators += @{ File = "Gemfile";              Stack = "Ruby / Rails";     Profile = "ruby-dev" }
+    $indicators += @{ File = "build.sbt";            Stack = "Scala";            Profile = "scala-dev" }
+    $indicators += @{ File = "pom.xml";              Stack = "Java / Maven";     Profile = "java-dev" }
+    $indicators += @{ File = "build.gradle";         Stack = "Java / Gradle";    Profile = "java-dev" }
+    $indicators += @{ File = "Cargo.toml";           Stack = "Rust";             Profile = "rust-dev" }
+    $indicators += @{ File = "go.mod";               Stack = "Go";               Profile = "go-dev" }
+    $indicators += @{ File = "Dockerfile";           Stack = "Docker";           Profile = "docker-dev" }
+    $indicators += @{ File = "Makefile";             Stack = "C/C++ / General";  Profile = "cpp-dev" }
+    $indicators += @{ File = "CMakeLists.txt";       Stack = "C/C++ / CMake";    Profile = "cpp-dev" }
+    $indicators += @{ File = "*.sln";                Stack = ".NET";             Profile = "dotnet-dev" }
+    $indicators += @{ File = "*.csproj";             Stack = ".NET";             Profile = "dotnet-dev" }
+    $indicators += @{ File = "Cargo.toml";           Stack = "Rust";             Profile = "rust-dev" }
+
+    $found = @()
+    foreach ($ind in $indicators) {
+        $pattern = if ($ind.File.Contains('*')) { $ind.File } else { $ind.File }
+        $matches = Get-ChildItem -Path $scanPath -Recurse -Name -Filter $pattern -ErrorAction SilentlyContinue
+        if ($matches) {
+            $found += $ind
+        }
+    }
+
+    $found = $found | Sort-Object Stack -Unique
+
+    if ($found.Count -eq 0) {
+        Write-Host "No common project indicators found." -ForegroundColor Yellow
+        Write-Host "This might be a new project — create a workspace template manually." -ForegroundColor DarkGray
+    } else {
+        Write-Host "Detected stacks:" -ForegroundColor Green
+        foreach ($f in $found) {
+            Write-Host "  $($f.File) → $($f.Stack) (suggested profile: $($f.Profile))" -ForegroundColor Cyan
+        }
+        Write-Host ""
+        Write-Host "Suggested profiles:"
+        $profiles = Get-ChildItem -Path $ProfilesDir -Filter "*.json" -ErrorAction SilentlyContinue
+        $suggested = @()
+        foreach ($f in $found) {
+            if ($f.Profile -notin $suggested) {
+                $suggested += $f.Profile
+            }
+        }
+        foreach ($sp in $suggested) {
+            Write-Host "  - $sp" -ForegroundColor Green
+        }
+        if ($profiles.Count -gt 0) {
+            Write-Host ""
+            Write-Host "Available profiles in $ProfilesDir :" -ForegroundColor White
+            foreach ($p in $profiles) {
+                Write-Host "  - $($p.BaseName)" -ForegroundColor DarkGray
+            }
+        }
+        Write-Host ""
+        $assign = Read-Host "Assign a profile to this project? (y/n)"
+        if ($assign -eq 'y' -and $profiles.Count -gt 0) {
+            for ($i = 0; $i -lt $profiles.Count; $i++) {
+                Write-Host "  $($i+1)) $($profiles[$i].BaseName)"
+            }
+            $pChoice = Read-Host "Select profile number (or 0 to skip)"
+            if ($pChoice -match '^\d+$' -and [int]$pChoice -gt 0 -and [int]$pChoice -le $profiles.Count) {
+                $selected = $profiles[[int]$pChoice - 1]
+                $projectName = Split-Path -Leaf $scanPath
+                $metaPath = Join-Path $MetaDir "$projectName.meta.json"
+                $meta = @{
+                    template = ""
+                    profile = $selected.Name
+                    projectName = $projectName
+                    projectPath = $scanPath.ToString()
+                    created = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+                }
+                $meta | ConvertTo-Json -Depth 3 | Set-Content -Path $metaPath -Encoding UTF8 -NoNewline
+                Write-Host "[OK] Profile assigned: $($selected.Name) → $metaPath" -ForegroundColor Green
+            }
+        }
+    }
+    Pause
+}
+
+function Invoke-UpdateCheck {
+    Write-Host "`n=== Check for Updates ===" -ForegroundColor Cyan
+    $changelogPath = Join-Path $TemplatesRoot "CHANGELOG.md"
+    if (-not (Test-Path $changelogPath)) {
+        Write-Host "[WARN] CHANGELOG.md not found." -ForegroundColor Yellow
+        Pause
+        return
+    }
+
+    $changelog = Get-Content $changelogPath -Raw
+    if ($changelog -match '## \[(\d+\.\d+\.\d+)\]') {
+        $currentVersion = $matches[1]
+        Write-Host "Current version: v$currentVersion" -ForegroundColor Green
+    } else {
+        Write-Host "Current version: unknown" -ForegroundColor Yellow
+    }
+
+    Write-Host ""
+    Write-Host "To check for updates, run:" -ForegroundColor White
+    Write-Host "  git fetch origin" -ForegroundColor DarkGray
+    Write-Host "  git log --oneline HEAD..origin/master" -ForegroundColor DarkGray
+
+    $remoteUrl = & git remote get-url origin 2>$null
+    if ($remoteUrl) {
+        Write-Host ""
+        Write-Host "Remote: $remoteUrl" -ForegroundColor DarkGray
+        Write-Host "Visit the repo for the latest release." -ForegroundColor DarkGray
+    }
+
+    # Offer self-update
+    Write-Host ""
+    $doUpdate = Read-Host "Run self-update now? (y/n)"
+    if ($doUpdate -eq 'y') {
+        $updateScript = Join-Path $TemplatesRoot "scripts\Update-Self.ps1"
+        if (Test-Path $updateScript) {
+            & pwsh -NoProfile -File $updateScript
+        } else {
+            Write-Host "[ERROR] Update-Self.ps1 not found." -ForegroundColor Red
+        }
+    }
+    Pause
+}
+
 # Main Menu
 # ========================
 do {
     Clear-Host
-    Write-Host "========================================" -ForegroundColor Cyan
-    Write-Host "  VS Code Workspace Manager" -ForegroundColor White
-    Write-Host "  $TemplatesRoot" -ForegroundColor DarkGray
-    Write-Host "========================================" -ForegroundColor Cyan
+
+    # Auto-update check (once per session)
+    if (-not $script:updateChecked) {
+        $trustPath = Join-Path $MetaDir "trust.json"
+        if (Test-Path $trustPath) {
+            try {
+                $trust = Get-Content $trustPath -Raw -Encoding UTF8 | ConvertFrom-Json
+                if ($trust.autoUpdateCheck) {
+                    $remote = & git -C $TemplatesRoot remote get-url origin 2>$null
+                    if ($remote) {
+                        & git -C $TemplatesRoot fetch origin 2>$null
+                        $behind = & git -C $TemplatesRoot rev-list --count HEAD..@{u} 2>$null
+                        if ($behind -and [int]$behind -gt 0) {
+                            Write-Host "  ⚡ $behind update(s) available — select [14] to update" -ForegroundColor Yellow
+                        }
+                    }
+                }
+            } catch { }
+        }
+        $script:updateChecked = $true
+    }
+
+    # Quick stats
+    $tCount = (Get-ChildItem -Path $TemplatesDir -Filter "*.code-workspace" -ErrorAction SilentlyContinue).Count
+    $pCount = (Get-ChildItem -Path $ProfilesDir -Filter "*.json" -ErrorAction SilentlyContinue).Count
+    $version = "v1.1.0"
+
+    Write-Host "╔════════════════════════════════════════════════╗" -ForegroundColor Cyan
+    Write-Host "║" -NoNewline -ForegroundColor Cyan
+    Write-Host "  ⚙️  VS Code Workspace Manager $version" -ForegroundColor White -NoNewline
+    Write-Host (" " * (24 - $version.Length)) -NoNewline
+    Write-Host "║" -ForegroundColor Cyan
+    Write-Host "╠════════════════════════════════════════════════╣" -ForegroundColor Cyan
+    Write-Host "║" -NoNewline -ForegroundColor Cyan
+    Write-Host "  📁 Templates: $tCount  │  📋 Profiles: $pCount" -ForegroundColor DarkGray -NoNewline
+    Write-Host (" " * 10) -NoNewline
+    Write-Host "║" -ForegroundColor Cyan
+    Write-Host "╚════════════════════════════════════════════════╝" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "  1) Check VS Code settings.json"
-    Write-Host "  2) New workspace template"
-    Write-Host "  3) Save workspace template"
-    Write-Host "  4) Set DeepSeek BYOK"
-    Write-Host "  5) Set Empty Workspace Trust"
-    Write-Host "  6) Open workspace"
-    Write-Host "  7) Profiles management"
-    Write-Host "  8) Init repo"
-    Write-Host "  9) Search templates"
-    Write-Host "  0) Exit"
+
+    Write-Host "  ── Workspace ─────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "   1) 📄 Check VS Code settings"
+    Write-Host "   2) 🆕 New workspace template"
+    Write-Host "   3) 💾 Save workspace template"
+    Write-Host "   6) 🚀 Open workspace"
+    Write-Host "   9) 🔍 Search templates"
+    Write-Host ""
+
+    Write-Host "  ── Profiles ──────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "   7) 👤 Profiles management"
+    Write-Host "  13) 🔬 Scan project for recommendations"
+    Write-Host ""
+
+    Write-Host "  ── Security ──────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "   4) 🔑 Set DeepSeek BYOK"
+    Write-Host "   5) 🛡️  Set Empty Workspace Trust"
+    Write-Host ""
+
+    Write-Host "  ── Tools ─────────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "   8) 🏗️  Init repo"
+    Write-Host "  10) ✅ Run validation checks"
+    Write-Host "  11) 📖 Open docs"
+    Write-Host "  12) ℹ️  About / version"
+    Write-Host "  14) 🔄 Check for updates"
+    Write-Host "  15) ⏰ Schedule tasks"
+    Write-Host ""
+    Write-Host "   0) 🚪 Exit"
     Write-Host ""
 
     $choice = Read-Host "Select an option"
@@ -538,6 +747,12 @@ do {
         }
         "8" { Init-TemplatesRepo }
         "9" { Search-Templates }
+        "10" { Invoke-ValidateChecks }
+        "11" { Invoke-OpenDocs }
+        "12" { Invoke-About }
+        "13" { Invoke-ScanProject }
+        "14" { Invoke-UpdateCheck }
+        "15" { Invoke-ScheduleTasks }
         "0" { Write-Host "Goodbye." -ForegroundColor Green }
         default { Write-Host "Invalid option." -ForegroundColor Red; Start-Sleep -Seconds 1 }
     }

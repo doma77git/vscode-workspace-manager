@@ -1,0 +1,31 @@
+#!/bin/sh
+# VS Code Templates — post-commit hook
+# Runs validation after every commit. If validation fails, the commit
+# is already done — this is informational only, not a blocker.
+# To disable: chmod -x .git/hooks/post-commit
+
+TEMPLATES_ROOT="$(git rev-parse --show-toplevel)"
+echo ""
+echo "============================================"
+echo "  Post-commit: Running validation checks..."
+echo "============================================"
+
+# Run PowerShell tests if available
+if command -v pwsh > /dev/null 2>&1; then
+    if [ -f "$TEMPLATES_ROOT/scripts/Run-Tests.ps1" ]; then
+        pwsh -NoProfile -File "$TEMPLATES_ROOT/scripts/Run-Tests.ps1"
+        if [ $? -ne 0 ]; then
+            echo ""
+            echo "============================================"
+            echo "  TESTS FAILED!"
+            echo "  Review and fix before pushing."
+            echo "============================================"
+            echo ""
+        else
+            echo ""
+            echo "[OK] All tests passed."
+        fi
+    fi
+else
+    echo "[SKIP] PowerShell (pwsh) not found — skipping tests."
+fi

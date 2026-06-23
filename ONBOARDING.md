@@ -1,6 +1,27 @@
-# Onboarding — 5 Minutes to Productive
+# Onboarding — 7 Minutes to Productive
 
 > New here? Follow these steps. You'll be managing workspaces like a pro.
+
+**Checklist:** `[ ]` Mark as you go — takes ~7 minutes total.
+
+- [ ] Minute 0: Check prerequisites
+- [ ] Minute 1: Clone & initialize
+- [ ] Minute 2: Launch & explore the menu
+- [ ] Minute 3: Create your first workspace template
+- [ ] Minute 4: Set workspace trust
+- [ ] Minute 5: Export your VS Code profile
+- [ ] Minute 6: Run validation checks
+- [ ] Minute 7: Explore advanced features
+
+---
+
+## ⚡ Quick Start (if you know what you're doing)
+
+```powershell
+git clone <remote> C:\VSCode\Templates && cd C:\VSCode\Templates
+make install
+make manager
+```
 
 ---
 
@@ -34,27 +55,25 @@ This creates the git repo, makes first commit, and installs the pre-commit hook.
 pwsh -NoProfile -ExecutionPolicy Bypass -File "scripts\WorkspaceManager.ps1"
 ```
 
-You see:
+You see a box-drawn menu with 15 options organized into sections:
 
 ```
-========================================
-  VS Code Workspace Manager
-  C:\VSCode\Templates
-========================================
+╔════════════════════════════════════════════════╗
+║  ⚙️  VS Code Workspace Manager v1.1.0         ║
+╠════════════════════════════════════════════════╣
+║  📁 Templates: 1  │  📋 Profiles: 1            ║
+╚════════════════════════════════════════════════╝
 
-  1) Check VS Code settings.json
-  2) New workspace template
-  3) Save workspace template
-  4) Set DeepSeek BYOK
-  5) Set Empty Workspace Trust
-  6) Open workspace
-  7) Profiles management
-  8) Init repo
-  9) Search templates
-  0) Exit
+  ── Workspace ──    ── Profiles ──    ── Security ──    ── Tools ──
+  1) 📄 Settings     7) 👤 Profiles    4) 🔑 BYOK        8) 🏗️  Init
+  2) 🆕 New template 13) 🔬 Scan      5) 🛡️  Trust      10) ✅ Validate
+  3) 💾 Save                                                11) 📖 Docs
+  6) 🚀 Open                                                12) ℹ️  About
+  9) 🔍 Search                                              14) 🔄 Updates
+                                                            15) ⏰ Schedule
 ```
 
-Pick **1** — it shows your VS Code environment health.
+Pick **1** — it shows your VS Code environment health. Pick **12** — see project stats.
 
 ---
 
@@ -94,17 +113,65 @@ Trust decisions are recorded in `meta/trust.json`.
 
 ---
 
+## Minute 6 — Run Validation Checks
+
+Run a quick health check to confirm everything is working:
+
+```powershell
+# Standalone validation (all JSON + workspace files)
+pwsh -NoProfile -File "scripts\Run-Validate.ps1"
+
+# Full checks (validation + secret scan)
+pwsh -NoProfile -File "scripts\Run-Checks.ps1"
+```
+
+Or from the interactive menu: **10 → Run validation checks**.
+
+---
+
+## Minute 7 — Explore Advanced Features
+
+Now that you have the basics, try these:
+
+**Auto-open a project with the right profile:**
+```powershell
+pwsh -File scripts\Open-WithProfile.ps1 path\to\project
+```
+
+**Scan a project for recommendations:**
+```
+Menu → Option 13 → enter project path → see detected stack and suggested profile
+```
+
+**Check your environment health:**
+```powershell
+pwsh -File scripts\Check-Environment.ps1
+```
+
+**Set up automated backups and validation:**
+```
+Menu → Option 15 → Install all tasks
+```
+
+**Self-update to the latest version:**
+```powershell
+make update
+```
+
+---
+
 ## You're Done. What's Next?
 
 | Want to... | Read |
 |------------|------|
 | Understand architecture | [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) |
+| Set up terminal profiles | [`docs/TERMINAL.md`](./docs/TERMINAL.md) |
 | Tune DeepSeek | [`docs/DEEPSEEK-RECOMMENDATIONS.md`](./docs/DEEPSEEK-RECOMMENDATIONS.md) |
 | Dive into trust | [`docs/WORKSPACE-TRUST.md`](./docs/WORKSPACE-TRUST.md) |
 | See daily workflows | [`docs/WORKFLOW.md`](./docs/WORKFLOW.md) |
 | Something broken? | [`HELP.md`](./HELP.md) |
 | Detailed setup | [`docs/SETUP.md`](./docs/SETUP.md) |
-| Use Reasonix prompts | [`prompts/`](./prompts/) |
+| Use Reasonix prompts | [`prompts/`](./prompts/) (goals, run cookbook, learn path, improve, usage) |
 | BYOK configuration | [`docs/BYOK-GUIDE.md`](./docs/BYOK-GUIDE.md) |
 
 ---
@@ -123,4 +190,22 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "C:\VSCode\Templates\scripts\Works
 
 # Open with specific profile
 code --profile python-dev C:\VSCode\Templates\templates\my-app.code-workspace
+
+# Validate everything
+pwsh -NoProfile -File "scripts\Run-Validate.ps1"
+
+# Full health check
+pwsh -NoProfile -File "scripts\Run-Checks.ps1"
+
+# Environment doctor
+make doctor
+
+# Auto-open a project
+pwsh -File scripts\Open-WithProfile.ps1 path\to\project
+
+# Back up everything
+make backup
+
+# Schedule daily validation
+make schedule
 ```

@@ -1,0 +1,77 @@
+name: Scheduled Checks
+
+on:
+  schedule:
+    # Run weekly on Monday at 09:00 UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+    # Allow manual trigger from GitHub UI
+
+jobs:
+  validate:
+    name: Weekly Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up jq
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq jq
+
+      - name: Validate all JSON
+        run: |
+          find . -name "*.json" -not -path "./.git/*" | while read f; do
+            jq . "$f" > /dev/null || { echo "INVALID JSON: $f"; exit 1; }
+          done
+
+      - name: Validate all workspace files
+        run: |
+          find . -name "*.code-workspace" -not -path "./.git/*" | while read f; do
+            jq . "$f" > /dev/null || { echo "INVALID WORKSPACE: $f"; exit 1; }
+          done
+
+      - name: Secrets scan
+        run: |
+          FOUND=0
+          find . -type f -not -path "./.git/*" -not -path "./.github/*" \
+            -not -name "*.lock" -not -name "*.exe" -not -name "*.dll" \
+            -not -name "*.md" -not -name "*.txt" -not -name ".editorconfig" | while read f; do
+            if grep -E -n -i '(password|secret|api[_-]?key|token|private_key)' "$f" 2>/dev/null; then
+              echo "::warning file=$f::Potential secret found"
+              FOUND=1
+            fi
+          done
+          if [ "$FOUND" -eq 1 ]; then
+            echo "SECRETS DETECTED — review the warnings above."
+            exit 1
+          fi
+          echo "No secrets detected."
+
+      - name: Structure check
+        run: |
+          for dir in templates profiles meta scripts docs prompts skills .github/workflows; do
+            [ -d "$dir" ] || { echo "MISSING: $dir/"; exit 1; }
+          done
+          for file in .gitignore README.md LICENSE SECURITY.md CONTRIBUTING.md .editorconfig; do
+            [ -f "$file" ] || { echo "MISSING: $file"; exit 1; }
+          done
+          echo "Structure OK."
+
+  notify:
+    name: Notify on Failure
+    needs: validate
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create issue on failure
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '[AUTO] Scheduled checks failed — ' + new Date().toISOString().split('T')[0],
+              body: 'The weekly scheduled validation failed. See [workflow run](' +
+                    `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}` +
+                    ') for details.',
+              labels: ['bug', 'automated']
+            });

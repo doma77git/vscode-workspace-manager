@@ -1,0 +1,35 @@
+{
+  "name": "vscode-workspace-manager",
+  "version": "1.1.0",
+  "description": "VS Code Workspace Manager — manage workspace templates, profiles, trust, and BYOK metadata",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "validate": "pwsh -NoProfile -File scripts/Run-Validate.ps1",
+    "checks": "pwsh -NoProfile -File scripts/Run-Checks.ps1",
+    "test": "pwsh -NoProfile -File scripts/Run-Tests.ps1",
+    "all": "pwsh -NoProfile -File scripts/Run-All.ps1",
+    "install": "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/Init-TemplatesRepo.ps1",
+    "doctor": "pwsh -NoProfile -Command \"Write-Host 'PowerShell:' -NoNewline; $PSVersionTable.PSVersion; try { $cv = & code --version 2>&1 | Select-Object -First 1; Write-Host \\\"VS Code: $cv\\\" } catch { Write-Host 'code CLI not found' }; try { & git --version } catch { Write-Host 'git not found' }; try { & act --version 2>$null } catch { Write-Host 'act not installed (optional)' }\"",
+    "open": "pwsh -NoProfile -File scripts/Open-WithProfile.ps1",
+    "ci": "act -W .github/workflows/validate.yml",
+    "update": "pwsh -NoProfile -File scripts/Update-Self.ps1 -Force",
+    "manager": "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/WorkspaceManager.ps1",
+    "backup": "pwsh -NoProfile -File scripts/Auto-Backup.ps1",
+    "schedule": "pwsh -NoProfile -File scripts/Schedule-Tasks.ps1 -Action list",
+    "doctor": "pwsh -NoProfile -File scripts/Check-Environment.ps1",
+    "recommend": "pwsh -NoProfile -File scripts/Recommend-Extensions.ps1"
+  },
+  "keywords": [
+    "vscode",
+    "workspace",
+    "profiles",
+    "terminal",
+    "templates",
+    "powershell"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/vscode-workspace-manager.git"
+  }
+}

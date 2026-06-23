@@ -1,5 +1,9 @@
 {
+  "version": "1.0",
   "emptyWorkspaceTrust": false,
-  "description": "Toggle to true to trust all empty workspaces in VS Code.",
-  "version": "1.0"
+  "autoUpdateCheck": true,
+  "trustedParentFolders": [],
+  "decisions": [],
+  "updatedAt": "2026-06-23T20:15:00Z",
+  "description": "Record of workspace trust decisions and auto-update preferences. Empty by default — populate decisions as workspaces are reviewed."
 }

@@ -47,6 +47,9 @@ jobs:
             -not -name "*.lock" \
             -not -name "*.exe" \
             -not -name "*.dll" \
+            -not -name "*.md" \
+            -not -name "*.txt" \
+            -not -name ".editorconfig" \
           | while read f; do
             if grep -E -n -i '(password|secret|api[_-]?key|token|private_key)' "$f" 2>/dev/null; then
               echo "::warning file=$f::Potential secret found"
@@ -74,7 +77,7 @@ jobs:
 
       - name: Check required directories
         run: |
-          for dir in templates profiles meta scripts docs prompts .github/workflows; do
+          for dir in templates profiles meta scripts docs prompts skills .github/workflows .github/ISSUE_TEMPLATE; do
             if [ ! -d "$dir" ]; then
               echo "MISSING: $dir/"
               exit 1
@@ -84,10 +87,54 @@ jobs:
 
       - name: Check required files
         run: |
-          for file in .gitignore README.md deploy-instructions.txt; do
+          for file in .gitignore README.md deploy-instructions.txt .editorconfig SECURITY.md CONTRIBUTING.md LICENSE; do
             if [ ! -f "$file" ]; then
               echo "MISSING: $file"
               exit 1
             fi
             echo "OK: $file"
           done
+
+      - name: Check required docs
+        run: |
+          for file in docs/ARCHITECTURE.md docs/TERMINAL.md docs/WORKSPACE-TRUST.md docs/DEEPSEEK-RECOMMENDATIONS.md; do
+            if [ ! -f "$file" ]; then
+              echo "MISSING: $file"
+              exit 1
+            fi
+            echo "OK: $file"
+          done
+
+      - name: Check run scripts
+        run: |
+          for file in scripts/Run-Validate.ps1 scripts/Run-Checks.ps1; do
+            if [ ! -f "$file" ]; then
+              echo "MISSING: $file"
+              exit 1
+            fi
+            echo "OK: $file"
+          done
+
+      - name: Check PR and issue templates
+        run: |
+          for file in .github/PULL_REQUEST_TEMPLATE.md .github/ISSUE_TEMPLATE/bug_report.md .github/ISSUE_TEMPLATE/feature_request.md; do
+            if [ ! -f "$file" ]; then
+              echo "MISSING: $file"
+              exit 1
+            fi
+            echo "OK: $file"
+          done
+
+      - name: Validate terminal profiles in workspace
+        run: |
+          if jq -e '.settings."terminal.integrated.profiles.windows"' templates/sample-project.code-workspace > /dev/null 2>&1; then
+            PROFILE_COUNT=$(jq '.settings."terminal.integrated.profiles.windows" | length' templates/sample-project.code-workspace)
+            echo "OK: $PROFILE_COUNT terminal profiles configured"
+          else
+            echo "WARNING: No terminal profiles found in sample workspace"
+          fi
+
+      - name: Check task definitions
+        run: |
+          TASK_COUNT=$(jq '.tasks.tasks | length' templates/sample-project.code-workspace)
+          echo "OK: $TASK_COUNT tasks defined in sample workspace"

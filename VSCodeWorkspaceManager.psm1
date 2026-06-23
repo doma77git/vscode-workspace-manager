@@ -1,0 +1,19 @@
+# VSCodeWorkspaceManager — Root Module
+# Dot-source all component scripts for module import
+
+$moduleDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$scriptsDir = Join-Path $moduleDir "scripts"
+
+# Shared library (must be loaded first)
+. (Join-Path $scriptsDir "Helper-Functions.ps1")
+
+# Menu modules
+. (Join-Path $scriptsDir "Invoke-ValidateChecks.ps1")
+. (Join-Path $scriptsDir "Invoke-OpenDocs.ps1")
+. (Join-Path $scriptsDir "Invoke-About.ps1")
+. (Join-Path $scriptsDir "Invoke-ScheduleTasks.ps1")
+
+# Set aliases for convenience
+New-Alias -Name wsm -Value (Join-Path $scriptsDir "WorkspaceManager.ps1") -Force
+New-Alias -Name wsm-test -Value (Join-Path $scriptsDir "Run-Tests.ps1") -Force
+New-Alias -Name wsm-validate -Value (Join-Path $scriptsDir "Run-Validate.ps1") -Force

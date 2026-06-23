@@ -27,6 +27,14 @@ One-time setup (run from any directory):
 
    act -W .github/workflows/validate.yml
 
+4) Run standalone validation:
+
+   pwsh -NoProfile -File ''C:\VSCode\Templates\scripts\Run-Validate.ps1''
+
+5) Run full checks (validate + secret scan):
+
+   pwsh -NoProfile -File ''C:\VSCode\Templates\scripts\Run-Checks.ps1''
+
 ============================================================
 Post-deploy verification checklist:
 ============================================================
@@ -34,7 +42,11 @@ Post-deploy verification checklist:
 [ ] .gitignore exists and excludes secrets
 [ ] .git/hooks/pre-commit blocks commits with passwords/tokens
 [ ] .github/workflows/validate.yml passes JSON lint + secrets scan
-[ ] WorkspaceManager.ps1 menu loads and all options respond
+[ ] WorkspaceManager.ps1 menu loads and all 12 options respond
 [ ] code --profile <name> <workspace> opens correctly
 [ ] meta/deepseek-byok.json placeholder present (no real keys)
 [ ] meta/trust.json has emptyWorkspaceTrust = false
+[ ] LICENSE, SECURITY.md, CONTRIBUTING.md, .editorconfig exist
+[ ] scripts/Run-Validate.ps1 passes all files
+[ ] scripts/Run-Checks.ps1 reports no secrets
+[ ] docs/TERMINAL.md, docs/ARCHITECTURE.md, docs/WORKSPACE-TRUST.md exist

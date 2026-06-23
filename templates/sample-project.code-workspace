@@ -1,37 +1,201 @@
 {
-  "folders": [
-    {
-      "path": "..",
-      "name": "${PROJECT_NAME}"
-    }
-  ],
-  "settings": {
-    "editor.formatOnSave": true,
-    "editor.tabSize": 4,
-    "editor.rulers": [80, 120],
-    "files.encoding": "utf8",
-    "files.exclude": {
-      "**/.git": true,
-      "**/.vscode": false,
-      "**/node_modules": true
+    "folders": [
+        {
+            "path": "..",
+            "name": "${PROJECT_NAME}"
+        }
+    ],
+    "settings": {
+        "editor.formatOnSave": true,
+        "editor.tabSize": 4,
+        "editor.rulers": [80, 120],
+        "files.encoding": "utf8",
+        "files.exclude": {
+            "**/.git": true,
+            "**/.vscode": false,
+            "**/node_modules": true
+        },
+        "search.exclude": {
+            "**/node_modules": true,
+            "**/.git": true
+        },
+        "terminal.integrated.profiles.windows": {
+            "PowerShell 7 (fast)": {
+                "source": "PowerShell",
+                "args": ["-NoProfile"],
+                "overrideName": true,
+                "icon": "terminal-powershell"
+            },
+            "PowerShell 7 (full)": {
+                "path": "pwsh.exe",
+                "icon": "terminal-powershell"
+            },
+            "Windows PowerShell": {
+                "path": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                "icon": "terminal-powershell"
+            },
+            "Git Bash": {
+                "path": "C:\\Program Files\\Git\\bin\\bash.exe",
+                "icon": "terminal-bash",
+                "args": ["--login"]
+            },
+            "Command Prompt": {
+                "path": "C:\\WINDOWS\\System32\\cmd.exe",
+                "icon": "terminal-cmd"
+            },
+            "WSL (Ubuntu)": {
+                "path": "C:\\WINDOWS\\System32\\wsl.exe",
+                "args": ["-d", "Ubuntu"],
+                "icon": "terminal-ubuntu"
+            }
+        },
+        "terminal.integrated.defaultProfile.windows": "PowerShell 7 (full)",
+        "terminal.integrated.automationProfile.windows": {
+            "path": "pwsh.exe",
+            "args": ["-NoProfile", "-Command"]
+        },
+        "terminal.integrated.shellIntegration.enabled": true,
+        "terminal.integrated.shellIntegration.decorationsEnabled": "both",
+        "terminal.integrated.shellIntegration.showCommandGuide": true,
+        "terminal.integrated.stickyScroll.enabled": true,
+        "terminal.integrated.suggest.enabled": true,
+        "terminal.integrated.suggest.quickSuggestions": true,
+        "terminal.integrated.enableMultiLinePasteWarning": true,
+        "terminal.integrated.gpuAcceleration": "auto",
+        "terminal.integrated.splitCwd": "inherited",
+        "terminal.integrated.localEchoEnabled": "auto",
+        "terminal.integrated.cursorBlinking": true,
+        "terminal.integrated.cursorStyle": "line"
     },
-    "search.exclude": {
-      "**/node_modules": true,
-      "**/.git": true
-    }
-  },
-  "extensions": {
-    "recommendations": [
-      "eamodio.gitlens",
-      "editorconfig.editorconfig",
-      "ms-vscode.remote-wsl",
-      "streetsidesoftware.code-spell-checker"
-    ]
-  },
-  "launch": {},
-  "tasks": {
-    "version": "2.0.0",
-    "tasks": []
-  },
-  "git.remote": "${GIT_REMOTE}"
+    "extensions": {
+        "recommendations": [
+            "eamodio.gitlens",
+            "editorconfig.editorconfig",
+            "ms-vscode.remote-wsl",
+            "streetsidesoftware.code-spell-checker"
+        ]
+    },
+    "launch": {},
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Validate All JSON",
+                "detail": "Recursively validates all .json files in the project against JSON schema",
+                "type": "shell",
+                "command": "powershell.exe",
+                "args": [
+                    "-NoProfile",
+                    "-Command",
+                    "Get-ChildItem -Recurse -Filter '*.json' -Exclude '.git' | ForEach-Object { try { $null = Get-Content $_.FullName -Raw -Encoding UTF8 | ConvertFrom-Json; Write-Host \"OK: $($_.Name)\" -ForegroundColor Green } catch { Write-Host \"INVALID: $($_.Name) - $($_.Exception.Message)\" -ForegroundColor Red; exit 1 } }"
+                ],
+                "group": "test",
+                "presentation": {
+                    "reveal": "always",
+                    "panel": "new",
+                    "clear": true
+                },
+                "problemMatcher": []
+            },
+            {
+                "label": "Validate All .code-workspace",
+                "detail": "Recursively validates all .code-workspace files (JSON-based workspace configs)",
+                "type": "shell",
+                "command": "powershell.exe",
+                "args": [
+                    "-NoProfile",
+                    "-Command",
+                    "Get-ChildItem -Recurse -Filter '*.code-workspace' | ForEach-Object { try { $null = Get-Content $_.FullName -Raw -Encoding UTF8 | ConvertFrom-Json; Write-Host \"OK: $($_.Name)\" -ForegroundColor Green } catch { Write-Host \"INVALID: $($_.Name) - $($_.Exception.Message)\" -ForegroundColor Red; exit 1 } }"
+                ],
+                "group": "test",
+                "presentation": {
+                    "reveal": "always",
+                    "panel": "new",
+                    "clear": true
+                },
+                "problemMatcher": []
+            },
+            {
+                "label": "Run CI Checks Locally",
+                "detail": "Runs the GitHub Actions validate.yml workflow locally via act (requires Docker)",
+                "type": "shell",
+                "command": "act",
+                "args": ["-W", ".github/workflows/validate.yml"],
+                "group": "test",
+                "presentation": {
+                    "reveal": "always",
+                    "panel": "new"
+                },
+                "problemMatcher": []
+            },
+            {
+                "label": "Launch Workspace Manager",
+                "detail": "Opens the interactive VS Code Workspace Manager (WorkspaceManager.ps1) menu",
+                "type": "shell",
+                "command": "pwsh",
+                "args": [
+                    "-NoProfile",
+                    "-ExecutionPolicy", "Bypass",
+                    "-File", "${workspaceFolder}\\scripts\\WorkspaceManager.ps1"
+                ],
+                "group": "none",
+                "presentation": {
+                    "reveal": "always",
+                    "panel": "dedicated"
+                },
+                "problemMatcher": []
+            },
+            {
+                "label": "Validate This Workspace JSON",
+                "detail": "Validates that this workspace file itself is well-formed JSON",
+                "type": "shell",
+                "command": "pwsh",
+                "args": [
+                    "-NoProfile",
+                    "-Command",
+                    "$null = Get-Content '${workspaceFolder}\\templates\\sample-project.code-workspace' -Raw -Encoding UTF8 | ConvertFrom-Json; Write-Host '[OK] Workspace JSON is valid' -ForegroundColor Green"
+                ],
+                "group": "test",
+                "presentation": {
+                    "reveal": "always",
+                    "panel": "new",
+                    "clear": true
+                },
+                "problemMatcher": []
+            },
+            {
+                "label": "Check VS Code Prerequisites",
+                "detail": "Reports installed versions of PowerShell, VS Code CLI (code), and git",
+                "type": "shell",
+                "command": "powershell.exe",
+                "args": [
+                    "-NoProfile",
+                    "-Command",
+                    "Write-Host 'PowerShell:' -NoNewline; $psv = $PSVersionTable.PSVersion; Write-Host \" $psv\" -ForegroundColor Green; try { $cv = & code --version 2>&1 | Select-Object -First 1; Write-Host \"VS Code: $cv\" -ForegroundColor Green } catch { Write-Host 'VS Code CLI not found in PATH' -ForegroundColor Red }; try { $gv = & git --version 2>&1; Write-Host \"Git: $gv\" -ForegroundColor Green } catch { Write-Host 'Git not found' -ForegroundColor Red }"
+                ],
+                "group": "none",
+                "presentation": {
+                    "reveal": "always",
+                    "panel": "new"
+                },
+                "problemMatcher": []
+            },
+            {
+                "label": "Full Validation",
+                "detail": "Runs all validation tasks: JSON, .code-workspace, workspace self-check",
+                "dependsOn": [
+                    "Validate All JSON",
+                    "Validate All .code-workspace",
+                    "Validate This Workspace JSON"
+                ],
+                "group": "test",
+                "presentation": {
+                    "reveal": "always",
+                    "panel": "dedicated"
+                },
+                "problemMatcher": []
+            }
+        ]
+    },
+    "git.remote": "${GIT_REMOTE}"
 }

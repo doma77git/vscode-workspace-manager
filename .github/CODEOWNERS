@@ -1,0 +1,17 @@
+# CODEOWNERS — assign reviewers to specific paths
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for the entire repo
+* @your-org/maintainers
+
+# Security-sensitive files
+/SECURITY.md         @your-org/security
+/meta/               @your-org/security
+/.github/workflows/  @your-org/security
+
+# Scripts
+/scripts/            @your-org/maintainers
+
+# Documentation
+/docs/               @your-org/docs
+/*.md                @your-org/docs

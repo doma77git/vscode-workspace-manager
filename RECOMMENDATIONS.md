@@ -151,3 +151,98 @@ C:\VSCode\Templates\
 | Accidentally committed a secret | Rotate key in KMS → `git reset HEAD~1` → force push |
 | Pre-commit blocks a doc edit | `git commit --no-verify` (only if false positive) |
 | Template doesn't fit new project | Create a new one with `New-WorkspaceTemplate` → variable substitution handles the rest |
+
+---
+
+## Terminal Configuration Recommendations
+
+### Choosing a Default Profile
+
+| Use Case | Recommended Profile | Rationale |
+|----------|-------------------|-----------|
+| Daily development | **PowerShell 7 (full)** | Full profile with modules, PSReadLine, custom prompts |
+| Quick commands / scripts | **PowerShell 7 (fast)** | `-NoProfile` skips startup, launches instantly |
+| POSIX / git workflows | **Git Bash** | Native bash experience, git aliases |
+| Legacy / batch files | **Command Prompt** | `cmd.exe` compatibility |
+| Linux development | **WSL (Ubuntu)** | Full Linux environment on Windows |
+
+### Automation Profile
+
+Tasks and debug features should use a separate profile to avoid loading heavy shell startup scripts:
+
+```json
+"terminal.integrated.automationProfile.windows": {
+  "path": "pwsh.exe",
+  "args": ["-NoProfile", "-Command"]
+}
+```
+
+This is already pre-configured in the sample workspace.
+
+### Shell Integration
+
+Always keep shell integration enabled — it powers command decorations, sticky scroll, IntelliSense, and quick fixes:
+
+```json
+"terminal.integrated.shellIntegration.enabled": true,
+"terminal.integrated.shellIntegration.decorationsEnabled": "both",
+"terminal.integrated.shellIntegration.showCommandGuide": true,
+"terminal.integrated.stickyScroll.enabled": true
+```
+
+### Manual Shell Integration Installation
+
+If automatic injection fails (e.g., sub-shells, SSH, complex setups), add to your PowerShell profile (`code $Profile`):
+
+```powershell
+if ($env:TERM_PROGRAM -eq "vscode") {
+  . "$(code --locate-shell-integration-path pwsh)"
+}
+```
+
+---
+
+## Task Automation Recommendations
+
+### Task Structure
+
+Every task should include:
+
+- **`label`** — Unique, descriptive name (e.g., `"Validate All JSON"`)
+- **`detail`** — One-line description shown in the task picker (e.g., `"Recursively validates all .json files"`)
+- **`type`** — `"shell"` for PowerShell commands, `"process"` for binaries
+- **`group`** — `"build"` (Ctrl+Shift+B), `"test"` (Run Test Task), or omit for general tasks
+
+### Compound Tasks with `dependsOn`
+
+Chain related tasks to run them in sequence with a single command:
+
+```json
+{
+  "label": "Full Validation",
+  "dependsOn": ["Validate All JSON", "Validate This Workspace JSON"],
+  "group": "test"
+}
+```
+
+This runs each dependency in order and reports individual pass/fail.
+
+### When to Use Each Task Trigger
+
+| Trigger | Task Group | Best For |
+|---------|-----------|----------|
+| `Ctrl+Shift+B` | `"build"` | Compilation, bundling, type-checking |
+| `Run Test Task` | `"test"` | Validation, linting, audit checks |
+| `Terminal → Run Task` | (none) | One-off scripts, manager launch, diagnostics |
+
+### Running Tasks Without the VS Code UI
+
+For headless or CI environments, use the standalone run scripts:
+
+```powershell
+# Same as "Validate All JSON" + "Validate All .code-workspace" tasks
+pwsh -NoProfile -File "scripts\Run-Validate.ps1"
+
+# Same as full validation + secret scan
+pwsh -NoProfile -File "scripts\Run-Checks.ps1"
+```

@@ -1,6 +1,6 @@
 ---
 name: deepseek-byok
-description: Manage DeepSeek BYOK metadata — store KMS instructions and key references without committing real secrets.
+description: Manage DeepSeek BYOK metadata — store KMS instructions and key references without committing real secrets. Includes security verification and CI integration.
 type: project
 runAs: inline
 allowedTools: [read_file, write_file, bash, ask]
@@ -13,7 +13,7 @@ Manage Bring-Your-Own-Key metadata for DeepSeek authentication. This skill store
 ## When to use
 - User says "set up DeepSeek", "configure BYOK", "deepseek keys", "KMS for DeepSeek"
 - User needs to switch KMS providers (Azure Key Vault ↔ AWS KMS ↔ HashiCorp Vault)
-- User needs to check BYOK status
+- User needs to check BYOK status or verify security
 
 ## Steps
 
@@ -54,14 +54,26 @@ Update `meta/deepseek-byok.json` with:
 - `keyReference` set to the user's reference
 - `createdAt` set to current timestamp
 
-### 5. Confirm
+### 5. Verify security posture
+Run after configuring BYOK:
+```powershell
+make checks          # Verify no secrets in the repo
+make test            # Verify nothing is broken
+```
+
+Check that `.gitignore` still excludes `deepseek-byok.json` and `deepseek-keys.json`.
+
+### 6. Confirm
 Tell the user:
 - Where the metadata was saved
 - That `.gitignore` excludes this file from git
 - How to retrieve the key at runtime (link to `docs/BYOK-GUIDE.md`)
+- That scheduled checks will catch any secret leaks weekly
 
 ## Security rules
 - **NEVER** store real keys, tokens, or secrets in `meta/deepseek-byok.json`
 - **NEVER** accept a raw API key from the user — only key references
 - The file is in `.gitignore` — verify before committing anything
 - If a user pastes a real key, stop and warn them. Do not write it to disk.
+- Run `make checks` after any BYOK changes
+- Review `SECURITY.md` for the full security policy

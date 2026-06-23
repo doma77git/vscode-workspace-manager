@@ -1,0 +1,38 @@
+{
+    "version": "0.2",
+    "language": "en",
+    "words": [
+        "BYOK",
+        "DeepSeek",
+        "KMS",
+        "pwsh",
+        "powershell",
+        "keyvault",
+        "hashicorp",
+        "code-workspace",
+        "subagent",
+        "subagents",
+        "pro",
+        "flash",
+        "copen",
+        "dependabot",
+        "dogfood",
+        "ENDCOL",
+        "ENDLINE",
+        "eslint",
+        "gitlens",
+        "keybindings",
+        "markdownlint",
+        "msys",
+        "posix",
+        "scala",
+        "tsconfig",
+        "workspaces",
+        "zshrc"
+    ],
+    "ignorePaths": [
+        ".git/",
+        "node_modules/",
+        "*.code-workspace"
+    ]
+}
