@@ -21,16 +21,54 @@ function Validate-JsonFile {
 
 function Check-VSCodeSettings {
     Write-Host "`n=== Check VS Code Settings ===" -ForegroundColor Cyan
+
+    # Check VS Code CLI availability
+    Write-Host "`n--- VS Code CLI ---" -ForegroundColor DarkGray
+    try {
+        $codeVersion = & code --version 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            $versionLine = ($codeVersion | Select-Object -First 1)
+            Write-Host "[OK] code CLI available: $versionLine" -ForegroundColor Green
+        } else {
+            Write-Host "[WARN] code CLI not found in PATH." -ForegroundColor Yellow
+            Write-Host "  Fix: VS Code -> Ctrl+Shift+P -> 'Shell Command: Install code command in PATH'"
+        }
+    } catch {
+        Write-Host "[WARN] code CLI not found in PATH." -ForegroundColor Yellow
+        Write-Host "  Fix: VS Code -> Ctrl+Shift+P -> 'Shell Command: Install code command in PATH'"
+    }
+
+    # Check VS Code settings.json
+    Write-Host "`n--- Settings File ---" -ForegroundColor DarkGray
     $settingsPath = Join-Path $env:APPDATA "Code\User\settings.json"
     if (Test-Path $settingsPath) {
-        Write-Host "Found settings at: $settingsPath"
+        Write-Host "[OK] Found settings at: $settingsPath" -ForegroundColor Green
         Validate-JsonFile $settingsPath | Out-Null
-        Write-Host "Recommendations:"
-        Write-Host "  - Consider exporting your profile to C:\VSCode\Templates\profiles\"
-        Write-Host "  - Use Workspace Manager to create templates with your preferred settings"
     } else {
-        Write-Host "No VS Code settings.json found at: $settingsPath"
+        Write-Host "[WARN] No VS Code settings.json found at: $settingsPath" -ForegroundColor Yellow
     }
+
+    # Check environment
+    Write-Host "`n--- Environment ---" -ForegroundColor DarkGray
+    Write-Host "  Templates root : $TemplatesRoot"
+    Write-Host "  Templates dir  : $TemplatesDir"
+    Write-Host "  Profiles dir   : $ProfilesDir"
+    Write-Host "  Meta dir       : $MetaDir"
+    Write-Host "  PowerShell     : $($PSVersionTable.PSVersion)"
+
+    $templateCount = (Get-ChildItem -Path $TemplatesDir -Filter "*.code-workspace" -ErrorAction SilentlyContinue).Count
+    $profileCount = (Get-ChildItem -Path $ProfilesDir -Filter "*.json" -ErrorAction SilentlyContinue).Count
+    Write-Host "  Templates      : $templateCount file(s)"
+    Write-Host "  Profiles       : $profileCount file(s)"
+
+    Write-Host "`n--- Recommendations ---" -ForegroundColor DarkGray
+    if ($profileCount -eq 0) {
+        Write-Host "  - Export a VS Code profile to $ProfilesDir (Ctrl+Shift+P -> Profiles: Export Profile)"
+    }
+    if ($templateCount -eq 0) {
+        Write-Host "  - Create a workspace template (option 2 in main menu)"
+    }
+    Write-Host "  - Run 'code --list-extensions' to see installed extensions"
     Pause
 }
 
@@ -329,8 +367,102 @@ function Import-Profile {
     Pause
 }
 
+function Search-Templates {
+    Write-Host "`n=== Search Templates ===" -ForegroundColor Cyan
+    $query = Read-Host "Enter search query (searches template names, metadata, and file contents)"
+    if ([string]::IsNullOrWhiteSpace($query)) {
+        Write-Host "[ERROR] Query cannot be empty." -ForegroundColor Red
+        return
+    }
+
+    Write-Host "`nSearching templates/ for: $query" -ForegroundColor Yellow
+    Write-Host ("-" * 50)
+
+    $found = 0
+
+    # Search template file names
+    $nameMatches = Get-ChildItem -Path $TemplatesDir -Filter "*.code-workspace" -ErrorAction SilentlyContinue `
+        | Where-Object { $_.BaseName -match $query }
+    foreach ($t in $nameMatches) {
+        Write-Host "[NAME]  $($t.Name)" -ForegroundColor Green
+        $found++
+    }
+
+    # Search inside .code-workspace files
+    $contentMatches = Get-ChildItem -Path $TemplatesDir -Filter "*.code-workspace" -ErrorAction SilentlyContinue `
+        | Where-Object { -not ($_.BaseName -match $query) } `
+        | ForEach-Object {
+            $content = Get-Content $_.FullName -Raw -Encoding UTF8
+            if ($content -match $query) {
+                Write-Host "[CONTENT] $($_.Name)" -ForegroundColor Green
+                $script:found++
+            }
+        }
+
+    # Search metadata files
+    $metaMatches = Get-ChildItem -Path $MetaDir -Filter "*.meta.json" -ErrorAction SilentlyContinue `
+        | ForEach-Object {
+            $content = Get-Content $_.FullName -Raw -Encoding UTF8
+            if ($content -match $query) {
+                $metaData = $content | ConvertFrom-Json
+                Write-Host "[META]   $($metaData.template) — project: $($metaData.projectName)" -ForegroundColor Green
+                $script:found++
+            }
+        }
+
+    if ($found -eq 0) {
+        Write-Host "No templates matched '$query'." -ForegroundColor Yellow
+    } else {
+        Write-Host ("-" * 50)
+        Write-Host "$found result(s) found." -ForegroundColor Cyan
+    }
+    Pause
+}
+
+function Export-AllProfiles {
+    Write-Host "`n=== Export All Profiles ===" -ForegroundColor Cyan
+
+    $profiles = Get-ChildItem -Path $ProfilesDir -Filter "*.json" -ErrorAction SilentlyContinue
+    if ($profiles.Count -eq 0) {
+        Write-Host "No profiles to export." -ForegroundColor Yellow
+        Pause
+        return
+    }
+
+    $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+    $exportDir = Join-Path $TemplatesRoot "exports"
+    $archiveDir = Join-Path $exportDir "profiles-$timestamp"
+
+    if (-not (Test-Path $archiveDir)) {
+        New-Item -ItemType Directory -Path $archiveDir -Force | Out-Null
+    }
+
+    foreach ($p in $profiles) {
+        Copy-Item $p.FullName (Join-Path $archiveDir $p.Name) -Force
+    }
+
+    # Also export trust and BYOK metadata for reference
+    $trustPath = Join-Path $MetaDir "trust.json"
+    if (Test-Path $trustPath) {
+        Copy-Item $trustPath (Join-Path $archiveDir "trust.json") -Force
+    }
+
+    # Create a manifest
+    $manifest = @{
+        exportDate = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+        source = $TemplatesRoot
+        profileCount = $profiles.Count
+        profiles = @($profiles | ForEach-Object { $_.Name })
+    }
+    $manifest | ConvertTo-Json -Depth 3 | Set-Content -Path (Join-Path $archiveDir "manifest.json") -Encoding UTF8 -NoNewline
+
+    Write-Host "[OK] $($profiles.Count) profile(s) exported to:" -ForegroundColor Green
+    Write-Host "     $archiveDir" -ForegroundColor Green
+    Write-Host "[NOTE] Exports are NOT tracked by git." -ForegroundColor DarkGray
+    Pause
+}
 function Export-Profile {
-    Write-Host "`n=== Export Profile ===" -ForegroundColor Cyan
+    Write-Host "`n=== Export Profile (Single) ===" -ForegroundColor Cyan
     Write-Host "To export a VS Code profile:"
     Write-Host "  1. Open VS Code"
     Write-Host "  2. Ctrl+Shift+P -> Profiles: Export Profile"
@@ -370,6 +502,7 @@ do {
     Write-Host "  6) Open workspace"
     Write-Host "  7) Profiles management"
     Write-Host "  8) Init repo"
+    Write-Host "  9) Search templates"
     Write-Host "  0) Exit"
     Write-Host ""
 
@@ -391,17 +524,20 @@ do {
                 Write-Host ""
                 Write-Host "  1) List profiles"
                 Write-Host "  2) Import profile"
-                Write-Host "  3) Export profile (instructions)"
+                Write-Host "  3) Export single profile (instructions)"
+                Write-Host "  4) Export all profiles (bulk archive)"
                 Write-Host "  0) Back"
                 $pChoice = Read-Host "Select"
                 switch ($pChoice) {
                     "1" { Get-ProfileList; Pause }
                     "2" { Import-Profile }
                     "3" { Export-Profile }
+                    "4" { Export-AllProfiles }
                 }
             } while ($pChoice -ne "0")
         }
         "8" { Init-TemplatesRepo }
+        "9" { Search-Templates }
         "0" { Write-Host "Goodbye." -ForegroundColor Green }
         default { Write-Host "Invalid option." -ForegroundColor Red; Start-Sleep -Seconds 1 }
     }
