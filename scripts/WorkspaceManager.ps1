@@ -659,7 +659,7 @@ do {
                         & git -C $TemplatesRoot fetch origin 2>$null
                         $behind = & git -C $TemplatesRoot rev-list --count HEAD..@{u} 2>$null
                         if ($behind -and [int]$behind -gt 0) {
-                            Write-Host "  ⚡ $behind update(s) available — select [14] to update" -ForegroundColor Yellow
+                            Write-Host "  ⚡ $behind update(s) available — select [14]" -ForegroundColor Yellow
                         }
                     }
                 }
@@ -668,54 +668,51 @@ do {
         $script:updateChecked = $true
     }
 
-    # Quick stats
+    # Live stats
     $tCount = (Get-ChildItem -Path $TemplatesDir -Filter "*.code-workspace" -ErrorAction SilentlyContinue).Count
     $pCount = (Get-ChildItem -Path $ProfilesDir -Filter "*.json" -ErrorAction SilentlyContinue).Count
-    $version = "v1.1.0"
+    $sCount = (Get-ChildItem -Path (Join-Path $TemplatesRoot "scripts") -Filter "*.ps1" -ErrorAction SilentlyContinue).Count
+    $time = Get-Date -Format "HH:mm"
 
-    Write-Host "╔════════════════════════════════════════════════╗" -ForegroundColor Cyan
+    # Header
+    Write-Host "╔══════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
     Write-Host "║" -NoNewline -ForegroundColor Cyan
-    Write-Host "  ⚙️  VS Code Workspace Manager $version" -ForegroundColor White -NoNewline
-    Write-Host (" " * (24 - $version.Length)) -NoNewline
-    Write-Host "║" -ForegroundColor Cyan
-    Write-Host "╠════════════════════════════════════════════════╣" -ForegroundColor Cyan
+    Write-Host "  ⚙️  VS Code Workspace Manager  v1.1.0" -ForegroundColor White -NoNewline
+    Write-Host "                     ⏰ $time ║" -ForegroundColor DarkGray
+    Write-Host "╠══════════════════════════════════════════════════════════╣" -ForegroundColor Cyan
     Write-Host "║" -NoNewline -ForegroundColor Cyan
-    Write-Host "  📁 Templates: $tCount  │  📋 Profiles: $pCount" -ForegroundColor DarkGray -NoNewline
-    Write-Host (" " * 10) -NoNewline
+    Write-Host ("  📁 {0} templates  │  📋 {1} profiles  │  ⚡ {2} scripts" -f $tCount, $pCount, $sCount) -ForegroundColor White -NoNewline
+    Write-Host (" " * (16 - "$tCount$pCount$sCount".Length)) -NoNewline
     Write-Host "║" -ForegroundColor Cyan
-    Write-Host "╚════════════════════════════════════════════════╝" -ForegroundColor Cyan
+    Write-Host "╚══════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
     Write-Host ""
 
-    Write-Host "  ── Workspace ─────────────────────────────────" -ForegroundColor DarkGray
-    Write-Host "   1) 📄 Check VS Code settings"
-    Write-Host "   2) 🆕 New workspace template"
-    Write-Host "   3) 💾 Save workspace template"
-    Write-Host "   6) 🚀 Open workspace"
-    Write-Host "   9) 🔍 Search templates"
+    # Menu body with keyboard shortcuts
+    Write-Host "  ── Workspace ───────────────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "  [1] 📄 Check settings       [2] 🆕 New template"
+    Write-Host "  [3] 💾 Save template         [6] 🚀 Open workspace"
+    Write-Host "  [9] 🔍 Search templates"
     Write-Host ""
 
-    Write-Host "  ── Profiles ──────────────────────────────────" -ForegroundColor DarkGray
-    Write-Host "   7) 👤 Profiles management"
-    Write-Host "  13) 🔬 Scan project for recommendations"
+    Write-Host "  ── Profiles ────────────────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "  [7] 👤 Profile management    [13] 🔬 Scan project"
     Write-Host ""
 
-    Write-Host "  ── Security ──────────────────────────────────" -ForegroundColor DarkGray
-    Write-Host "   4) 🔑 Set DeepSeek BYOK"
-    Write-Host "   5) 🛡️  Set Empty Workspace Trust"
+    Write-Host "  ── Security ────────────────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "  [4] 🔑 DeepSeek BYOK         [5] 🛡️  Workspace Trust"
     Write-Host ""
 
-    Write-Host "  ── Tools ─────────────────────────────────────" -ForegroundColor DarkGray
-    Write-Host "   8) 🏗️  Init repo"
-    Write-Host "  10) ✅ Run validation checks"
-    Write-Host "  11) 📖 Open docs"
-    Write-Host "  12) ℹ️  About / version"
-    Write-Host "  14) 🔄 Check for updates"
-    Write-Host "  15) ⏰ Schedule tasks"
-    Write-Host ""
-    Write-Host "   0) 🚪 Exit"
+    Write-Host "  ── Tools ───────────────────────────────────────────────" -ForegroundColor DarkGray
+    Write-Host "  [8] 🏗️  Init repo             [10] ✅ Validate"
+    Write-Host "  [11] 📖 Open docs             [12] ℹ️  About"
+    Write-Host "  [14] 🔄 Check updates         [15] ⏰ Schedule"
     Write-Host ""
 
-    $choice = Read-Host "Select an option"
+    Write-Host "  ════════════════════════════════════════════════════════" -ForegroundColor DarkGray
+    Write-Host "  [0] Exit    │  R: Repair    │  T: Run Tests    │  ?: Help" -ForegroundColor DarkGray
+    Write-Host ""
+
+    $choice = Read-Host "Select"
 
     switch ($choice) {
         "1" { Check-VSCodeSettings }
@@ -753,6 +750,23 @@ do {
         "13" { Invoke-ScanProject }
         "14" { Invoke-UpdateCheck }
         "15" { Invoke-ScheduleTasks }
+        "R" { Invoke-ValidateChecks }
+        "r" { Invoke-ValidateChecks }
+        "T" {
+            $testScript = Join-Path $TemplatesRoot "scripts\Run-All.ps1"
+            if (Test-Path $testScript) { & pwsh -NoProfile -File $testScript -Quick }
+            else { Write-Host "Run-All.ps1 not found" -ForegroundColor Red }
+            Pause
+        }
+        "t" {
+            $testScript = Join-Path $TemplatesRoot "scripts\Run-All.ps1"
+            if (Test-Path $testScript) { & pwsh -NoProfile -File $testScript -Quick }
+            else { Write-Host "Run-All.ps1 not found" -ForegroundColor Red }
+            Pause
+        }
+        "?" { Invoke-OpenDocs }
+        "h" { Invoke-OpenDocs }
+        "H" { Invoke-OpenDocs }
         "0" { Write-Host "Goodbye." -ForegroundColor Green }
         default { Write-Host "Invalid option." -ForegroundColor Red; Start-Sleep -Seconds 1 }
     }

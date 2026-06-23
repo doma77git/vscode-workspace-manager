@@ -86,4 +86,34 @@ Set-Content -Path $reportPath -Value $reportContent -Encoding UTF8 -NoNewline
 Write-Host ""
 Write-Pass "Saved" "PROJECT-STATS.md"
 
+# ── Auto-update AGENTS.md stats ──────────────────
+Write-Section "Auto-Update AGENTS.md"
+$agentsPath = Join-Path $root "AGENTS.md"
+if (Test-Path $agentsPath) {
+    $agents = Get-Content $agentsPath -Raw
+    # Update script count
+    $agents = $agents -replace '\*\*Scripts:\*\* \d+ PowerShell', "**Scripts:** $($stats.Scripts) PowerShell"
+    $agents = $agents -replace '\*\*Docs:\*\* \d+ guides', "**Docs:** $($stats.Docs) guides"
+    $agents = $agents -replace '\*\*Prompts:\*\* \d+ prompt', "**Prompts:** $($stats.Prompts) prompt"
+    $agents = $agents -replace '\*\*Skills:\*\* \d+ Reasonix', "**Skills:** $($stats.Skills) Reasonix"
+    $agents = $agents -replace '\*\*CI:\*\* \d+ workflows', "**CI:** $($stats.CIWorkflows) workflows"
+    $agents = $agents -replace '\*\*Tests:\*\* \d+ checks', "**Tests:** $($stats.TestCount) checks"
+    Set-Content -Path $agentsPath -Value $agents -Encoding UTF8 -NoNewline
+    Write-Pass "Updated" "AGENTS.md stats"
+} else {
+    Write-Warn "Missing" "AGENTS.md — skipping"
+}
+
+# ── Auto-update README.md counts ────────────────
+Write-Section "Auto-Update README.md"
+$readmePath = Join-Path $root "README.md"
+if (Test-Path $readmePath) {
+    $readme = Get-Content $readmePath -Raw
+    $readme = $readme -replace 'scripts/ \(manager, init, validate[^)]*\)', "scripts/ (manager, init, validate, repair, compile — $($stats.Scripts) total)"
+    Set-Content -Path $readmePath -Value $readme -Encoding UTF8 -NoNewline
+    Write-Pass "Updated" "README.md"
+} else {
+    Write-Warn "Missing" "README.md — skipping"
+}
+
 Write-Result $true "Documentation generated"

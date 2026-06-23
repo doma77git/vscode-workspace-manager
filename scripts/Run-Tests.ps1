@@ -20,7 +20,7 @@ param(
 $ErrorActionPreference = "Stop"
 $TemplatesRoot = Split-Path -Parent $PSScriptRoot
 $exitCode = 0
-$psOk = 0; $psFail = 0; $jsonOk = 0; $jsonFail = 0; $yamlOk = 0; $yamlFail = 0
+$psOk = 0; $psFail = 0; $jsonOk = 0; $jsonFail = 0; $yamlOk = 0; $yamlFail = 0; $intOk = 0; $intFail = 0; $benchMs = 0
 
 if (-not $Quiet -and -not $Json) {
     Write-Host ""
@@ -123,6 +123,42 @@ foreach ($f in $yamlFiles) {
     }
 }
 
+# Integration tests
+Write-Host ""
+Write-Host "  ── Integration Tests ─────────────────────────" -ForegroundColor DarkGray
+
+# Test 1: Can load Helper-Functions
+try {
+    . "$PSScriptRoot\Helper-Functions.ps1"
+    $v = Get-CurrentVersion
+    Write-Host ("    {0}  {1,-30} PASS  (v{2})" -f "✅", "Helper-Functions load", $v) -ForegroundColor Green
+    $intOk++
+} catch {
+    Write-Host ("    {0}  {1,-30} FAIL  {2}" -f "❌", "Helper-Functions load", $_.Exception.Message) -ForegroundColor Red
+    $intFail++; $script:exitCode = 1
+}
+
+# Test 2: Template + profile dirs exist
+$td = Join-Path $TemplatesRoot "templates"
+$pd = Join-Path $TemplatesRoot "profiles"
+if ((Test-Path $td) -and (Test-Path $pd)) {
+    Write-Host ("    {0}  {1,-30} PASS" -f "✅", "Data dirs exist") -ForegroundColor Green
+    $intOk++
+} else {
+    Write-Host ("    {0}  {1,-30} FAIL" -f "❌", "Data dirs exist") -ForegroundColor Red
+    $intFail++; $script:exitCode = 1
+}
+
+# Performance benchmark
+$sw = [System.Diagnostics.Stopwatch]::StartNew()
+$count = (Get-ChildItem $TemplatesRoot -Recurse -File -ErrorAction SilentlyContinue |
+    Where-Object { $_.FullName -notmatch '\\.git\\' }).Count
+$sw.Stop()
+$benchMs = $sw.ElapsedMilliseconds
+$perfResult = if ($benchMs -lt 1000) { "PASS" } else { "WARN" }
+$perfColor = if ($benchMs -lt 1000) { "Green" } else { "Yellow" }
+Write-Host ("    {0}  {1,-30} {2}  ({3}ms, {4} files)" -f $(if ($benchMs -lt 1000) { "✅" } else { "⚠️ " }), "File scan perf", $perfResult, $benchMs, $count) -ForegroundColor $perfColor
+
 # Summary
 if ($Json) {
     $result = @{
@@ -141,7 +177,9 @@ if ($Json) {
     Write-Host ("    PowerShell : {0} passed, {1} failed" -f $psOk, $psFail) -ForegroundColor $(if ($psFail -eq 0) { "Green" } else { "Red" })
     Write-Host ("    JSON       : {0} passed, {1} failed" -f $jsonOk, $jsonFail) -ForegroundColor $(if ($jsonFail -eq 0) { "Green" } else { "Red" })
     Write-Host ("    YAML       : {0} passed, {1} failed" -f $yamlOk, $yamlFail) -ForegroundColor $(if ($yamlFail -eq 0) { "Green" } else { "Red" })
-    Write-Host ("    Total      : {0} checks" -f ($psOk + $psFail + $jsonOk + $jsonFail + $yamlOk + $yamlFail)) -ForegroundColor White
+    Write-Host ("    Integration: {0} passed, {1} failed" -f $intOk, $intFail) -ForegroundColor $(if ($intFail -eq 0) { "Green" } else { "Red" })
+    Write-Host ("    Perf       : {0}ms file scan" -f $benchMs) -ForegroundColor $(if ($benchMs -lt 1000) { "Green" } else { "Yellow" })
+    Write-Host ("    Total      : {0} checks" -f ($psOk + $psFail + $jsonOk + $jsonFail + $yamlOk + $yamlFail + $intOk + $intFail)) -ForegroundColor White
 
     Write-Host ""
     if ($exitCode -eq 0) {

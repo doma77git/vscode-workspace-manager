@@ -71,6 +71,10 @@ repair:
 docs-gen:
 	@pwsh -NoProfile -File scripts/Generate-Docs.ps1
 
+## compile     Compile all scripts into deployable module (+ zip)
+compile:
+	@pwsh -NoProfile -File scripts/Compile-Module.ps1 -Zip
+
 ## deps        Run CI workflow locally (requires act + Docker)
 deps:
 	@act -W .github/workflows/validate.yml
