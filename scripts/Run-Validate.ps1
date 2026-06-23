@@ -7,7 +7,11 @@
     with aligned columns. Exits 0 on pass, 1 on failure.
 .EXAMPLE
     pwsh -NoProfile -File scripts\Run-Validate.ps1
+.EXAMPLE
+    pwsh -NoProfile -File scripts\Run-Validate.ps1 -Json
 #>
+
+param([switch]$Json)
 
 $ErrorActionPreference = "Stop"
 $TemplatesRoot = Split-Path -Parent $PSScriptRoot
@@ -37,13 +41,17 @@ foreach ($f in $files) {
     }
 }
 
-Write-Host ""
-Write-Host "  ── Result ────────────────────────────────────" -ForegroundColor DarkGray
-if ($exitCode -eq 0) {
-    Write-Host "  ✅  All $ok file(s) validated successfully" -ForegroundColor Green
+if ($Json) {
+    @{ passed = ($exitCode -eq 0); ok = $ok; fail = $fail } | ConvertTo-Json -Compress | Write-Host
 } else {
-    Write-Host "  ❌  $ok passed, $fail failed" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "  ── Result ────────────────────────────────────" -ForegroundColor DarkGray
+    if ($exitCode -eq 0) {
+        Write-Host "  ✅  All $ok file(s) validated successfully" -ForegroundColor Green
+    } else {
+        Write-Host "  ❌  $ok passed, $fail failed" -ForegroundColor Red
+    }
+    Write-Host ""
 }
-Write-Host ""
 
 exit $exitCode

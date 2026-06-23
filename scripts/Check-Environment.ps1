@@ -6,7 +6,11 @@
     Outputs a pass/fail report with recommendations. Exits 0 on all pass.
 .EXAMPLE
     pwsh -NoProfile -File scripts\Check-Environment.ps1
+.EXAMPLE
+    pwsh -NoProfile -File scripts\Check-Environment.ps1 -Json
 #>
+
+param([switch]$Json)
 
 $ErrorActionPreference = "Stop"
 . "$PSScriptRoot\Helper-Functions.ps1"
@@ -184,6 +188,10 @@ if ($recs -eq 0) {
     Write-Pass "All good" "no recommendations"
 }
 
-Write-Result $allOk "Environment check complete"
+if ($Json) {
+    @{ passed = $allOk; version = (Get-CurrentVersion); scripts = (Get-ScriptCount); docs = (Get-DocCount); templates = (Get-TemplateCount); profiles = (Get-ProfileCount) } | ConvertTo-Json -Compress | Write-Host
+} else {
+    Write-Result $allOk "Environment check complete"
+}
 
 exit $(if ($allOk) { 0 } else { 1 })

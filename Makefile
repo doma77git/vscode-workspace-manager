@@ -75,6 +75,14 @@ docs-gen:
 compile:
 	@pwsh -NoProfile -File scripts/Compile-Module.ps1 -Zip
 
+## export      Export .vscode/ files from a template to a project
+export:
+	@pwsh -NoProfile -File scripts/Export-Workspace.ps1 -OutputDir .
+
+## ext-check   Verify all recommended extensions are installable
+ext-check:
+	@pwsh -NoProfile -File scripts/Check-Extensions.ps1
+
 ## deps        Run CI workflow locally (requires act + Docker)
 deps:
 	@act -W .github/workflows/validate.yml

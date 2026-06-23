@@ -20,7 +20,10 @@
     "doctor": "pwsh -NoProfile -File scripts/Check-Environment.ps1",
     "recommend": "pwsh -NoProfile -File scripts/Recommend-Extensions.ps1",
     "repair": "pwsh -NoProfile -File scripts/Repair-Project.ps1 -Force",
-    "docs-gen": "pwsh -NoProfile -File scripts/Generate-Docs.ps1"
+    "docs-gen": "pwsh -NoProfile -File scripts/Generate-Docs.ps1",
+    "compile": "pwsh -NoProfile -File scripts/Compile-Module.ps1 -Zip",
+    "export": "pwsh -NoProfile -File scripts/Export-Workspace.ps1 -OutputDir .",
+    "ext-check": "pwsh -NoProfile -File scripts/Check-Extensions.ps1"
   },
   "keywords": [
     "vscode",

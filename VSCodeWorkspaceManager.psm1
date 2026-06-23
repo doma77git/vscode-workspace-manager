@@ -1,5 +1,6 @@
-# VSCodeWorkspaceManager — Root Module
-# Dot-source all component scripts for module import
+# VSCodeWorkspaceManager — Auto-Generated Root Module
+# Generated: 2026-06-23 23:17:01
+# Version: 1.1.0
 
 $moduleDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $scriptsDir = Join-Path $moduleDir "scripts"
@@ -13,7 +14,8 @@ $scriptsDir = Join-Path $moduleDir "scripts"
 . (Join-Path $scriptsDir "Invoke-About.ps1")
 . (Join-Path $scriptsDir "Invoke-ScheduleTasks.ps1")
 
-# Set aliases for convenience
+# Aliases
 New-Alias -Name wsm -Value (Join-Path $scriptsDir "WorkspaceManager.ps1") -Force
 New-Alias -Name wsm-test -Value (Join-Path $scriptsDir "Run-Tests.ps1") -Force
 New-Alias -Name wsm-validate -Value (Join-Path $scriptsDir "Run-Validate.ps1") -Force
+New-Alias -Name wsm-repair -Value (Join-Path $scriptsDir "Repair-Project.ps1") -Force

@@ -6,7 +6,11 @@
     matching the CI workflow pattern. Exits 0 on pass, 1 on failure.
 .EXAMPLE
     pwsh -NoProfile -File scripts\Run-Checks.ps1
+.EXAMPLE
+    pwsh -NoProfile -File scripts\Run-Checks.ps1 -Json
 #>
+
+param([switch]$Json)
 
 $ErrorActionPreference = "Stop"
 $TemplatesRoot = Split-Path -Parent $PSScriptRoot
@@ -67,13 +71,17 @@ if ($found -eq 1) {
     Write-Host "  ✅  No secrets detected" -ForegroundColor Green
 }
 
-Write-Host ""
-Write-Host "  ── Result ────────────────────────────────────" -ForegroundColor DarkGray
-if ($exitCode -eq 0) {
-    Write-Host "  ✅  ALL CHECKS PASSED" -ForegroundColor Green
+if ($Json) {
+    @{ passed = ($exitCode -eq 0); secretsDetected = ($found -eq 1) } | ConvertTo-Json -Compress | Write-Host
 } else {
-    Write-Host "  ❌  SOME CHECKS FAILED" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "  ── Result ────────────────────────────────────" -ForegroundColor DarkGray
+    if ($exitCode -eq 0) {
+        Write-Host "  ✅  ALL CHECKS PASSED" -ForegroundColor Green
+    } else {
+        Write-Host "  ❌  SOME CHECKS FAILED" -ForegroundColor Red
+    }
+    Write-Host ""
 }
-Write-Host ""
 
 exit $exitCode

@@ -174,4 +174,9 @@ Write-Host ("  Issues fixed : {0}" -f $fixed) -ForegroundColor $(if ($fixed -gt 
 Write-Host ("  Manual needed: {0}" -f ($issues - $fixed)) -ForegroundColor $(if ($issues - $fixed -gt 0) { "Red" } else { "DarkGray" })
 
 Write-Result ($issues -eq 0 -or $fixed -eq $issues) "Self-repair complete"
+
+if ($Json) {
+    @{ passed = $true; issues = $issues; fixed = $fixed } | ConvertTo-Json -Compress | Write-Host
+}
+
 exit 0

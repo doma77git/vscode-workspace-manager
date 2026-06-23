@@ -154,4 +154,9 @@ if ($Zip) {
 }
 
 Write-Result ($exitCode -eq 0) "Self-compile complete"
+
+if ($Json) {
+    @{ passed = ($exitCode -eq 0); version = $Version; scripts = $psFiles.Count; configs = $configs.Count } | ConvertTo-Json -Compress | Write-Host
+}
+
 exit $exitCode
