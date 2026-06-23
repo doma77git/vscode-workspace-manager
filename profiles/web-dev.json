@@ -1,0 +1,12 @@
+{
+    "name": "web-dev",
+    "version": "1.0",
+    "description": "Web development — ESLint, Prettier, TypeScript, Tailwind",
+    "tags": ["web", "frontend", "javascript", "typescript", "react", "nextjs"],
+    "theme": "Default Dark+",
+    "icon": "symbol-class",
+    "settings": "{\"editor.fontSize\":14,\"editor.tabSize\":2,\"editor.formatOnSave\":true,\"editor.defaultFormatter\":\"esbenp.prettier-vscode\",\"editor.rulers\":[80,120],\"prettier.singleQuote\":true,\"prettier.trailingComma\":\"all\",\"javascript.updateImportsOnFileMove.enabled\":\"always\",\"terminal.integrated.defaultProfile.windows\":\"PowerShell 7 (full)\",\"terminal.integrated.shellIntegration.enabled\":true,\"workbench.colorTheme\":\"Default Dark+\"}",
+    "extensions": "[{\"identifier\":{\"id\":\"dbaeumer.vscode-eslint\"}},{\"identifier\":{\"id\":\"esbenp.prettier-vscode\"}},{\"identifier\":{\"id\":\"ms-vscode.vscode-typescript-next\"}},{\"identifier\":{\"id\":\"bradlc.vscode-tailwindcss\"}},{\"identifier\":{\"id\":\"formulahendry.auto-rename-tag\"}}]",
+    "keybindings": "[]",
+    "globalState": "{}"
+}

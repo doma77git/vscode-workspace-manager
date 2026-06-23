@@ -1,0 +1,79 @@
+{
+    "folders": [
+        { "path": "..", "name": "${PROJECT_NAME}" }
+    ],
+    "settings": {
+        "editor.formatOnSave": true,
+        "editor.tabSize": 4,
+        "editor.rulers": [100, 120],
+        "files.encoding": "utf8",
+        "files.exclude": {
+            "**/.git": true,
+            "**/target": true
+        },
+        "search.exclude": {
+            "**/target": true
+        },
+        "rust-analyzer.checkOnSave.command": "clippy",
+        "rust-analyzer.cargo.allFeatures": true,
+        "terminal.integrated.defaultProfile.windows": "PowerShell 7 (full)",
+        "terminal.integrated.shellIntegration.enabled": true
+    },
+    "extensions": {
+        "recommendations": [
+            "rust-lang.rust-analyzer",
+            "tamasfe.even-better-toml",
+            "vadimcn.vscode-lldb",
+            "fill-labs.dependi",
+            "eamodio.gitlens",
+            "editorconfig.editorconfig",
+            "streetsidesoftware.code-spell-checker"
+        ]
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Run",
+                "detail": "cargo run",
+                "type": "shell",
+                "command": "cargo",
+                "args": ["run"],
+                "group": "none",
+                "presentation": { "reveal": "always", "panel": "new" },
+                "problemMatcher": ["$rustc"]
+            },
+            {
+                "label": "Test",
+                "detail": "cargo test",
+                "type": "shell",
+                "command": "cargo",
+                "args": ["test"],
+                "group": "test",
+                "presentation": { "reveal": "always", "panel": "new" },
+                "problemMatcher": ["$rustc"]
+            },
+            {
+                "label": "Clippy",
+                "detail": "cargo clippy -- -D warnings",
+                "type": "shell",
+                "command": "cargo",
+                "args": ["clippy", "--", "-D", "warnings"],
+                "group": "test",
+                "presentation": { "reveal": "always", "panel": "new" },
+                "problemMatcher": ["$rustc"]
+            },
+            {
+                "label": "Build Release",
+                "detail": "cargo build --release",
+                "type": "shell",
+                "command": "cargo",
+                "args": ["build", "--release"],
+                "group": "build",
+                "presentation": { "reveal": "always", "panel": "new" },
+                "problemMatcher": ["$rustc"]
+            }
+        ]
+    },
+    "git.remote": "${GIT_REMOTE}"
+}

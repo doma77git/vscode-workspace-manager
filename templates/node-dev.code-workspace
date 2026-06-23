@@ -1,0 +1,89 @@
+{
+    "folders": [
+        { "path": "..", "name": "${PROJECT_NAME}" }
+    ],
+    "settings": {
+        "editor.formatOnSave": true,
+        "editor.tabSize": 2,
+        "editor.rulers": [80, 120],
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "files.encoding": "utf8",
+        "files.exclude": {
+            "**/.git": true,
+            "**/node_modules": true,
+            "**/dist": true,
+            "**/.next": true,
+            "**/build": true
+        },
+        "search.exclude": {
+            "**/node_modules": true,
+            "**/dist": true
+        },
+        "prettier.singleQuote": true,
+        "prettier.trailingComma": "all",
+        "javascript.updateImportsOnFileMove.enabled": "always",
+        "typescript.updateImportsOnFileMove.enabled": "always",
+        "terminal.integrated.defaultProfile.windows": "PowerShell 7 (full)",
+        "terminal.integrated.shellIntegration.enabled": true
+    },
+    "extensions": {
+        "recommendations": [
+            "dbaeumer.vscode-eslint",
+            "esbenp.prettier-vscode",
+            "ms-vscode.vscode-typescript-next",
+            "bradlc.vscode-tailwindcss",
+            "formulahendry.auto-rename-tag",
+            "christian-kohler.path-intellisense",
+            "eamodio.gitlens",
+            "editorconfig.editorconfig",
+            "streetsidesoftware.code-spell-checker"
+        ]
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Run Dev Server",
+                "detail": "Start development server (npm run dev)",
+                "type": "shell",
+                "command": "npm",
+                "args": ["run", "dev"],
+                "group": "none",
+                "isBackground": true,
+                "presentation": { "reveal": "always", "panel": "dedicated" },
+                "problemMatcher": []
+            },
+            {
+                "label": "Run Tests",
+                "detail": "Run test suite (npm test)",
+                "type": "shell",
+                "command": "npm",
+                "args": ["test"],
+                "group": "test",
+                "presentation": { "reveal": "always", "panel": "new" },
+                "problemMatcher": []
+            },
+            {
+                "label": "Lint & Format",
+                "detail": "ESLint + Prettier",
+                "type": "shell",
+                "command": "npm",
+                "args": ["run", "lint"],
+                "group": "test",
+                "presentation": { "reveal": "always", "panel": "new" },
+                "problemMatcher": ["$eslint-stylish"]
+            },
+            {
+                "label": "Build",
+                "detail": "Production build (npm run build)",
+                "type": "shell",
+                "command": "npm",
+                "args": ["run", "build"],
+                "group": "build",
+                "presentation": { "reveal": "always", "panel": "new" },
+                "problemMatcher": []
+            }
+        ]
+    },
+    "git.remote": "${GIT_REMOTE}"
+}

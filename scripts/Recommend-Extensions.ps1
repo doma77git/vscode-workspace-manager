@@ -75,6 +75,9 @@ $ExtensionMap = @{
     "go.mod" = @(
         @{ id = "golang.go";                    name = "Go";             reason = "Core Go support" }
     )
+    "starship.toml" = @(
+        @{ id = "starship.windsurf";            name = "Starship";       reason = "Shell prompt customization" }
+    )
     "Dockerfile" = @(
         @{ id = "ms-azuretools.vscode-docker";  name = "Docker";         reason = "Docker support" }
     )

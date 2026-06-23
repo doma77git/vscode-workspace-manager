@@ -1,0 +1,12 @@
+{
+    "name": "python-dev",
+    "version": "1.0",
+    "description": "Python development — Black, Ruff, pytest, Pylance",
+    "tags": ["python", "backend", "data-science", "ml"],
+    "theme": "Default Dark+",
+    "icon": "symbol-class",
+    "settings": "{\"editor.fontSize\":14,\"editor.tabSize\":4,\"editor.formatOnSave\":true,\"editor.rulers\":[88,120],\"python.defaultInterpreterPath\":\"${workspaceFolder}/.venv/Scripts/python.exe\",\"python.formatting.provider\":\"black\",\"terminal.integrated.defaultProfile.windows\":\"PowerShell 7 (full)\",\"terminal.integrated.shellIntegration.enabled\":true,\"workbench.colorTheme\":\"Default Dark+\"}",
+    "extensions": "[{\"identifier\":{\"id\":\"ms-python.python\"}},{\"identifier\":{\"id\":\"ms-python.black-formatter\"}},{\"identifier\":{\"id\":\"charliermarsh.ruff\"}},{\"identifier\":{\"id\":\"ms-python.vscode-pylance\"}},{\"identifier\":{\"id\":\"njpwerner.autodocstring\"}}]",
+    "keybindings": "[]",
+    "globalState": "{}"
+}
