@@ -145,3 +145,41 @@ Our workflow:
 # Regenerate project config
 # → /init (in chat)
 ```
+
+---
+
+## 9. Context Engineering Workflow
+
+Based on [VS Code Context Engineering Guide](https://code.visualstudio.com/docs/agents/guides/context-engineering-guide).
+
+### Step 1: Curate Project Context
+| File | Purpose |
+|------|---------|
+| `.github/copilot-instructions.md` | Auto-loaded in all chat interactions |
+| `docs/PRD.md` | Product vision and goals |
+| `docs/ARCHITECTURE.md` | System architecture and design |
+| `CONTRIBUTING.md` | Development guidelines |
+
+### Step 2: Create Implementation Plan
+| File | Purpose |
+|------|---------|
+| `.github/agents/plan.agent.md` | Planning custom agent |
+| `.github/plan-template.md` | Structured plan template |
+| `.github/prompts/plan.prompt.md` | Planning prompt with clarification |
+
+**Use:** `/plan-qna add feature X` → agent asks 3 questions → generates plan
+
+### Step 3: Implement from Plan
+| File | Purpose |
+|------|---------|
+| `.github/agents/tdd.agent.md` | TDD implementation agent |
+| `scripts/Run-Tests.ps1` | Validation after each change |
+| `make all` | Full pipeline check |
+
+**Use:** Handoff from plan agent → TDD agent implements → tests validate
+
+### Anti-Patterns to Avoid
+- ❌ Context dumping — keep instructions concise
+- ❌ Inconsistent guidance — align all docs
+- ❌ Neglecting validation — always `make test`
+- ❌ Over-engineering agent chains — keep shallow
