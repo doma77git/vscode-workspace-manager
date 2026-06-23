@@ -642,7 +642,7 @@ function Invoke-UpdateCheck {
     Pause
 }
 
-# Main Menu
+# Main Menu (Modern)
 # ========================
 $script:lastAction = ""
 do {
@@ -650,7 +650,7 @@ do {
 
     # Terminal width detection
     $termWidth = if ($host.UI.RawUI.WindowSize.Width -gt 0) { $host.UI.RawUI.WindowSize.Width } else { 80 }
-    $boxWidth = [Math]::Min($termWidth - 2, 70)
+    $w = [Math]::Min($termWidth - 2, 72)
 
     # Auto-update check (once per session)
     if (-not $script:updateChecked) {
@@ -680,68 +680,61 @@ do {
     $time = Get-Date -Format "HH:mm"
 
     # Git status
-    $gitStatus = ""
+    $gitDot = "○"
+    $gitLabel = ""
     try {
-        $dirty = & git -C $TemplatesRoot diff --quiet 2>$null
-        if ($LASTEXITCODE -ne 0) { $gitStatus = " • modified" }
+        & git -C $TemplatesRoot diff --quiet 2>$null
+        if ($LASTEXITCODE -ne 0) { $gitDot = "●"; $gitLabel = "dirty" }
         $branch = & git -C $TemplatesRoot rev-parse --abbrev-ref HEAD 2>$null
-    } catch { $branch = "" }
+    } catch { $branch = ""; $gitDot = "○" }
 
-    # Dynamic box width
-    $line = "━" * ($boxWidth - 2)
-
-    Write-Host "╔$line╗" -ForegroundColor Cyan
-    Write-Host "║" -NoNewline -ForegroundColor Cyan
-    $title = "  ⚙️  VS Code Workspace Manager  v1.1.0"
-    Write-Host $title -ForegroundColor White -NoNewline
-    $right = "⏰ $time"
-    $pad = $boxWidth - $title.Length - $right.Length - 3
+    # ── Modern Header ──────────────────────────
+    $bar = "─" * $w
+    Write-Host "╭$bar╮" -ForegroundColor Cyan
+    Write-Host "│" -NoNewline -ForegroundColor Cyan
+    Write-Host "  Workspace Manager" -ForegroundColor White -NoNewline
+    Write-Host " · v1.1.0" -ForegroundColor DarkGray -NoNewline
+    $right = "$time  $gitDot $branch"
+    $pad = $w - 33 - $right.Length
     if ($pad -gt 0) { Write-Host (" " * $pad) -NoNewline }
-    Write-Host " $right ║" -ForegroundColor DarkGray
-    Write-Host "╠$line╣" -ForegroundColor Cyan
-    Write-Host "║" -NoNewline -ForegroundColor Cyan
-    $stats = "  📁 $tCount templates  │  📋 $pCount profiles  │  ⚡ $sCount scripts"
-    Write-Host $stats -ForegroundColor White -NoNewline
-    $gStat = if ($branch) { "$branch$gitStatus" } else { "" }
-    $pad = $boxWidth - $stats.Length - $gStat.Length - 4
+    Write-Host " $right │" -ForegroundColor $(if ($gitDot -eq "●") { "Yellow" } else { "DarkGray" })
+    Write-Host "├$bar┤" -ForegroundColor Cyan
+    Write-Host "│" -NoNewline -ForegroundColor Cyan
+    Write-Host ("  $tCount templates  ·  $pCount profiles  ·  $sCount scripts") -ForegroundColor White -NoNewline
+    $pad = $w - 2 - 40
     if ($pad -gt 0) { Write-Host (" " * $pad) -NoNewline }
-    if ($gStat) { Write-Host " $gStat ║" -ForegroundColor $(if ($gitStatus) { "Yellow" } else { "Green" }) }
-    else { Write-Host " ║" -ForegroundColor Cyan }
-    Write-Host "╚$line╝" -ForegroundColor Cyan
+    Write-Host " │" -ForegroundColor Cyan
+    Write-Host "╰$bar╯" -ForegroundColor Cyan
     Write-Host ""
 
-    # Menu body — color-coded sections
-    Write-Host "  ──── ⚒️  Workspace ────" -ForegroundColor Blue -NoNewline
-    Write-Host (" " * ($boxWidth - 23)) -ForegroundColor Blue
+    # ── Tab bar ────────────────────────────────
+    Write-Host "  ⚒️  Workspace" -ForegroundColor Blue -NoNewline
+    Write-Host "   │   " -NoNewline -ForegroundColor DarkGray
+    Write-Host "👤 Profiles" -ForegroundColor Magenta -NoNewline
+    Write-Host "   │   " -NoNewline -ForegroundColor DarkGray
+    Write-Host "🛡️  Security" -ForegroundColor Red -NoNewline
+    Write-Host "   │   " -NoNewline -ForegroundColor DarkGray
+    Write-Host "🔧 Tools" -ForegroundColor Green
+    Write-Host ""
+
+    # ── Menu grid ──────────────────────────────
     Write-Host "  [1] 📄 Check settings       [2] 🆕 New template"
     Write-Host "  [3] 💾 Save template         [6] 🚀 Open workspace"
-    Write-Host "  [9] 🔍 Search templates [$tCount]"
-    Write-Host ""
-
-    Write-Host "  ──── 👤 Profiles ────" -ForegroundColor Magenta -NoNewline
-    Write-Host (" " * ($boxWidth - 20)) -ForegroundColor Magenta
-    Write-Host "  [7] 👤 Profile management    [13] 🔬 Scan project"
-    Write-Host ""
-
-    Write-Host "  ──── 🛡️  Security ────" -ForegroundColor Red -NoNewline
-    Write-Host (" " * ($boxWidth - 20)) -ForegroundColor Red
-    Write-Host "  [4] 🔑 DeepSeek BYOK         [5] 🛡️  Workspace Trust"
-    Write-Host ""
-
-    Write-Host "  ──── 🔧 Tools ────" -ForegroundColor Green -NoNewline
-    Write-Host (" " * ($boxWidth - 16)) -ForegroundColor Green
+    Write-Host "  [9] 🔍 Search templates      [7] 👤 Profiles"
+    Write-Host "  [4] 🔑 DeepSeek BYOK         [5] 🛡️  Trust"
     Write-Host "  [8] 🏗️  Init repo             [10] ✅ Validate"
     Write-Host "  [11] 📖 Open docs             [12] ℹ️  About"
-    Write-Host "  [14] 🔄 Check updates         [15] ⏰ Schedule"
+    Write-Host "  [13] 🔬 Scan project          [14] 🔄 Updates"
+    Write-Host "  [15] ⏰ Schedule"
     Write-Host ""
 
-    # Bottom bar
-    Write-Host "  $(('═' * ($boxWidth - 2)))" -ForegroundColor DarkGray
-    $lastMsg = if ($script:lastAction) { "← $($script:lastAction)" } else { "" }
-    Write-Host "  [0] Exit  │  R: Repair  │  T: Tests  │  ?: Help  $lastMsg" -ForegroundColor DarkGray
+    # ── Footer ─────────────────────────────────
+    Write-Host "  $(('─' * $w))" -ForegroundColor DarkGray
+    $last = if ($script:lastAction) { "  ← $($script:lastAction)" } else { "" }
+    Write-Host "  [0] Exit   ·   R: Repair   ·   T: Test   ·   ?: Help$last" -ForegroundColor DarkGray
     Write-Host ""
 
-    $choice = Read-Host "Select"
+    $choice = Read-Host "▶"
 
     switch ($choice) {
         "1" { $script:lastAction = "Checked settings"; Check-VSCodeSettings }
