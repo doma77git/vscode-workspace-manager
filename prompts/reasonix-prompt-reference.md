@@ -65,29 +65,67 @@ How to apply: Always use tabs in generated configs. Check .editorconfig.
 Type: project
 ```
 
+**When to use each type:**
+| Type | Use for |
+|------|---------|
+| `user` | Personal preferences, identity, who you are |
+| `feedback` | How Reasonix should work in this project |
+| `project` | Facts the code doesn't record (roadmap, decisions, constraints) |
+| `reference` | External resource pointers, URLs, docs |
+
+**Memory workflow:**
+```
+1. Search memories for: deployment  → check for duplicates
+2. Remember: deploy-pipeline-azure
+   Body: Deploy to Azure via .azure/deployment-plan.md...
+   Type: project
+3. Later: Read memory: deploy-pipeline-azure
+4. Stale? → Update by re-running Remember with same name
+5. Obsolete? → Forget memory: deploy-pipeline-azure
+```
+
 ---
 
-## project
+## todo
 
-Switch context or describe the current project.
+Track multi-step work with structured task lists.
 
+### Create a task list
 ```
-This project is: {one-paragraph description}
-Stack: {languages, frameworks}
-Entry point: {main file or command}
-Build: {build command}
-Test: {test command}
-Conventions: {naming, formatting, patterns}
+Todo:
+1. {phase 1 title} (phase)
+   - {sub-step A}
+   - {sub-step B}
+2. {phase 2 title} (phase)
+   - {sub-step C}
+   - {sub-step D}
 ```
 
 **Example:**
 ```
-This project is: A VS Code workspace template manager on Windows.
-Stack: PowerShell 7, Git, VS Code CLI, GitHub Actions.
-Entry point: scripts/WorkspaceManager.ps1
-Build: none (scripts only)
-Test: pwsh -NoProfile -File scripts/WorkspaceManager.ps1
-Conventions: UTF-8 no BOM, PowerShell 7 compatible, no secrets in repo.
+Todo:
+1. Setup (phase)
+   - Create project directory
+   - Initialize git
+2. Core logic (phase)
+   - Add config loader
+   - Add CLI parser
+3. Polish (phase)
+   - Write README
+   - Run tests
+```
+
+### Best practices
+- Keep exactly **one step** in progress at a time
+- Mark completed IMMEDIATELY after finishing — don't batch
+- Use **phases** (level 0) for milestones, **sub-steps** (level 1) for concrete tasks
+- Each step needs an `activeForm` (present-continuous verb: "Adding the parser")
+
+### The todo lifecycle
+```
+pending → in_progress (one at a time) → completed
+                                              ↓
+                              evidence required (verification/diff/files/manual)
 ```
 
 ---
@@ -109,6 +147,125 @@ Plan task: Add a new command "Export all profiles" to WorkspaceManager.ps1.
 Constraints: Must use existing functions, no new dependencies, UTF-8 output.
 Target files: scripts/WorkspaceManager.ps1, docs/WORKFLOW.md.
 Output: Phased plan with sub-steps for code change, doc update, and test.
+```
+
+### Plan mode rules
+- **Read-only** — writers are blocked until approved
+- Plans are **two-level markdown lists**: phases (numbered) with sub-steps (bullets)
+- 2–6 phases recommended
+- Present the plan, then **stop** — the user approves before execution
+
+---
+
+## instructions
+
+Write and reuse instruction files, slash commands, and skills.
+
+### Write an instruction file
+```
+Create instructions: {path/instructions.md}
+
+Purpose: {what this instruction set does}
+
+Steps:
+1. {step 1}
+2. {step 2}
+3. {step 3}
+
+Output: {expected result}
+```
+
+**Example:**
+```
+Create instructions: .reasonix/instructions/release.md
+
+Purpose: Cut a new release — version bump, changelog, tag, push.
+
+Steps:
+1. Read current version from package.json
+2. Prompt for new version (major/minor/patch)
+3. Update package.json and CHANGELOG.md
+4. git add, git commit -m "Release v{version}"
+5. git tag v{version}
+6. git push --follow-tags
+
+Output: New version committed, tagged, and pushed.
+```
+
+### Create a slash command (skill)
+```
+Create skill: {skill-name}
+Description: {≤120 chars, one-liner}
+Body:
+{markdown instructions}
+
+Run as: inline | subagent
+Scope: project | global
+```
+
+### Run a skill or slash command
+```
+/{skill-name} {arguments}
+```
+
+**Example:**
+```
+/azure-deploy
+→ runs the azure-deploy skill
+→ reads .azure/deployment-plan.md
+→ executes deployment
+```
+
+---
+
+## kb
+
+Build and query a project knowledge base with Reasonix.
+
+### Bootstrap a knowledge base
+```
+Init this project.
+
+Then document:
+- Architecture decisions (ADR-style)
+- API endpoints and their contracts
+- Data models and relationships
+- Deployment topology
+- Onboarding guide for new contributors
+```
+
+### Index and search the codebase
+```
+Explore: {question about the codebase}
+
+Example:
+Explore: Where is authentication handled, and how does the token flow work end-to-end?
+→ Returns distilled answer with file:line citations
+```
+
+### Research with external + local context
+```
+Research: {question}
+
+Example:
+Research: Is our rate-limiting implementation consistent with RFC 6585? Compare our impl in src/ratelimit/ against the spec.
+→ Returns synthesis citing code (file:line) and web (URL)
+```
+
+### Build a structured KB
+```
+Memo workflow:
+1. Remember: architecture-overview
+   Body: System diagram description, key services, data flow...
+   Type: reference
+2. Remember: api-endpoints
+   Body: GET /api/users, POST /api/auth, ...
+   Type: reference
+3. Remember: deploy-topology
+   Body: Azure App Service + AKS, regions, failover...
+   Type: reference
+
+Search memories for: {topic} → find relevant context
 ```
 
 ---
@@ -157,13 +314,150 @@ Conventions: Prettier default config, no any types, colocate tests.
 
 ---
 
+## graphical workflow
+
+Generate visual diagrams for architecture, workflows, and deployment.
+
+### Architecture diagram from resources
+```
+Analyze resource group {name} and generate a Mermaid architecture diagram.
+```
+
+### Data flow diagram
+```
+Draw a Mermaid sequence diagram showing:
+1. User submits login form
+2. Auth service validates credentials
+3. JWT token issued
+4. Frontend stores token in httpOnly cookie
+5. Subsequent requests include token in Authorization header
+```
+
+### Deployment pipeline
+```
+Diagram the CI/CD pipeline:
+1. Push to main → GitHub Actions trigger
+2. Build → Lint → Test → Package
+3. Deploy to staging (Azure App Service slot)
+4. Smoke tests
+5. Swap to production
+Use Mermaid flowchart.
+```
+
+### Project structure map
+```
+Generate a Mermaid mindmap of this project's directory structure and key files.
+```
+
+### Common diagram types
+
+| Diagram | Mermaid type | Use for |
+|---------|-------------|---------|
+| Architecture | `graph TD` / `flowchart` | Services, resources, dependencies |
+| Sequence | `sequenceDiagram` | API calls, auth flows, async ops |
+| State | `stateDiagram-v2` | State machines, lifecycle |
+| Class | `classDiagram` | Data models, interfaces |
+| Entity relation | `erDiagram` | Database schemas |
+| Mindmap | `mindmap` | Project structure, feature breakdown |
+
+### Prompt template
+```
+Generate a Mermaid {diagram type} showing:
+- {entity 1}
+- {entity 2}
+- {relationship 1}
+- {relationship 2}
+
+Include: {annotations, colors, notes}
+Output: Raw Mermaid syntax in a markdown code block.
+```
+
+---
+
+## agentic deployment
+
+Autonomous deployment with Reasonix — from code to cloud.
+
+### Azure deployment (full pipeline)
+```
+Goal: Deploy this project to Azure.
+
+Context:
+- App type: {web app / function app / container / AKS}
+- Framework: {Node.js / Python / .NET / Go / ...}
+- Target: {new resource group / existing environment}
+
+The agent should:
+1. Run azure-prepare to generate Bicep/Terraform, Dockerfile, azure.yaml
+2. Run azure-validate to check readiness
+3. Run azure-deploy to execute the deployment plan
+4. Verify the deployed app responds on its endpoint
+
+Stop when: curl {endpoint} returns 200.
+```
+
+### Quick deploy prompt
+```
+/azure-prepare
+→ generates infrastructure and deployment files
+→ then:
+/azure-validate
+→ deep pre-deployment checks
+→ then:
+/azure-deploy
+→ executes .azure/deployment-plan.md
+```
+
+### Deployment checklists
+```
+Before deploying, verify:
+[ ] .azure/deployment-plan.md exists
+[ ] Bicep/Terraform templates are valid
+[ ] Dockerfile builds locally
+[ ] azure.yaml is configured
+[ ] Secrets are in environment variables, NOT in code
+[ ] Resource quotas are sufficient (run /azure-quotas)
+```
+
+### Multi-environment workflow
+```
+Plan: Set up staging + production deployment slots in Azure App Service.
+Goal: Implement the approved plan.
+→ swap to production when smoke tests pass.
+```
+
+### AKS deployment
+```
+/azure-kubernetes
+→ plan and create production-ready AKS cluster
+→ then:
+/azure-deploy
+→ deploy the application to AKS
+```
+
+### Post-deployment verification
+```
+After deployment:
+1. Check resource health (azure-diagnostics)
+2. Verify endpoints respond
+3. Check logs for errors
+4. Set up Application Insights (appinsights-instrumentation)
+5. Save deployment context as memory:
+   Remember: deploy-{date}
+   Body: Deployed to {resource-group}. Endpoint: {url}. Commit: {sha}.
+   Type: reference
+```
+
+---
+
 ## Quick Combinations
 
-### Start a new feature (plan → goal)
+### Start a new feature (plan → goal → todo)
 ```
 Plan task: Add export-all-profiles to WorkspaceManager.ps1.
 → approve plan
-Goal: Implement the approved plan for export-all-profiles.
+Goal: Implement the approved plan.
+→ the agent creates a todo list automatically
 ```
 
 ### Save context for next session (memo + project)
@@ -175,11 +469,29 @@ Type: project
 This project is: VS Code Workspace Manager — templates, profiles, BYOK, trust.
 ```
 
-### Bootstrap a new repo (init → project → goal)
+### Bootstrap a new repo (init → project → kb → goal)
 ```
 Init this project.
 → then:
 This project is: {description from generated AGENTS.md}
 → then:
+Explore: What is the overall architecture and where are the key modules?
+→ then:
 Goal: {first task based on the project structure}
+```
+
+### Deploy from scratch (prepare → validate → deploy → verify)
+```
+/azure-prepare
+/azure-validate
+/azure-deploy
+→ then: curl the endpoint to verify
+→ then: remember the deployment context
+```
+
+### Visualize and understand (explore → graphical workflow)
+```
+Explore: How does the request flow from entry point to database?
+→ then:
+Draw a Mermaid sequence diagram of the request lifecycle based on the exploration.
 ```
