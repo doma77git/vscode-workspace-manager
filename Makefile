@@ -63,6 +63,14 @@ doctor:
 recommend:
 	@pwsh -NoProfile -File scripts/Recommend-Extensions.ps1 -Path $(or $(PATH),.)
 
+## repair      Auto-repair common issues (JSON, line endings, dirs, hooks)
+repair:
+	@pwsh -NoProfile -File scripts/Repair-Project.ps1 -Force
+
+## docs-gen    Generate fresh PROJECT-STATS.md and stats summary
+docs-gen:
+	@pwsh -NoProfile -File scripts/Generate-Docs.ps1
+
 ## deps        Run CI workflow locally (requires act + Docker)
 deps:
 	@act -W .github/workflows/validate.yml

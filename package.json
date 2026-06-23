@@ -18,7 +18,9 @@
     "backup": "pwsh -NoProfile -File scripts/Auto-Backup.ps1",
     "schedule": "pwsh -NoProfile -File scripts/Schedule-Tasks.ps1 -Action list",
     "doctor": "pwsh -NoProfile -File scripts/Check-Environment.ps1",
-    "recommend": "pwsh -NoProfile -File scripts/Recommend-Extensions.ps1"
+    "recommend": "pwsh -NoProfile -File scripts/Recommend-Extensions.ps1",
+    "repair": "pwsh -NoProfile -File scripts/Repair-Project.ps1 -Force",
+    "docs-gen": "pwsh -NoProfile -File scripts/Generate-Docs.ps1"
   },
   "keywords": [
     "vscode",

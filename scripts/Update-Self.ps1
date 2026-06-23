@@ -136,6 +136,14 @@ try {
         }
     }
 
+    # Run self-repair
+    Write-Host ""
+    Write-Host "Running self-repair..." -ForegroundColor DarkGray
+    $repairScript = Join-Path $PSScriptRoot "Repair-Project.ps1"
+    if (Test-Path $repairScript) {
+        & pwsh -NoProfile -File $repairScript -Force
+    }
+
     # Run validation
     if (-not $SkipTests) {
         Write-Host ""
