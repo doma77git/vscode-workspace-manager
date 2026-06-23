@@ -35,8 +35,7 @@ try {
         Write-Pass "VS Code CLI" "$codeVer"
     } else { throw }
 } catch {
-    Write-Fail "VS Code CLI" "not in PATH — Ctrl+Shift+P → Install 'code' command in PATH"
-    $allOk = $false
+    Write-Warn "VS Code CLI" "not in PATH — optional for local dev"
 }
 
 # Git
@@ -46,8 +45,7 @@ try {
         Write-Pass "Git" ($gitVer -replace 'git version ', '')
     } else { throw }
 } catch {
-    Write-Fail "Git" "not found — install from https://git-scm.com"
-    $allOk = $false
+    Write-Warn "Git" "not found — optional for local dev"
 }
 
 # ── Optional Tools ────────────────────────────────
