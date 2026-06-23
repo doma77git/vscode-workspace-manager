@@ -26,7 +26,7 @@ if ($Action -eq "status") {
         else { Write-Warn "Auto-launch" "not registered" }
     } else {
         if (Test-Path "$env:HOME/.bashrc") {
-            if (grep -q "workspace-manager" "$env:HOME/.bashrc" 2>/dev/null) {
+            if (Select-String -Quiet -Pattern "workspace-manager" "$env:HOME/.bashrc" 2>$null) {
                 Write-Pass "Auto-launch" "in ~/.bashrc"
             } else { Write-Warn "Auto-launch" "not in ~/.bashrc" }
         }
@@ -35,15 +35,16 @@ if ($Action -eq "status") {
 
 if ($Action -eq "install") {
     if ($IsWindows -or (-not (Test-Path variable:IsWindows))) {
-        $cmd = "schtasks /create /tn `"VSCodeWS-AutoLaunch`" /tr `"pwsh -NoProfile -NoExit -Command 'cd `"$root`"; Write-Host ''⚙️  Workspace Manager ready'' -F Cyan'`" /sc onlogon /f"
-        Invoke-Expression $cmd 2>$null
+        & schtasks /create /tn "VSCodeWS-AutoLaunch" /tr "pwsh -NoProfile -NoExit -Command cd '$root'; Write-Host '⚙️ Workspace Manager ready' -F Cyan" /sc onlogon /f 2>$null
         if ($LASTEXITCODE -eq 0) { Write-Pass "Installed" "Windows Task Scheduler — runs on login" }
         else { Write-Warn "May need admin rights" }
     } else {
         $line = "# VS Code Workspace Manager auto-launch`npwsh -NoProfile -NoExit -Command 'cd $root; Write-Host ''⚙️  Workspace Manager ready'' -F Cyan'"
-        if (-not (grep -q "workspace-manager" "$env:HOME/.bashrc" 2>/dev/null)) {
-            Add-Content "$env:HOME/.bashrc" "`n$line"
-            Write-Pass "Installed" "added to ~/.bashrc"
+        if (Test-Path "$env:HOME/.bashrc") {
+            if (-not (Select-String -Quiet -Pattern "workspace-manager" "$env:HOME/.bashrc" 2>$null)) {
+                Add-Content "$env:HOME/.bashrc" "`n$line"
+                Write-Pass "Installed" "added to ~/.bashrc"
+            }
         }
     }
 }
@@ -53,7 +54,11 @@ if ($Action -eq "uninstall") {
         & schtasks /delete /tn "VSCodeWS-AutoLaunch" /f 2>$null
         Write-Pass "Removed" "Windows Task Scheduler"
     } else {
-        sed -i '/workspace-manager/d' "$env:HOME/.bashrc" 2>/dev/null
+        if (Test-Path "$env:HOME/.bashrc") {
+            $content = Get-Content "$env:HOME/.bashrc" -Raw
+            $content = $content -replace ".*workspace-manager.*\n?", ""
+            Set-Content "$env:HOME/.bashrc" -Value $content -NoNewline
+        }
         Write-Pass "Removed" "from ~/.bashrc"
     }
 }

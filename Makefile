@@ -119,7 +119,6 @@ update-gists:
 ## docs-gen    Generate fresh PROJECT-STATS.md and stats summary
 docs-gen:
 	@pwsh -NoProfile -File scripts/Generate-Docs.ps1
-	@pwsh -NoProfile -File scripts/Generate-Docs.ps1
 
 ## compile     Compile all scripts into deployable module (+ zip)
 compile:
