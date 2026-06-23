@@ -1,0 +1,44 @@
+#!/bin/sh
+# VS Code Templates — pre-push hook
+# Runs validation before pushing. Blocks push if tests fail.
+# To disable: chmod -x .git/hooks/pre-push
+
+TEMPLATES_ROOT="$(git rev-parse --show-toplevel)"
+echo ""
+echo "============================================"
+echo "  Pre-push: Running validation checks..."
+echo "============================================"
+
+has_error=0
+
+# Run PowerShell tests if available
+if command -v pwsh > /dev/null 2>&1; then
+    if [ -f "$TEMPLATES_ROOT/scripts/Run-Tests.ps1" ]; then
+        pwsh -NoProfile -File "$TEMPLATES_ROOT/scripts/Run-Tests.ps1" -Quiet
+        if [ $? -ne 0 ]; then
+            has_error=1
+        fi
+    fi
+
+    if [ -f "$TEMPLATES_ROOT/scripts/Run-Checks.ps1" ]; then
+        pwsh -NoProfile -File "$TEMPLATES_ROOT/scripts/Run-Checks.ps1" -Quiet
+        if [ $? -ne 0 ]; then
+            has_error=1
+        fi
+    fi
+else
+    echo "[SKIP] PowerShell (pwsh) not found — skipping."
+fi
+
+echo ""
+if [ $has_error -eq 1 ]; then
+    echo "============================================"
+    echo "  PUSH BLOCKED — tests or checks failed!"
+    echo "  Run 'make test' and 'make checks' to fix."
+    echo "  Use 'git push --no-verify' to bypass."
+    echo "============================================"
+    exit 1
+fi
+
+echo "[OK] All validation passed."
+exit 0

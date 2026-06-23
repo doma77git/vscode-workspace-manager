@@ -66,6 +66,10 @@ All notable changes to the VS Code Workspace Manager.
 - `VSCodeWorkspaceManager.psm1` — Root module (dot-sources all scripts, exports functions)
 - `Open-WithProfile.ps1` — added tab-completion for -Profile parameter (Register-ArgumentCompleter)
 - `Run-Tests.ps1` — added -Json and -Quiet flags
+- `prompts/gists.md` — copy-paste snippets and one-liners for every operation
+- `docs/GRAPHICS.md` — ASCII art and box-drawing style reference
+- `.github/workflows/auto-changelog.yml` — validates CHANGELOG on push
+- `scripts/pre-push` — blocks push if tests or checks fail
 - Saved 4 Reasonix project memories (project-context, project-stats, architecture-layers, test-commands)
 - `WorkspaceManager.ps1` — modularized: 4 Invoke-* functions extracted to separate module files (912→759 lines, -17%)
 - `LICENSE` — MIT

@@ -1,0 +1,35 @@
+name: Auto-Changelog
+
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  validate-changelog:
+    name: Validate Changelog
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check CHANGELOG exists
+        run: |
+          if [ ! -f CHANGELOG.md ]; then
+            echo "MISSING: CHANGELOG.md"
+            exit 1
+          fi
+          echo "OK: CHANGELOG.md present"
+
+      - name: Check version header
+        run: |
+          if grep -q "^## \[.*\]" CHANGELOG.md; then
+            VERSION=$(grep -m1 "^## \[.*\]" CHANGELOG.md | sed 's/## \[\(.*\)\].*/\1/')
+            echo "Current version: $VERSION"
+          else
+            echo "WARNING: No version header found in CHANGELOG.md"
+          fi
+
+      - name: Check for unreleased changes
+        run: |
+          if grep -q "Unreleased\|unreleased\|UNRELEASED" CHANGELOG.md; then
+            echo "WARNING: Unreleased section found — consider releasing"
+          fi
