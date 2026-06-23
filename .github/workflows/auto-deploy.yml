@@ -1,0 +1,41 @@
+name: Auto-Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate
+        run: |
+          # JSON validation
+          find . -name "*.json" -not -path "./.git/*" | while read f; do
+            python3 -c "import json; json.load(open('$f'))" || { echo "INVALID: $f"; exit 1; }
+          done
+          find . -name "*.code-workspace" -not -path "./.git/*" | while read f; do
+            python3 -c "import json; json.load(open('$f'))" || { echo "INVALID: $f"; exit 1; }
+          done
+          echo "All JSON valid."
+
+      - name: Generate docs
+        run: |
+          SCRIPTS=$(find scripts -name "*.ps1" 2>/dev/null | wc -l)
+          DOCS=$(find docs -name "*.md" 2>/dev/null | wc -l)
+          PROMPTS=$(find prompts -name "*.md" 2>/dev/null | wc -l)
+          echo "Scripts: $SCRIPTS | Docs: $DOCS | Prompts: $PROMPTS"
+
+      - name: Tag release if version changed
+        run: |
+          VERSION=$(grep -m1 '^## \[' CHANGELOG.md | sed 's/## \[\(.*\)\].*/\1/')
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "Tag v$VERSION already exists — skipping."
+          else
+            git tag "v$VERSION"
+            git push origin "v$VERSION"
+            echo "Tagged v$VERSION"
+          fi

@@ -54,9 +54,29 @@ try {
     $hookContent = @'
 #!/bin/sh
 # VS Code Templates — pre-commit hook
-# Scans staged files for accidental secrets.
-# Blocks commit if password, secret, api_key, token, or private_key are found.
+# 1. Auto-repairs common issues (line endings, trailing commas)
+# 2. Scans staged files for accidental secrets.
+# 3. Blocks commit if secrets are found.
+# To bypass: git commit --no-verify
 
+# ── Auto-repair ────────────────────────────────
+echo ""
+echo "=== Auto-repair: fixing line endings ==="
+for f in $(git diff --cached --name-only); do
+    if [ -f "$f" ]; then
+        case "$f" in
+            *.json|*.md|*.yml|*.yaml|*.toml|*.sh|*.txt|Makefile|LICENSE|.gitignore|.gitattributes|.editorconfig)
+                # Convert CRLF to LF for non-PowerShell files
+                if grep -q $'\r' "$f" 2>/dev/null; then
+                    sed -i 's/\r$//' "$f" 2>/dev/null && echo "  Fixed: $f (CRLF → LF)"
+                    git add "$f" 2>/dev/null
+                fi
+                ;;
+        esac
+    fi
+done
+
+# ── Secret scan ────────────────────────────────
 has_secret=0
 
 for f in $(git diff --cached --name-only); do
@@ -65,9 +85,6 @@ for f in $(git diff --cached --name-only); do
         echo "============================================"
         echo "  COMMIT BLOCKED: Potential secret in $f"
         echo "============================================"
-        echo ""
-        echo "  The file above matches a secret pattern:"
-        echo "    password | secret | api_key | token | private_key"
         echo ""
         echo "  Remove the secret or add the file to .gitignore."
         echo "  If this is a false positive, run:"
