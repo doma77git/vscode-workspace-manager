@@ -41,7 +41,7 @@ if (Test-Path $validateScript) {
 Write-Host "  ── Step 2/2 : Secret Scan ─────────────────────" -ForegroundColor DarkGray
 $found = 0
 $secretPattern = '(password|secret|api[_-]?key|token|private_key)'
-$knownSafe = @('.gitignore', 'deepseek-byok.json', 'deepseek-keys.json', 'Init-TemplatesRepo.ps1', 'Run-Checks.ps1', 'WorkspaceManager.ps1', 'Makefile')
+$knownSafe = @('.gitignore', 'deepseek-byok.json', 'deepseek-keys.json', 'Init-TemplatesRepo.ps1', 'Run-Checks.ps1', 'WorkspaceManager.ps1', 'Makefile', 'bash-runner.sh')
 
 Get-ChildItem -Path $TemplatesRoot -File -Recurse -ErrorAction SilentlyContinue |
     Where-Object {
