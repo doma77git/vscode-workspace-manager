@@ -2,28 +2,36 @@
 
 ## Current: v1.1.0 — Feature-Rich Toolkit
 
-✅ 15 menu options  
-✅ 12 PowerShell scripts (runners, checkers, helpers, backup, scheduler)  
-✅ 11 documentation guides  
-✅ 7 prompt library files  
-✅ 3 CI workflows (validate, release, scheduled)  
+✅ 15 menu options (box-drawn UI, live clock, keyboard shortcuts)  
+✅ 23 PowerShell scripts (runners, checkers, helpers, backup, scheduler, compiler, exporter, navigator)  
+✅ 16 documentation guides (including PRD, UML, GRAPHICS, INDEX)  
+✅ 11 prompt library files (agent-flows, goals, gists, research, memories)  
+✅ 4 CI workflows (validate, release, scheduled, auto-changelog)  
 ✅ 6 terminal profiles + 7 tasks in sample workspace  
-✅ Self-update, auto-backup, scheduled tasks  
-✅ Makefile + npm scripts convenience layer  
+✅ Self-update, auto-backup, self-repair, self-compile, self-documenting  
+✅ 20 Makefile targets + 19 npm scripts  
 ✅ Cross-platform support (Windows/Linux/macOS)  
-✅ Security: BYOK, pre-commit, secrets scan, dependabot  
+✅ Security: BYOK, pre-commit, pre-push, post-commit, secrets scan, dependabot  
+✅ 41 automated tests (23 PS AST + 10 JSON + 6 YAML + 2 integration)  
+✅ `--json` flag on all 8 primary scripts  
+✅ Tab-completion for profile names  
+✅ Module manifest (.psd1/.psm1) for PSGallery  
+✅ Extension health checker  
+✅ `.vscode/` exporter from template  
+✅ 3 Reasonix skills installed  
+✅ 3 git hooks (pre-commit, pre-push, post-commit)
 
 ---
 
 ## v1.2.0 — Polish & Ecosystem (target: next release)
 
 - [ ] **Interactive onboarding wizard** — guided first-run experience (option 0 or auto-detect)
-- [ ] **PowerShell module packaging** — publish as `VSCodeWorkspaceManager` module to PSGallery
-- [ ] **Shell tab-completion** — argument completer for `Open-WithProfile.ps1` profile names
-- [ ] **Export to `.vscode/settings.json`** — generate workspace settings from template
+- [x] **PowerShell module packaging** — publish as `VSCodeWorkspaceManager` module to PSGallery
+- [x] **Shell tab-completion** — argument completer for `Open-WithProfile.ps1` profile names
+- [x] **Export to `.vscode/settings.json`** — generate workspace settings from template
 - [ ] **Diff viewer for template changes** — show what changed between template versions
 - [ ] **Template validation against JSON Schema** — validate `.code-workspace` against official schema
-- [ ] **Profile health check** — verify extensions exist and are installable
+- [x] **Profile health check** — verify extensions exist and are installable
 - [ ] **Batch operations** — apply same profile to multiple templates at once
 
 ---
