@@ -1,0 +1,93 @@
+name: Validate Templates
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  json-lint:
+    name: JSON Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up jq
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq jq
+
+      - name: Validate .json files
+        run: |
+          find . -name "*.json" -not -path "./.git/*" | while read f; do
+            echo "Validating: $f"
+            jq . "$f" > /dev/null || { echo "INVALID JSON: $f"; exit 1; }
+          done
+
+      - name: Validate .code-workspace files
+        run: |
+          find . -name "*.code-workspace" -not -path "./.git/*" | while read f; do
+            echo "Validating: $f"
+            jq . "$f" > /dev/null || { echo "INVALID JSON: $f"; exit 1; }
+          done
+
+  secrets-scan:
+    name: Secrets Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan for secrets
+        run: |
+          echo "Scanning for secret patterns..."
+          FOUND=0
+
+          find . -type f \
+            -not -path "./.git/*" \
+            -not -path "./.github/*" \
+            -not -name "*.lock" \
+            -not -name "*.exe" \
+            -not -name "*.dll" \
+          | while read f; do
+            if grep -E -n -i '(password|secret|api[_-]?key|token|private_key)' "$f" 2>/dev/null; then
+              echo "::warning file=$f::Potential secret found"
+              FOUND=1
+            fi
+          done
+
+          if [ "$FOUND" -eq 1 ]; then
+            echo "============================================"
+            echo "  SECRETS DETECTED!"
+            echo "============================================"
+            echo "  Remove secrets before committing."
+            echo "  If these are false positives, add the file"
+            echo "  to .gitignore or annotate with a comment."
+            exit 1
+          fi
+
+          echo "No secrets detected."
+
+  structure-check:
+    name: Structure Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required directories
+        run: |
+          for dir in templates profiles meta scripts docs prompts .github/workflows; do
+            if [ ! -d "$dir" ]; then
+              echo "MISSING: $dir/"
+              exit 1
+            fi
+            echo "OK: $dir/"
+          done
+
+      - name: Check required files
+        run: |
+          for file in .gitignore README.md deploy-instructions.txt; do
+            if [ ! -f "$file" ]; then
+              echo "MISSING: $file"
+              exit 1
+            fi
+            echo "OK: $file"
+          done

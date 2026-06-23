@@ -1,0 +1,5 @@
+{
+  "emptyWorkspaceTrust": false,
+  "description": "Toggle to true to trust all empty workspaces in VS Code.",
+  "version": "1.0"
+}

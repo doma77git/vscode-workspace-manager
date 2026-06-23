@@ -1,0 +1,9 @@
+{
+  "name": "sample-profile",
+  "icon": "symbol-class",
+  "settings": "{\"editor.fontSize\":14,\"editor.tabSize\":4,\"editor.renderWhitespace\":\"boundary\",\"editor.formatOnSave\":true,\"editor.minimap.enabled\":false,\"workbench.colorTheme\":\"Default Dark+\",\"files.autoSave\":\"onFocusChange\",\"terminal.integrated.defaultProfile.windows\":\"PowerShell\"}",
+  "extensions": "[{\"identifier\":{\"id\":\"eamodio.gitlens\"}},{\"identifier\":{\"id\":\"editorconfig.editorconfig\"}},{\"identifier\":{\"id\":\"streetsidesoftware.code-spell-checker\"}}]",
+  "keybindings": "[]",
+  "globalState": "{}",
+  "version": 1
+}

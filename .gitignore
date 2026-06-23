@@ -1,0 +1,21 @@
+# VS Code local workspace settings
+.vscode/
+workspaceStorage/
+
+# Lock files
+*.code-workspace.lock
+
+# Secrets and keys — never commit
+*.secret
+*.env
+*.local
+secrets.json
+deepseek-byok.json
+deepseek-keys.json
+
+# Git internals
+.git/
+
+# Temp files
+*.tmp
+*.temp

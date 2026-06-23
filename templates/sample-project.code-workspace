@@ -1,0 +1,37 @@
+{
+  "folders": [
+    {
+      "path": "..",
+      "name": "${PROJECT_NAME}"
+    }
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+    "editor.rulers": [80, 120],
+    "files.encoding": "utf8",
+    "files.exclude": {
+      "**/.git": true,
+      "**/.vscode": false,
+      "**/node_modules": true
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/.git": true
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "eamodio.gitlens",
+      "editorconfig.editorconfig",
+      "ms-vscode.remote-wsl",
+      "streetsidesoftware.code-spell-checker"
+    ]
+  },
+  "launch": {},
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": []
+  },
+  "git.remote": "${GIT_REMOTE}"
+}
