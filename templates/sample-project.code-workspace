@@ -65,7 +65,13 @@
         "terminal.integrated.splitCwd": "inherited",
         "terminal.integrated.localEchoEnabled": "auto",
         "terminal.integrated.cursorBlinking": true,
-        "terminal.integrated.cursorStyle": "line"
+        "terminal.integrated.cursorStyle": "line",
+        "chat.agent.workspaceContext": true,
+        "chat.agent.terminal.enabled": true,
+        "sessions.changes.openSingleFileDiff": false,
+        "extensions.supportAgentsWindow": {
+            "editorconfig.editorconfig": true
+        }
     },
     "extensions": {
         "recommendations": [
