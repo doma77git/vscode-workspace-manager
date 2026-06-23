@@ -2,6 +2,12 @@
 # Run targets from Git Bash (Windows) or any POSIX shell.
 # Prerequisites: pwsh 7+, git, code CLI
 
+# Detect PowerShell
+PWSH := $(shell command -v pwsh 2>/dev/null)
+ifeq ($(PWSH),)
+$(error PowerShell 7+ (pwsh) is required but not found. Install: https://github.com/PowerShell/PowerShell)
+endif
+
 .PHONY: help validate checks install clean deps doctor
 
 ## help        Show this help (default)
@@ -32,16 +38,9 @@ all:
 install:
 	@pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/Init-TemplatesRepo.ps1
 
-## doctor      Check prerequisites (PowerShell, VS Code CLI, git)
+## doctor      Full environment health check + prerequisites
 doctor:
-	@echo "PowerShell:"
-	@pwsh --version || echo "  MISSING: install PowerShell 7+"
-	@echo "VS Code CLI:"
-	@code --version || echo "  MISSING: install code in PATH"
-	@echo "Git:"
-	@git --version || echo "  MISSING: install git"
-	@echo "act (optional):"
-	@act --version 2>/dev/null || echo "  Not installed — optional for CI simulation"
+	@pwsh -NoProfile -File scripts/Check-Environment.ps1
 
 ## clean       Remove export archives
 clean:
@@ -54,10 +53,6 @@ backup:
 ## schedule    Show or manage scheduled tasks
 schedule:
 	@pwsh -NoProfile -File scripts/Schedule-Tasks.ps1 -Action list
-
-## doctor      Full environment health check
-doctor:
-	@pwsh -NoProfile -File scripts/Check-Environment.ps1
 
 ## recommend   Recommend VS Code extensions for a project (set PATH=)
 recommend:

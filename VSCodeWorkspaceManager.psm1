@@ -1,5 +1,5 @@
 # VSCodeWorkspaceManager — Auto-Generated Root Module
-# Generated: 2026-06-23 23:17:01
+# Generated: 2026-06-24 00:41:57
 # Version: 1.1.0
 
 $moduleDir = Split-Path -Parent $MyInvocation.MyCommand.Path
