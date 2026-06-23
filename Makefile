@@ -63,6 +63,10 @@ doctor:
 recommend:
 	@pwsh -NoProfile -File scripts/Recommend-Extensions.ps1 -Path $(or $(PATH),.)
 
+## runner      Universal launcher — interactive or by task name
+runner:
+	@pwsh -NoProfile -File scripts/Runner.ps1
+
 ## repair      Auto-repair common issues (JSON, line endings, dirs, hooks)
 repair:
 	@pwsh -NoProfile -File scripts/Repair-Project.ps1 -Force
