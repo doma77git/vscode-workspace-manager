@@ -29,8 +29,7 @@ function Write-Banner($title, $emoji) {
     <# Print a box-drawn banner with title and emoji. Adjusts box width to fit the title. #>
     $innerWidth = 50
     $text = "  $emoji  $title"
-    $textLen = [System.Text.Encoding]::UTF8.GetByteCount($text)
-    if ($textLen -gt $innerWidth - 4) { $innerWidth = $textLen + 6 }
+    if ($text.Length -gt $innerWidth - 4) { $innerWidth = $text.Length + 6 }
     $top    = "╔" + ("═" * ($innerWidth - 2)) + "╗"
     $bottom = "╚" + ("═" * ($innerWidth - 2)) + "╝"
     Write-Host ""
