@@ -18,17 +18,21 @@ jobs:
 
       - name: Validate .json files
         run: |
-          find . -name "*.json" -not -path "./.git/*" | while read f; do
+          FAIL=0
+          while IFS= read -r f; do
             echo "Validating: $f"
-            jq . "$f" > /dev/null || { echo "INVALID JSON: $f"; exit 1; }
-          done
+            jq . "$f" > /dev/null || { echo "INVALID JSON: $f"; FAIL=1; }
+          done < <(find . -name "*.json" -not -path "./.git/*")
+          [ "$FAIL" -eq 0 ] || exit 1
 
       - name: Validate .code-workspace files
         run: |
-          find . -name "*.code-workspace" -not -path "./.git/*" | while read f; do
+          FAIL=0
+          while IFS= read -r f; do
             echo "Validating: $f"
-            jq . "$f" > /dev/null || { echo "INVALID JSON: $f"; exit 1; }
-          done
+            jq . "$f" > /dev/null || { echo "INVALID JSON: $f"; FAIL=1; }
+          done < <(find . -name "*.code-workspace" -not -path "./.git/*")
+          [ "$FAIL" -eq 0 ] || exit 1
 
   secrets-scan:
     name: Secrets Scan
@@ -41,7 +45,12 @@ jobs:
           echo "Scanning for secret patterns..."
           FOUND=0
 
-          find . -type f \
+          while IFS= read -r f; do
+            if grep -E -n -i '(password|secret|api[_-]?key|token|private_key)' "$f" 2>/dev/null; then
+              echo "::warning file=$f::Potential secret found"
+              FOUND=1
+            fi
+          done < <(find . -type f \
             -not -path "./.git/*" \
             -not -path "./.github/*" \
             -not -name "*.lock" \
@@ -49,13 +58,7 @@ jobs:
             -not -name "*.dll" \
             -not -name "*.md" \
             -not -name "*.txt" \
-            -not -name ".editorconfig" \
-          | while read f; do
-            if grep -E -n -i '(password|secret|api[_-]?key|token|private_key)' "$f" 2>/dev/null; then
-              echo "::warning file=$f::Potential secret found"
-              FOUND=1
-            fi
-          done
+            -not -name ".editorconfig")
 
           if [ "$FOUND" -eq 1 ]; then
             echo "============================================"
