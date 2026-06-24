@@ -26,16 +26,21 @@ function Get-TemplatesRoot {
 # ── Display Helpers ───────────────────────────────
 
 function Write-Banner($title, $emoji) {
-    <# Print a box-drawn banner with title and emoji. #>
-    Write-Host ""
-    Write-Host "╔══════════════════════════════════════════════════╗" -ForegroundColor Cyan
-    Write-Host "║" -NoNewline -ForegroundColor Cyan
+    <# Print a box-drawn banner with title and emoji. Adjusts box width to fit the title. #>
+    $innerWidth = 50
     $text = "  $emoji  $title"
+    $textLen = [System.Text.Encoding]::UTF8.GetByteCount($text)
+    if ($textLen -gt $innerWidth - 4) { $innerWidth = $textLen + 6 }
+    $top    = "╔" + ("═" * ($innerWidth - 2)) + "╗"
+    $bottom = "╚" + ("═" * ($innerWidth - 2)) + "╝"
+    Write-Host ""
+    Write-Host $top -ForegroundColor Cyan
+    Write-Host "║" -NoNewline -ForegroundColor Cyan
     Write-Host $text -ForegroundColor White -NoNewline
-    $padding = 46 - $text.Length
+    $padding = $innerWidth - $text.Length - 2
     if ($padding -gt 0) { Write-Host (" " * $padding) -NoNewline }
     Write-Host "║" -ForegroundColor Cyan
-    Write-Host "╚══════════════════════════════════════════════════╝" -ForegroundColor Cyan
+    Write-Host $bottom -ForegroundColor Cyan
     Write-Host ""
 }
 
@@ -91,6 +96,22 @@ function Test-PowerShellFile($path) {
     $errors = $null
     $null = [System.Management.Automation.Language.Parser]::ParseInput($content, [ref]$null, [ref]$errors)
     return ($errors.Count -eq 0)
+}
+
+function Validate-JsonFile {
+    param([string]$Path)
+    if (-not (Test-Path $Path)) {
+        Write-Host "[ERROR] File not found: $Path" -ForegroundColor Red
+        return $false
+    }
+    try {
+        $null = Get-Content $Path -Raw -Encoding UTF8 | ConvertFrom-Json
+        Write-Host "[OK] Valid JSON: $Path" -ForegroundColor Green
+        return $true
+    } catch {
+        Write-Host "[ERROR] Invalid JSON in $Path : $($_.Exception.Message)" -ForegroundColor Red
+        return $false
+    }
 }
 
 # ── Git Helpers ───────────────────────────────────
