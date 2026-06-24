@@ -67,6 +67,23 @@ $taskDefs = @{
     }
 }
 
+function Get-CronLine($task) {
+    $scriptPath = Join-Path $TemplatesRoot $task.Script
+    $args = if ($task.Args) { " $($task.Args)" } else { "" }
+
+    $time = $task.Time -split ":"
+    $hour = [int]$time[0]
+    $minute = [int]$time[1]
+
+    $cronSchedule = switch ($task.Schedule) {
+        "daily"   { "$minute $hour * * *" }
+        "weekly"  { "$minute $hour * * 1" }
+        "monthly" { "$minute $hour 1 * *" }
+    }
+
+    return "$cronSchedule pwsh -NoProfile -File '$scriptPath'$args"
+}
+
 if ($Action -eq "list") {
     Write-Host "  Current platform: $($PSVersionTable.OS)" -ForegroundColor DarkGray
     Write-Host ""
@@ -114,10 +131,8 @@ if ($Action -eq "install") {
                 $scheduleMap = @{ daily = "DAILY"; weekly = "WEEKLY"; monthly = "MONTHLY" }
                 $schedule = $scheduleMap[$t.Schedule]
 
-                $cmd = "schtasks /create /tn `"$($t.Name)`" /tr `"pwsh -NoProfile -File '$scriptPath'$args`" /sc $schedule /st $($t.Time) /f"
-
                 Write-Host "  ⚡ Registering: $($t.Name) ($($t.Schedule) at $($t.Time))" -ForegroundColor Cyan
-                Invoke-Expression $cmd 2>$null
+                & schtasks /create /tn $t.Name /tr "pwsh -NoProfile -File '$scriptPath'$args" /sc $schedule /st $t.Time /f 2>$null
                 if ($LASTEXITCODE -eq 0) {
                     Write-Host "  ✅  Task registered: $($t.Name)" -ForegroundColor Green
                 } else {
@@ -164,22 +179,3 @@ if ($Action -eq "uninstall") {
 }
 
 Write-Host ""
-exit 0
-
-# Helper: generate cron line from task definition
-function Get-CronLine($task) {
-    $scriptPath = Join-Path $TemplatesRoot $task.Script
-    $args = if ($task.Args) { " $($task.Args)" } else { "" }
-
-    $time = $task.Time -split ":"
-    $hour = [int]$time[0]
-    $minute = [int]$time[1]
-
-    $cronSchedule = switch ($task.Schedule) {
-        "daily"   { "$minute $hour * * *" }
-        "weekly"  { "$minute $hour * * 1" }
-        "monthly" { "$minute $hour 1 * *" }
-    }
-
-    return "$cronSchedule pwsh -NoProfile -File '$scriptPath'$args"
-}
