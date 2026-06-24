@@ -155,6 +155,14 @@ function Get-ScriptCount {
     return (Get-ChildItem -Path (Join-Path $root "scripts") -Filter "*.ps1" -ErrorAction SilentlyContinue).Count
 }
 
+function Get-TestCount {
+    $root = Get-TemplatesRoot
+    $ps1 = (Get-ChildItem -Path (Join-Path $root "scripts") -Recurse -Filter "*.ps1" -ErrorAction SilentlyContinue | Where-Object { $_.FullName -notmatch '\\.git\\' }).Count
+    $json = (Get-ChildItem $root -Recurse -Include @("*.json", "*.code-workspace") -ErrorAction SilentlyContinue | Where-Object { $_.FullName -notmatch '\\.git\\' }).Count
+    $yaml = (Get-ChildItem $root -Recurse -Include @("*.yml", "*.yaml") -ErrorAction SilentlyContinue | Where-Object { $_.FullName -notmatch '\\.git\\' }).Count
+    return $ps1 + $json + $yaml + 2
+}
+
 # ── Export ────────────────────────────────────────
 
 Write-Verbose "Helper-Functions.ps1 loaded" -Verbose:$false

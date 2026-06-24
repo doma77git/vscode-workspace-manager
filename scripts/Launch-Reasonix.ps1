@@ -28,7 +28,7 @@ Write-Pass "TEMPLATES_ROOT" $root
 
 # Show quick commands
 Write-Section "Quick Commands"
-Write-Host "  make test      → 57 checks (2.9s)" -ForegroundColor DarkGray
+Write-Host "  make test      → live checks" -ForegroundColor DarkGray
 Write-Host "  make manager   → 15-option modern menu" -ForegroundColor DarkGray
 Write-Host "  make all       → Full pipeline" -ForegroundColor DarkGray
 Write-Host "  make update    → Self-update" -ForegroundColor DarkGray
@@ -36,6 +36,7 @@ Write-Host "  make update    → Self-update" -ForegroundColor DarkGray
 # Stats
 Write-Section "Project Snapshot"
 Write-Host ("  Scripts: {0}  ·  Docs: {1}  ·  Templates: {2}  ·  Profiles: {3}" -f (Get-ScriptCount), (Get-DocCount), (Get-TemplateCount), (Get-ProfileCount)) -ForegroundColor Cyan
-Write-Host ("  Tests:  57  ·  Version: v{0}" -f (Get-CurrentVersion)) -ForegroundColor Cyan
+
+Write-Host ("  Tests: {0}  ·  Version: v{1}" -f (Get-TestCount), (Get-CurrentVersion)) -ForegroundColor Cyan
 
 Write-Result $true "Ready for Reasonix session"

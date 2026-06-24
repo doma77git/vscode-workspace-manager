@@ -24,7 +24,7 @@ $stats = @{
     prompts   = (Get-ChildItem (Join-Path $root "prompts") -Filter "*.md" -ErrorAction SilentlyContinue).Count
     ci        = (Get-ChildItem (Join-Path $root ".github\workflows") -Filter "*.yml" -ErrorAction SilentlyContinue).Count
     skills    = (Get-ChildItem (Join-Path $root "skills") -Recurse -Filter "SKILL.md" -ErrorAction SilentlyContinue).Count
-    tests     = 55
+    tests     = Get-TestCount
     version   = Get-CurrentVersion
     make_tgts = (Select-String -Path (Join-Path $root "Makefile") -Pattern "^## ").Count
 }
@@ -33,8 +33,10 @@ $stats = @{
 $gistsPath = Join-Path $root "prompts\gists.md"
 if (Test-Path $gistsPath) {
     $gists = Get-Content $gistsPath -Raw
+    $jsonCount = (Get-ChildItem $root -Recurse -Include @("*.json", "*.code-workspace") -ErrorAction SilentlyContinue | Where-Object { $_.FullName -notmatch '\\.git\\' }).Count
+    $yamlCount = (Get-ChildItem $root -Recurse -Include @("*.yml", "*.yaml") -ErrorAction SilentlyContinue | Where-Object { $_.FullName -notmatch '\\.git\\' }).Count
     $gists = $gists -replace '\d+ checks: \d+ PS AST \+ \d+ JSON \+ \d+ YAML',
-        "$($stats.tests) checks: $($stats.scripts) PS AST + 21 JSON + 7 YAML + 2 integration"
+        "$($stats.tests) checks: $($stats.scripts) PS AST + $jsonCount JSON + $yamlCount YAML + 2 integration"
     Set-Content -Path $gistsPath -Value $gists -Encoding UTF8 -NoNewline
     Write-Pass "Updated" "prompts/gists.md"
     $updated++
