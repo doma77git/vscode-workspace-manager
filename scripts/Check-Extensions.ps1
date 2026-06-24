@@ -69,9 +69,22 @@ foreach ($extId in $allExtensions.Keys) {
             $missing += $extId
             if (-not $Json) { Write-Warn $extId "HTTP $($response.StatusCode) (from $source)" }
         }
+    } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
+        $statusCode = [int]$_.Exception.Response.StatusCode
+        if ($statusCode -eq 404) {
+            $reason = "not found in marketplace"
+        } elseif ($statusCode -eq 429) {
+            $reason = "rate limited"
+        } elseif ($statusCode -ge 500) {
+            $reason = "marketplace server error"
+        } else {
+            $reason = "HTTP $statusCode"
+        }
+        $missing += $extId
+        if (-not $Json) { Write-Warn $extId "$reason (from $source)" }
     } catch {
         $missing += $extId
-        if (-not $Json) { Write-Warn $extId "not found — may be deprecated or private (from $source)" }
+        if (-not $Json) { Write-Warn $extId "unexpected error: $($_.Exception.Message) (from $source)" }
     }
 }
 
