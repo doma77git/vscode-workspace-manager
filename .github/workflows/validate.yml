@@ -58,6 +58,10 @@ jobs:
             -not -name "*.dll" \
             -not -name "*.md" \
             -not -name "*.txt" \
+            -not -name "*.ps1" \
+            -not -name "*.sh" \
+            -not -name "Makefile" \
+            -not -name ".gitignore" \
             -not -name ".editorconfig")
 
           if [ "$FOUND" -eq 1 ]; then
