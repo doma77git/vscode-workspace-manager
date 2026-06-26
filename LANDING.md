@@ -8,21 +8,23 @@
 
 ```
 ╔══════════════════════════════════════════════════════════╗
-║  v1.1.0  ·  166 files  ·  38 scripts  ·  82+ checks     ║
+║  v1.1.0  ·  214 files  ·  34 scripts  ·  82+ checks     ║
 ╠══════════════════════════════════════════════════════════╣
 ║                                                          ║
 ║  📁 8 templates   │  Python · Node · Go · Rust · Java   ║
 ║                    │  C++ · .NET · Base                  ║
 ║  📋 6 profiles    │  python-dev · web-dev · go-dev      ║
 ║                    │  rust-dev · sample · template       ║
-║  ⚡ 24 scripts     │  runners · checkers · helpers       ║
+║  ⚡ 34 scripts     │  runners · checkers · helpers       ║
 ║                    │  backup · scheduler · compiler      ║
-║  📖 18 docs        │  guides · UML · PRD · HOWTO         ║
+║                    │  launchers · update · repair        ║
+║  📖 21 docs        │  guides · UML · PRD · HOWTO         ║
 ║  💬 13 prompts     │  goals · flows · gists · recipes    ║
 ║  🧠 4 skills       │  vscode-helper · deepseek-byok      ║
+║                    │  deepseek-reasonix                  ║
 ║                    │  workspace-manager                  ║
-║  ⚙️ 4 CI workflows  │  validate · release · scheduled     ║
-║                    │  auto-changelog                     ║
+║  ⚙️ 5 CI workflows  │  validate · release · scheduled     ║
+║                    │  auto-changelog · auto-deploy       ║
 ║                                                          ║
 ║  ✅ 82+ checks pass  ·  50ms scan  ·  🌍 Cross-platform ║
 ║  🔒 No secrets  ·  🛡️ 3 git hooks  ·  🌍 Cross-platform ║
@@ -72,13 +74,13 @@ C:\VSCode\Templates\
 ├── vscode.ps1 / vscode.cmd   ← Universal launcher + stubs
 ├── vscode.sh / vscode-tools.json
 ├── tests/                    ← Test fixtures
-├── scripts/ (24 files)      ← Runners, checkers, helpers
+├── scripts/ (37 files)      ← Runners, checkers, helpers
 ├── templates/ (8 files)     ← .code-workspace templates
 ├── profiles/ (6 files)      ← VS Code profile exports
 ├── meta/                    ← Trust + BYOK metadata
-├── docs/ (18 files)         ← Full documentation
+├── docs/ (21 files)         ← Full documentation
 ├── prompts/ (13 files)      ← AI agent library
-├── skills/ (3 skills)       ← Reasonix installable
+├── skills/ (4 skills)       ← Reasonix installable
 └── .github/workflows/ (4)   ← CI/CD pipelines
 ```
 

@@ -52,6 +52,11 @@ This creates the git repo, makes first commit, and installs the pre-commit hook.
 ## Minute 2 — Launch & Explore
 
 ```powershell
+# Quick launch (after install)
+wsm              # Portable launcher — works from any directory
+vscode wsm       # Universal launcher — discovers & dispatches
+
+# Verbose (always works)
 pwsh -NoProfile -ExecutionPolicy Bypass -File "scripts\WorkspaceManager.ps1"
 ```
 
@@ -179,8 +184,10 @@ make update
 ## Cheat Sheet
 
 ```powershell
-# Daily driver
-pwsh -NoProfile -ExecutionPolicy Bypass -File "C:\VSCode\Templates\scripts\WorkspaceManager.ps1"
+# Daily driver — pick one
+wsm                          # Fastest (from anywhere in PATH)
+vscode wsm                   # Universal launcher (discovers any C:\VSCode tool)
+pwsh -NoProfile -ExecutionPolicy Bypass -File "C:\VSCode\Templates\scripts\WorkspaceManager.ps1"  # Verbose
 
 # Quick create and open
 # → 2 → enter name → enter → enter → 6 → choose template → done
@@ -192,10 +199,13 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "C:\VSCode\Templates\scripts\Works
 code --profile python-dev C:\VSCode\Templates\templates\my-app.code-workspace
 
 # Validate everything
-pwsh -NoProfile -File "scripts\Run-Validate.ps1"
+wsm validate                 # Quick
+vscode wsm validate          # Via universal launcher
+pwsh -NoProfile -File "scripts\Run-Validate.ps1"  # Verbose
 
 # Full health check
-pwsh -NoProfile -File "scripts\Run-Checks.ps1"
+wsm check                    # Quick
+vscode wsm check             # Via universal launcher
 
 # Environment doctor
 make doctor
@@ -208,4 +218,7 @@ make backup
 
 # Schedule daily validation
 make schedule
+
+# Explore all C:\VSCode tools
+vscode list
 ```

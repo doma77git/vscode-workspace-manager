@@ -53,7 +53,6 @@ All notable changes to the VS Code Workspace Manager.
 - `prompts/agent-flows.md` — decision trees for 8 common agent tasks
 - `prompts/agent-research.md` — systematic investigation paths with search commands
 - `prompts/agent-memories.md` — key facts agents should retain across sessions
-- `.reasonix/memories/project-context.md` — Reasonix memory: project identity, conventions, critical rules
 - `AGENTS.md` — added Agent Workflows section with autosuggestions
 - `skills/deepseek-byok` — updated with security verification step and CI integration
 - `skills/deepseek-reasonix` — updated with prompt library references and full config
@@ -70,7 +69,13 @@ All notable changes to the VS Code Workspace Manager.
 - `docs/GRAPHICS.md` — ASCII art and box-drawing style reference
 - `.github/workflows/auto-changelog.yml` — validates CHANGELOG on push
 - `scripts/pre-push` — blocks push if tests or checks fail
-- Saved 4 Reasonix project memories (project-context, project-stats, architecture-layers, test-commands)
+- `wsm.ps1 / wsm.cmd` — portable launcher: `wsm` / `wsm validate` / `wsm test` from any directory
+- `vscode.ps1 / vscode.cmd / vscode.sh` — universal launcher: registry + scan discovery, interactive menu, dispatch
+- `vscode-tools.json` — tool registry for universal launcher (3 entries: wsm, multiboot, test-backup)
+- `skills/vscode-helper` — Reasonix skill: VS Code troubleshooting, REHL, topics
+- `docs/reasonix/specs/2026-06-26-vscode-launcher-design.md` — universal launcher design spec
+- `docs/reasonix/plans/2026-06-26-vscode-launcher.md` — universal launcher implementation plan
+- `tests/` — test fixtures directory (valid-tool.ps1, bad-tool.ps1 for scan testing)
 - `WorkspaceManager.ps1` — modularized: 4 Invoke-* functions extracted to separate module files (912→759 lines, -17%)
 - `LICENSE` — MIT
 - `.github/ISSUE_TEMPLATE/` — bug report, feature request, config

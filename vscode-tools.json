@@ -11,6 +11,15 @@
       "args": ""
     },
     {
+      "id": "docs",
+      "name": "Docs Portal",
+      "description": "Browse all project documentation",
+      "path": "Templates\\scripts\\Open-DocsPortal.ps1",
+      "type": "ps1",
+      "category": "Docs",
+      "args": "--list"
+    },
+    {
       "id": "multiboot",
       "name": "Build Multiboot",
       "description": "WinPE + Ventoy multiboot USB builder",

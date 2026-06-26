@@ -15,11 +15,11 @@ graph TB
 
     subgraph Entry["Entry Points"]
         MENU["WorkspaceManager.ps1<br/>15-option Interactive Menu"]
-        MAKE["Makefile<br/>8 targets"]
-        NPM["package.json<br/>9 scripts"]
+        MAKE["Makefile<br/>26 targets"]
+        NPM["package.json<br/>19 scripts"]
     end
 
-    subgraph Scripts["Scripts Layer (12 scripts)"]
+    subgraph Scripts["Scripts Layer (34 scripts)"]
         RUNNERS["🏃 Runners<br/>Run-Validate, Run-Checks, Run-Tests"]
         HELPERS["🔧 Helpers<br/>Helper-Functions"]
         CHECKERS["🔍 Checkers<br/>Check-Environment"]
@@ -302,4 +302,35 @@ graph TD
     style HF fill:#0f3460,stroke:#00ff88,color:#eee
     style WM fill:#16213e,stroke:#e94560,color:#eee
     style ST fill:#1a1a2e,stroke:#533483,color:#eee
+```
+
+---
+
+## 9. Universal Launcher (v1.1.0)
+
+```mermaid
+flowchart TD
+    START([vscode.ps1]) --> CHECK{args?}
+    
+    CHECK -->|"vscode"| MENU[Interactive Menu]
+    CHECK -->|"vscode <id>"| DISPATCH[Direct Dispatch]
+    CHECK -->|"vscode list"| LIST[List Tools]
+    CHECK -->|"vscode init"| INIT[Regenerate Registry]
+    
+    MENU --> LOAD[Get-AllTools<br/>registry + scan]
+    LOAD --> SHOW[Show-Menu<br/>category-grouped]
+    SHOW --> PICK{User picks}
+    PICK -->|"1..N"| DISPATCH
+    PICK -->|"0"| EXIT([Exit])
+    PICK -->|"H/L/?"| HELP[Show-Help/List]
+    HELP --> SHOW
+    
+    DISPATCH --> FIND{Find tool<br/>by id}
+    FIND -->|"found"| RUN[pwsh -File <path> @args]
+    FIND -->|"not found"| ERR([Error: Unknown])
+    RUN --> EXIT2([Exit])
+
+    style START fill:#0f3460,stroke:#e94560,color:#eee
+    style MENU fill:#16213e,stroke:#0f3460,color:#eee
+    style DISPATCH fill:#0f3460,stroke:#e94560,color:#eee
 ```

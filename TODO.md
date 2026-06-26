@@ -6,8 +6,8 @@
 
 ## Immediate
 
-- [ ] Add PowerShell module manifest (`.psd1`) for PSGallery publishing
-- [ ] Add shell tab-completion for `Open-WithProfile.ps1`
+- [x] Add PowerShell module manifest (`.psd1`) for PSGallery publishing
+- [x] Add shell tab-completion for `Open-WithProfile.ps1`
 - [ ] Create interactive onboarding wizard (first-run experience)
 - [ ] Add JSON Schema validation for `.code-workspace` files
 - [ ] Profile health check — verify extensions are installable
@@ -41,7 +41,7 @@
 ## UI / UX
 
 - [ ] Add progress bar for long operations
-- [ ] Add `--json` output flag to all scripts for machine parsing
+- [x] Add `--json` output flag to all scripts for machine parsing
 - [ ] Add `--quiet` flag to suppress non-error output
 - [ ] Color-code validation output consistently across all scripts
 - [ ] Add spinner animation for git fetch operations
@@ -61,7 +61,7 @@
 
 ## Testing
 
-- [ ] Add YAML validation to `Run-Tests.ps1` (CI workflows)
+- [x] Add YAML validation to `Run-Tests.ps1` (CI workflows)
 - [ ] Add Markdown linting to `Run-Tests.ps1` (broken links)
 - [ ] Add integration test: create template, assign profile, validate
 - [ ] Add mock-mode to menu for automated testing

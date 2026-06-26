@@ -35,7 +35,7 @@ Product Requirements Document · v1.1.0 · June 2026
 | **DevSecOps engineer** | No secrets in repos, trust tracking | BYOK metadata, pre-commit hooks |
 | **Full-stack / polyglot dev** | Switch stacks instantly | Project scanner + auto-open |
 | **OSS maintainer** | Professional repo with CI + community | Full CI suite, templates, CODEOWNERS |
-| **AI agent user (Reasonix)** | Agentic workflow automation | 11 prompt files, 3 skills, agent-flows |
+| **AI agent user (Reasonix)** | Agentic workflow automation | 13 prompt files, 4 skills, agent-flows |
 
 ---
 
@@ -68,7 +68,7 @@ Product Requirements Document · v1.1.0 · June 2026
 - ✅ Pre-commit hook: blocks secrets before commit
 - ✅ Pre-push hook: blocks push if tests fail
 - ✅ Post-commit hook: informational validation
-- ✅ 4 CI workflows: validate, release, scheduled, auto-changelog
+- ✅ 5 CI workflows: validate, release, scheduled, auto-changelog, auto-deploy
 - ✅ Secrets scan (grep for patterns)
 - ✅ Workspace trust tracking (`meta/trust.json`)
 - ✅ `.gitignore` excludes BYOK files + exports
@@ -108,7 +108,7 @@ Product Requirements Document · v1.1.0 · June 2026
 |-------------|--------|--------|
 | **Performance** | ✅ | Full test suite: 3.0s, file scan: 28ms |
 | **Cross-platform** | ✅ | Windows/Linux/macOS path detection |
-| **Security** | ✅ | No real secrets, 3 git hooks, 4 CI workflows |
+| **Security** | ✅ | No real secrets, 3 git hooks, 5 CI workflows |
 | **Maintainability** | ✅ | Modular architecture, Helper-Functions.ps1 shared lib |
 | **Documentation** | ✅ | 16 guides + 11 prompts + INDEX portal |
 | **CI/CD ready** | ✅ | `--json` on all scripts, 4 GitHub Actions workflows |
@@ -138,7 +138,7 @@ UI Layer        : WorkspaceManager.ps1 (759 lines) + 4 Invoke-* modules
 Logic Layer     : 16 standalone scripts (runners, checkers, backup, scheduler, compiler, exporter, navigator)
 Data Layer      : templates/ (.code-workspace) + profiles/ (.json) + meta/ (trust, BYOK)
 Shared Layer    : Helper-Functions.ps1 (Write-Banner, Write-Section, Write-Pass/Fail, validators)
-Security Layer  : 3 git hooks (pre-commit, pre-push, post-commit) + 4 CI workflows
+Security Layer  : 3 git hooks (pre-commit, pre-push, post-commit) + 5 CI workflows
 ```
 
 No circular dependencies. All scripts exit 0 on success, 1 on failure.

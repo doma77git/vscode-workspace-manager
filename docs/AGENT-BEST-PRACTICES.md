@@ -23,16 +23,14 @@ Our project implements all recommended AI configurations:
 
 ### Local Memory (VS Code Memory Tool)
 
-We use the memory tool's 3 scopes:
+We use the Reasonix memory system (knowledge graph with entities and relations). Key memories are stored via the `remember` tool and indexed across sessions. The `.reasonix/` directory contains topic metadata. See `prompts/agent-memories.md` for the full memory reference.
 
 ```
-.reasonix/memories/
-├── user/           → Preferences, patterns (persists across workspaces)
-│   └── coding-style.md
-├── repo/           → Codebase conventions (stays in this project)
-│   └── project-context.md
-└── session/        → Task-specific context (cleared when chat ends)
-    └── plan.md
+.reasonix/
+├── desktop-topic-created-at.json   → Session metadata
+├── desktop-topic-title-sources.json
+├── desktop-topic-titles.json
+└── (memories are stored in session state, not as flat files)
 ```
 
 Memory files are auto-loaded into agent context. Ask the agent:

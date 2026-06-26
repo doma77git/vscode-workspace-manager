@@ -215,6 +215,8 @@ graph LR
     subgraph Skills["Reasonix Skills"]
         SBYOK["skills/deepseek-byok/SKILL.md"]
         SRSNX["skills/deepseek-reasonix/SKILL.md"]
+        SVSC["skills/vscode-helper/SKILL.md"]
+        SWSM["skills/workspace-manager/SKILL.md"]
     end
 
     subgraph CI_Files["CI/CD"]
@@ -239,6 +241,8 @@ graph LR
     PUP -->|"references"| WM
     SBYOK -->|"manages"| META
     SRSNX -->|"tunes"| WM
+    SVSC -->|"assists"| WM
+    SWSM -->|"automates"| WM
     DARCH -->|"diagrams"| WM
     DARCH -->|"diagrams"| HOOK
     DARCH -->|"diagrams"| CIF

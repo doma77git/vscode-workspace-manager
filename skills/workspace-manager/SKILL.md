@@ -43,7 +43,7 @@ profiles/  → 6 VS Code profile JSON exports (python-dev, web-dev, go-dev, rust
 meta/      → trust.json + deepseek-byok.json + <template>.meta.json
 docs/      → 18 guides (INDEX.md for the portal)
 prompts/   → 13 agent instruction files (agent-flows, goals, run-cookbook, gists, workspace-recipes, etc.)
-skills/    → 3 Reasonix skills (deepseek-byok, deepseek-reasonix, workspace-manager)
+skills/    → 4 Reasonix skills (deepseek-byok, deepseek-reasonix, workspace-manager)
 ```
 
 ## Common Tasks

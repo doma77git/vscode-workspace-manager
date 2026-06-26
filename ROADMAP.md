@@ -3,22 +3,22 @@
 ## Current: v1.1.0 — Feature-Rich Toolkit
 
 ✅ 15 menu options (box-drawn UI, live clock, keyboard shortcuts)  
-✅ 23 PowerShell scripts (runners, checkers, helpers, backup, scheduler, compiler, exporter, navigator)  
-✅ 16 documentation guides (including PRD, UML, GRAPHICS, INDEX)  
-✅ 11 prompt library files (agent-flows, goals, gists, research, memories)  
-✅ 4 CI workflows (validate, release, scheduled, auto-changelog)  
+✅ 34 PowerShell scripts (runners, checkers, helpers, backup, scheduler, compiler, exporter, navigator, launchers)  
+✅ 21 documentation guides (including PRD, UML, GRAPHICS, INDEX, specs, plans)  
+✅ 13 prompt library files (agent-flows, goals, gists, research, memories)  
+✅ 5 CI workflows (validate, release, scheduled, auto-changelog, auto-deploy)  
 ✅ 6 terminal profiles + 7 tasks in sample workspace  
 ✅ Self-update, auto-backup, self-repair, self-compile, self-documenting  
 ✅ 20 Makefile targets + 19 npm scripts  
 ✅ Cross-platform support (Windows/Linux/macOS)  
 ✅ Security: BYOK, pre-commit, pre-push, post-commit, secrets scan, dependabot  
-✅ 41 automated tests (23 PS AST + 10 JSON + 6 YAML + 2 integration)  
+✅ 82+ automated tests (PS AST + JSON + YAML + integration)  
 ✅ `--json` flag on all 8 primary scripts  
 ✅ Tab-completion for profile names  
 ✅ Module manifest (.psd1/.psm1) for PSGallery  
 ✅ Extension health checker  
 ✅ `.vscode/` exporter from template  
-✅ 3 Reasonix skills installed  
+✅ 4 Reasonix skills installed  
 ✅ 3 git hooks (pre-commit, pre-push, post-commit)
 
 ---

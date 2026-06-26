@@ -56,7 +56,7 @@ You are in the VS Code Workspace Manager project.
 This project manages VS Code workspace templates, profiles, terminal configs,
 and automation from a single git repository.
 
-Current state: v1.1.0 · 24 scripts · 16 docs · 11 prompts · 5 templates · 4 profiles
+Current state: v1.1.0 · 34 scripts · 21 docs · 13 prompts · 5 templates · 4 profiles
 Test suite: 48 checks (all green) · 2.8s runtime
 
 When adding features:

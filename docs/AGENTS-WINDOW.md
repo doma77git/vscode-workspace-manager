@@ -33,7 +33,7 @@ The Agents window has a Customizations panel for:
 
 | Customization | Our Project Support |
 |---------------|-------------------|
-| Agents | Custom agent personas — our 3 Reasonix skills |
+| Agents | Custom agent personas — our 4 Reasonix skills |
 | Skills | `skills/` directory — 3 installable skills |
 | Instructions | `prompts/agent-templates.md` — ready-to-use configs |
 | Hooks | `scripts/pre-commit`, `pre-push`, `post-commit` |
