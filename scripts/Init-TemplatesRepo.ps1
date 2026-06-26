@@ -4,7 +4,13 @@
 # initializes git repo, and installs pre-commit hook.
 
 $ErrorActionPreference = "Stop"
-$TemplatesRoot = "C:\VSCode\Templates"
+
+# Resolve root: env var → script parent → fallback
+if (Test-Path env:TEMPLATES_ROOT) {
+    $TemplatesRoot = $env:TEMPLATES_ROOT
+} else {
+    $TemplatesRoot = Split-Path -Parent $PSScriptRoot
+}
 $ScriptsDir = Join-Path $TemplatesRoot "scripts"
 $TemplatesDir = Join-Path $TemplatesRoot "templates"
 $ProfilesDir = Join-Path $TemplatesRoot "profiles"
@@ -33,20 +39,17 @@ try {
     if (-not (Test-Path ".git")) {
         git init
         Write-Host "[GIT] Repository initialized." -ForegroundColor Green
+
+        git add .
+        $status = git status --porcelain
+        if ($status) {
+            git commit -m "Initial commit: templates repo"
+            Write-Host "[GIT] Initial commit created." -ForegroundColor Green
+        } else {
+            Write-Host "[GIT] Nothing to commit — working tree clean." -ForegroundColor Yellow
+        }
     } else {
         Write-Host "[GIT] Repository already exists." -ForegroundColor Yellow
-    }
-
-    # Stage all files
-    git add .
-
-    # Check if there is anything to commit
-    $status = git status --porcelain
-    if ($status) {
-        git commit -m "Initial commit: templates repo"
-        Write-Host "[GIT] Initial commit created." -ForegroundColor Green
-    } else {
-        Write-Host "[GIT] Nothing to commit — working tree clean." -ForegroundColor Yellow
     }
 
     # Install pre-commit hook
