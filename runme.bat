@@ -8,6 +8,7 @@ set "ROOT=%~dp0"
 echo.
 echo  VS Code Workspace Manager
 echo  ========================
+echo  Tip: Add this folder to PATH and run "wsm" from anywhere.
 
 REM Check for PowerShell 7
 where pwsh >nul 2>&1

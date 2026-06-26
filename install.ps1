@@ -53,7 +53,9 @@ if ($DryRun) {
     Write-Host "║     → $InstallPath" -ForegroundColor DarkGray
     Write-Host "║  2. Run Init-TemplatesRepo.ps1" -ForegroundColor DarkGray
     Write-Host "║  3. Run Run-All.ps1 -Quick" -ForegroundColor DarkGray
-    Write-Host "║  4. Launch WorkspaceManager.ps1" -ForegroundColor DarkGray
+    Write-Host "║  4. Create launcher stubs at parent directory" -ForegroundColor DarkGray
+    Write-Host "║  5. Offer to add PATH" -ForegroundColor DarkGray
+    Write-Host "║  6. Launch WorkspaceManager.ps1" -ForegroundColor DarkGray
     Write-Host "╚══════════════════════════════════════════════════╝" -ForegroundColor Cyan
     exit 0
 }
@@ -146,9 +148,78 @@ $pad = 49 - $InstallPath.Length
 if ($pad -gt 0) { Write-Host ("║" + " " * $pad) -ForegroundColor Cyan -NoNewline }
 Write-Host "║  Launch   : make manager" -ForegroundColor DarkGray
 Write-Host "║  Update   : make update" -ForegroundColor DarkGray
+Write-Host "║  Quick    : wsm          (from any directory)" -ForegroundColor DarkGray
 Write-Host "║  Docs     : docs/INDEX.md" -ForegroundColor DarkGray
 Write-Host "╚══════════════════════════════════════════════════╝" -ForegroundColor Cyan
 Write-Host ""
+
+# ── PATH Setup ─────────────────────────────────
+Write-Host "  ── Optional : Add to PATH ─────────────────────" -ForegroundColor DarkGray
+Write-Host "  To run 'wsm' from any terminal, add this folder to your PATH:"
+Write-Host "    $InstallPath" -ForegroundColor Cyan
+Write-Host ""
+$addPath = Read-Host "  Add to user PATH now? (y/n)"
+if ($addPath -eq 'y') {
+    $currentPath = [Environment]::GetEnvironmentVariable("PATH", "User")
+    if ($currentPath -notlike "*$InstallPath*") {
+        $newPath = "$InstallPath;$currentPath"
+        [Environment]::SetEnvironmentVariable("PATH", $newPath, "User")
+        Write-Host "  ✅  Added to user PATH. Restart your terminal to use 'wsm' from anywhere." -ForegroundColor Green
+        # Also update current session
+        $env:PATH = "$InstallPath;$env:PATH"
+    } else {
+        Write-Host "  ⚠️  Already in PATH — nothing changed." -ForegroundColor Yellow
+    }
+} else {
+    Write-Host "  ℹ️  To add manually later, run:" -ForegroundColor DarkGray
+    Write-Host "    [Environment]::SetEnvironmentVariable('PATH', \"`$InstallPath;\" + [Environment]::GetEnvironmentVariable('PATH', 'User'), 'User')" -ForegroundColor DarkGray
+}
+Write-Host ""
+
+# ── Launcher Stubs at Parent Directory ────────
+$parentDir = Split-Path $InstallPath -Parent
+if ($parentDir -and (Test-Path $parentDir) -and $parentDir -ne $InstallPath) {
+    Write-Host "  ── Optional : Launcher Stubs ──────────────────" -ForegroundColor DarkGray
+    Write-Host "  Create 'wsm' launchers at the parent directory so you can"
+    Write-Host "  run them from a shorter path, or add the parent to PATH:"
+    Write-Host "    $parentDir" -ForegroundColor Cyan
+    Write-Host ""
+    $createStubs = Read-Host "  Create launcher stubs at $parentDir? (y/n)"
+    if ($createStubs -eq 'y') {
+        $errors = 0
+
+        # Windows batch stub
+        $cmdContent = "@echo off`r`nREM VS Code Workspace Manager — launcher stub`r`nset ""REAL=%~dp0Templates\wsm.cmd""`r`nif not exist ""%REAL%"" (`r`n    echo [ERROR] Launcher not found: %REAL%`r`n    pause`r`n    exit /b 1`r`n)`r`ncall ""%REAL%"" %*`r`n"
+        $cmdPath = Join-Path $parentDir "wsm.cmd"
+        try {
+            $cmdContent | Set-Content -Path $cmdPath -Encoding ASCII -NoNewline
+            Write-Host "  ✅  wsm.cmd created" -ForegroundColor Green
+        } catch { Write-Host "  ❌  wsm.cmd: $($_.Exception.Message)" -ForegroundColor Red; $errors++ }
+
+        # PowerShell stub
+        $psContent = "<#`r`n.SYNOPSIS`r`n    Launch VS Code Workspace Manager from parent directory.`r`n.DESCRIPTION`r`n    Thin stub that delegates to Templates\wsm.ps1.`r`n#>  `$real = Join-Path `$PSScriptRoot ""Templates"" ""wsm.ps1"";`r`nif (Test-Path `$real) { & pwsh -NoProfile -ExecutionPolicy Bypass -File `$real @args; exit `$LASTEXITCODE }`r`nWrite-Host ""[ERROR] Launcher not found: `$real"" -ForegroundColor Red; exit 1`r`n"
+        $psPath = Join-Path $parentDir "wsm.ps1"
+        try {
+            $psContent | Set-Content -Path $psPath -Encoding UTF8 -NoNewline
+            Write-Host "  ✅  wsm.ps1 created" -ForegroundColor Green
+        } catch { Write-Host "  ❌  wsm.ps1: $($_.Exception.Message)" -ForegroundColor Red; $errors++ }
+
+        # Bash stub (Linux/macOS/WSL)
+        $shContent = "#!/usr/bin/env bash`n# VS Code Workspace Manager — launcher stub`nREAL=""`$(dirname ""`$0"")/Templates/wsm.ps1""`nif [ ! -f ""`$REAL"" ]; then`n    echo ""[ERROR] Launcher not found: `$REAL"" >&2`n    exit 1`nfi`npwsh -NoProfile -ExecutionPolicy Bypass -File ""`$REAL"" ""`$@""`nexit `$?`n"
+        $shPath = Join-Path $parentDir "wsm.sh"
+        try {
+            $shContent | Set-Content -Path $shPath -Encoding ASCII -NoNewline
+            Write-Host "  ✅  wsm.sh created" -ForegroundColor Green
+        } catch { Write-Host "  ❌  wsm.sh: $($_.Exception.Message)" -ForegroundColor Red; $errors++ }
+
+        if ($errors -eq 0) {
+            Write-Host "  🎯  Stubs created. Add $parentDir to PATH for 'wsm' from anywhere." -ForegroundColor Green
+        }
+    } else {
+        Write-Host "  ℹ️  Skip. Stubs can be created later from the installer." -ForegroundColor DarkGray
+    }
+    Write-Host ""
+}
 
 # ── Launch menu ────────────────────────────────
 if (-not $NoMenu) {

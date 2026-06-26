@@ -23,6 +23,7 @@
 | Quick commands via npm | `npm run validate` / `npm run checks` / `npm run open` |
 | Quick commands via make | `make validate` / `make checks` / `make install` |
 | Self-update from git remote | `scripts/Update-Self.ps1` / `make update` / `npm run update` |
+| Run from any directory | `wsm` / `wsm validate` / `wsm test` (if in PATH, or via `C:\VSCode\wsm.cmd`)
 
 ## 30-Second Start
 
@@ -35,6 +36,11 @@ git clone https://github.com/doma77git/vscode-workspace-manager.git C:\VSCode\Te
 cd C:\VSCode\Templates
 make install
 make manager
+
+# Option C: From any terminal (after install, add to PATH or use stubs)
+wsm                     # Launch the interactive menu
+wsm validate            # Run validation from anywhere
+wsm test                # Run tests from anywhere
 ```
 
 ## Project Map
@@ -61,6 +67,8 @@ C:\VSCode\Templates\
 ├── HELP.md                 Troubleshooting & FAQ
 ├── LANDING.md              Project overview
 ├── deploy-instructions.txt One-time deploy commands
+├── wsm.ps1                 Portable launcher (PowerShell, from any directory)
+├── wsm.cmd                 Portable launcher (Windows batch, from any directory)
 └── README.md               You are here
 ```
 
