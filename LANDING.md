@@ -8,7 +8,7 @@
 
 ```
 ╔══════════════════════════════════════════════════════════╗
-║  v1.1.0  ·  112 files  ·  24 scripts  ·  53 tests       ║
+║  v1.1.0  ·  166 files  ·  38 scripts  ·  82+ checks     ║
 ╠══════════════════════════════════════════════════════════╣
 ║                                                          ║
 ║  📁 8 templates   │  Python · Node · Go · Rust · Java   ║
@@ -19,12 +19,12 @@
 ║                    │  backup · scheduler · compiler      ║
 ║  📖 18 docs        │  guides · UML · PRD · HOWTO         ║
 ║  💬 13 prompts     │  goals · flows · gists · recipes    ║
-║  🧠 3 skills       │  deepseek-byok · deepseek-reasonix  ║
+║  🧠 4 skills       │  vscode-helper · deepseek-byok      ║
 ║                    │  workspace-manager                  ║
 ║  ⚙️ 4 CI workflows  │  validate · release · scheduled     ║
 ║                    │  auto-changelog                     ║
 ║                                                          ║
-║  ✅ 53/53 tests pass  ·  2.8s runtime  ·  28ms scan     ║
+║  ✅ 82+ checks pass  ·  50ms scan  ·  🌍 Cross-platform ║
 ║  🔒 No secrets  ·  🛡️ 3 git hooks  ·  🌍 Cross-platform ║
 ║                                                          ║
 ╚══════════════════════════════════════════════════════════╝
@@ -50,6 +50,8 @@ cd C:\VSCode\Templates && make install && make manager
 | Action | Command |
 |--------|---------|
 | Launch menu | `make manager` |
+| Universal launcher | `vscode` / `vscode wsm validate` |
+| Quick launch | `wsm` / `wsm validate` / `wsm test` |
 | Run tests | `make test` |
 | Full pipeline | `make all` |
 | Self-update | `make update` |
@@ -66,6 +68,10 @@ cd C:\VSCode\Templates && make install && make manager
 ```
 C:\VSCode\Templates\
 ├── install.ps1              ← One-line installer
+├── wsm.ps1 / wsm.cmd        ← Portable launchers
+├── vscode.ps1 / vscode.cmd   ← Universal launcher + stubs
+├── vscode.sh / vscode-tools.json
+├── tests/                    ← Test fixtures
 ├── scripts/ (24 files)      ← Runners, checkers, helpers
 ├── templates/ (8 files)     ← .code-workspace templates
 ├── profiles/ (6 files)      ← VS Code profile exports
@@ -97,6 +103,8 @@ C:\VSCode\Templates\
 | Agent flows | [`prompts/agent-flows.md`](./prompts/agent-flows.md) |
 | Run cookbook | [`prompts/run-cookbook.md`](./prompts/run-cookbook.md) |
 | Workspace recipes | [`prompts/workspace-recipes.md`](./prompts/workspace-recipes.md) |
+| Launcher design spec | [`docs/reasonix/specs/2026-06-26-vscode-launcher-design.md`](./docs/reasonix/specs/2026-06-26-vscode-launcher-design.md) |
+| Launcher implementation plan | [`docs/reasonix/plans/2026-06-26-vscode-launcher.md`](./docs/reasonix/plans/2026-06-26-vscode-launcher.md) |
 
 ---
 

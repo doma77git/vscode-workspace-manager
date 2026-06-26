@@ -33,6 +33,8 @@ Master portal for all project documentation. Start here.
 |----------|---------------|
 | [`docs/ARCHITECTURE.md`](ARCHITECTURE.md) | Full system architecture, component diagrams, data structures |
 | [`docs/UML.md`](UML.md) | Standalone UML collection: system, menu flow, self-update, validation, data structures |
+| [`docs/reasonix/specs/2026-06-26-vscode-launcher-design.md`](reasonix/specs/2026-06-26-vscode-launcher-design.md) | Universal launcher design spec |
+| [`docs/reasonix/plans/2026-06-26-vscode-launcher.md`](reasonix/plans/2026-06-26-vscode-launcher.md) | Universal launcher implementation plan |
 | [`ROADMAP.md`](../ROADMAP.md) | v1.2.0 → v2.0.0 planned releases + backlog |
 | [`TODO.md`](../TODO.md) | Tracking document for immediate and planned work |
 | [`SUGGESTIONS.md`](../SUGGESTIONS.md) | Future ideas across 10 categories |

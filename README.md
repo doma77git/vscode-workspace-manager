@@ -23,7 +23,8 @@
 | Quick commands via npm | `npm run validate` / `npm run checks` / `npm run open` |
 | Quick commands via make | `make validate` / `make checks` / `make install` |
 | Self-update from git remote | `scripts/Update-Self.ps1` / `make update` / `npm run update` |
-| Run from any directory | `wsm` / `wsm validate` / `wsm test` (if in PATH, or via `C:\VSCode\wsm.cmd`)
+| Run from any directory | `wsm` / `wsm validate` / `wsm test` (if in PATH, or via `C:\VSCode\wsm.cmd`) |
+| Universal launcher (all tools) | `vscode` / `vscode list` / `vscode wsm validate` (discover + dispatch any tool)
 
 ## 30-Second Start
 
@@ -41,6 +42,11 @@ make manager
 wsm                     # Launch the interactive menu
 wsm validate            # Run validation from anywhere
 wsm test                # Run tests from anywhere
+
+# Option D: Universal launcher (discover all C:\VSCode tools)
+vscode                  # Interactive menu
+vscode list             # What tools are available?
+vscode wsm validate     # Dispatch to any tool
 ```
 
 ## Project Map
@@ -69,6 +75,10 @@ C:\VSCode\Templates\
 ├── deploy-instructions.txt One-time deploy commands
 ├── wsm.ps1                 Portable launcher (PowerShell, from any directory)
 ├── wsm.cmd                 Portable launcher (Windows batch, from any directory)
+├── vscode.ps1              Universal launcher (discover + dispatch)
+├── vscode.cmd              Universal launcher (Windows batch stub)
+├── vscode.sh               Universal launcher (bash stub)
+├── vscode-tools.json       Universal launcher (tool registry)
 └── README.md               You are here
 ```
 
@@ -79,6 +89,8 @@ C:\VSCode\Templates\
 - **Profiles are portable** — Export from VS Code, drop into `profiles/`, assign to templates. Open workspaces with `code --profile`.
 - **Template variables** — `${PROJECT_NAME}` and `${GIT_REMOTE}` are replaced interactively when creating templates.
 - **UTF-8, no BOM** — All files are cleanly encoded. PowerShell 7 compatible.
+- **Universal launcher** — `vscode` discovers any tool under `C:\VSCode` via registry (`vscode-tools.json`) or `### VSCodeTool:` scan headers. `wsm` is the quick path.
+- **Zero-internal-deps dispatch** — `vscode.ps1` calls `pwsh -File`, never dot-sources. Tools are isolated.
 
 ## Documentation
 
@@ -97,3 +109,5 @@ C:\VSCode\Templates\
 | `HELP.md` | Troubleshooting and FAQ |
 | `prompts/workspace-manager-prompt.md` | Full spec for regenerating via Reasonix |
 | `prompts/usage-prompts.md` | Copy-paste prompts for common tasks |
+| `docs/reasonix/specs/2026-06-26-vscode-launcher-design.md` | Universal launcher design spec |
+| `docs/reasonix/plans/2026-06-26-vscode-launcher.md` | Universal launcher implementation plan |

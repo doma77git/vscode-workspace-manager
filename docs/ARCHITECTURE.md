@@ -13,6 +13,8 @@ graph TB
         WM["WorkspaceManager.ps1<br/>Interactive Menu"]
         INIT["Init-TemplatesRepo.ps1<br/>One-time Setup"]
         HOOK["pre-commit<br/>Git Hook"]
+        VSC["vscode.ps1<br/>Universal Launcher"]
+        WSM["wsm.ps1<br/>Portable Launcher"]
     end
 
     subgraph Storage["C:\\VSCode\\Templates"]
@@ -23,6 +25,11 @@ graph TB
         D["docs/<br/>Guides"]
         PR["prompts/<br/>Reasonix snippets"]
         S["skills/<br/>Custom Reasonix skills"]
+    end
+
+    subgraph VSCodeRoot["C:\\VSCode"]
+        VSCR["vscode-tools.json<br/>Tool Registry"]
+        VSCSTUB["vscode.cmd/.sh<br/>Launcher Stubs"]
     end
 
     subgraph External["External Systems"]
@@ -38,12 +45,19 @@ graph TB
 
     CLI -->|"pwsh -File"| WM
     CLI -->|"pwsh -File"| INIT
+    CLI -->|"wsm"| WSM
+    CLI -->|"vscode"| VSC
     VSCODE -->|"code --profile"| WM
     WM -->|"reads/writes"| T
     WM -->|"reads/writes"| P
     WM -->|"reads/writes"| M
     WM -->|"calls"| INIT
     WM -->|"opens"| VSCODE
+    WSM -->|"delegates"| WM
+    VSC -->|"dispatches"| WSM
+    VSC -->|"reads"| VSCR
+    VSC -->|"scans tools"| T
+    VSCSTUB -->|"forwards"| VSC
     INIT -->|"creates"| HOOK
     HOOK -->|"blocks secrets"| GH
     GH -->|"triggers"| CI
@@ -56,6 +70,7 @@ graph TB
     style User fill:#1a1a2e,stroke:#e94560,color:#eee
     style Manager fill:#16213e,stroke:#0f3460,color:#eee
     style Storage fill:#0f3460,stroke:#e94560,color:#eee
+    style VSCodeRoot fill:#16213e,stroke:#533483,color:#eee
     style External fill:#1a1a2e,stroke:#533483,color:#eee
     style CI fill:#16213e,stroke:#0f3460,color:#eee
 ```
@@ -231,7 +246,61 @@ graph LR
 
 ---
 
-## 6. Data Structures
+## 6. Universal Launcher Flow
+
+```mermaid
+flowchart TD
+    START([vscode.ps1]) --> CHECK{args?}
+    
+    CHECK -->|"vscode"| MENU[Interactive Menu]
+    CHECK -->|"vscode <id>"| DISPATCH[Direct Dispatch]
+    CHECK -->|"vscode list"| LIST[List Tools]
+    CHECK -->|"vscode init"| INIT[Regenerate Registry]
+    
+    MENU --> LOAD[Get-AllTools<br/>registry + scan]
+    LOAD --> SHOW[Show-Menu<br/>category-grouped]
+    SHOW --> PICK{User picks}
+    PICK -->|"1..N"| DISPATCH
+    PICK -->|"0"| EXIT([Exit])
+    PICK -->|"H/L/?"| HELP[Show-Help/List]
+    HELP --> SHOW
+    
+    DISPATCH --> FIND{Find tool<br/>by id}
+    FIND -->|"found"| RUN[pwsh -File <path> @args]
+    FIND -->|"not found"| ERR([Error: Unknown])
+    RUN --> EXIT2([Exit])
+
+    style START fill:#0f3460,stroke:#e94560,color:#eee
+    style MENU fill:#16213e,stroke:#0f3460,color:#eee
+    style DISPATCH fill:#0f3460,stroke:#e94560,color:#eee
+```
+
+---
+
+## 7. Data Structures
+
+### vscode-tools.json (Tool Registry)
+```json
+{
+  "version": "1.0",
+  "tools": [
+    {
+      "id": "wsm",
+      "name": "Workspace Manager",
+      "description": "Manage VS Code workspaces, profiles, trust, BYOK",
+      "path": "Templates\\wsm.ps1",
+      "type": "ps1",
+      "category": "VS Code",
+      "args": ""
+    }
+  ]
+}
+```
+
+### Discovery Header (in-script)
+```powershell
+### VSCodeTool: id="tool-id", name="Display Name", desc="Description", category="Category"
+```
 
 ### meta/deepseek-byok.json
 ```json
@@ -281,7 +350,7 @@ graph LR
 
 ---
 
-## 7. Key Design Decisions
+## 8. Key Design Decisions
 
 | Decision | Rationale |
 |----------|-----------|
@@ -292,4 +361,6 @@ graph LR
 | **Pre-commit is a shell script** | Works on Windows (git bash) and any POSIX shell |
 | **CI uses `ubuntu-latest`** | JSON lint + regex scan are OS-agnostic |
 | **Skills are Reasonix-native** | Installable with `Install skill from:` — no custom packaging |
+| **Universal launcher dispatches via `pwsh -File`** | Zero dot-sourcing — tools are isolated, no dependency bleed |
+| **Registry-first with scan fallback** | `vscode-tools.json` is source of truth; `### VSCodeTool:` headers catch unregistered tools |
 | **Mermaid for diagrams** | Renders in GitHub, VS Code, and any Markdown viewer |
