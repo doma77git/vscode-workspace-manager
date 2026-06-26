@@ -18,6 +18,15 @@
       "type": "ps1",
       "category": "System",
       "args": ""
+    },
+    {
+      "id": "test-backup",
+      "name": "Test Backup",
+      "description": "Test backup tool for scan discovery",
+      "path": "Templates\\tests\\valid-tool.ps1",
+      "type": "ps1",
+      "category": "Testing",
+      "args": ""
     }
   ]
 }

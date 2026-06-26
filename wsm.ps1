@@ -1,3 +1,4 @@
+### VSCodeTool: id="wsm", name="Workspace Manager", desc="Manage VS Code workspaces, profiles, trust, BYOK", category="VS Code"
 <#
 .SYNOPSIS
     Launch the VS Code Workspace Manager from any directory.
