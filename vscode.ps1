@@ -19,14 +19,14 @@ $RegistryPath = Join-Path $VSCodeRoot "vscode-tools.json"
 
 function Read-Registry {
     <# Returns tool objects from vscode-tools.json, or $null if missing/invalid. #>
-    if (-not (Test-Path $RegistryPath)) { return $null }
+    if (-not (Test-Path $RegistryPath)) { return @() }
     try {
         $reg = Get-Content $RegistryPath -Raw -Encoding UTF8 | ConvertFrom-Json
         return $reg.tools
     } catch {
         Write-Host "[WARN] vscode-tools.json is invalid: $($_.Exception.Message)" -ForegroundColor Yellow
         Write-Host "  Fix or delete it, then run 'vscode init' to regenerate." -ForegroundColor DarkGray
-        return $null
+        return @()
     }
 }
 
@@ -41,7 +41,7 @@ function Initialize-Registry {
     Write-Host "Scanning C:\VSCode for discoverable tools..." -ForegroundColor Cyan
     $found = @()
     $files = Get-ChildItem -Path $VSCodeRoot -Recurse -Include @("*.ps1","*.bat","*.cmd") -ErrorAction SilentlyContinue |
-        Where-Object { $_.FullName -notmatch '\\.git\\' }
+        Where-Object { $_.FullName -notmatch '\\\.git\\' }
     foreach ($f in $files) {
         $matches = Select-String -Path $f.FullName -Pattern '### VSCodeTool:' -SimpleMatch -ErrorAction SilentlyContinue
         foreach ($m in $matches) {
@@ -85,7 +85,7 @@ function Get-AllTools {
 
     # Scan for unregistered tools
     $files = Get-ChildItem -Path $VSCodeRoot -Recurse -Include @("*.ps1","*.bat","*.cmd") -ErrorAction SilentlyContinue |
-        Where-Object { $_.FullName -notmatch '\\.git\\' }
+        Where-Object { $_.FullName -notmatch '\\\.git\\' }
     foreach ($f in $files) {
         $matches = Select-String -Path $f.FullName -Pattern '### VSCodeTool:' -SimpleMatch -ErrorAction SilentlyContinue
         foreach ($m in $matches) {
