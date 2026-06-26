@@ -212,6 +212,28 @@ if ($parentDir -and (Test-Path $parentDir) -and $parentDir -ne $InstallPath) {
             Write-Host "  ✅  wsm.sh created" -ForegroundColor Green
         } catch { Write-Host "  ❌  wsm.sh: $($_.Exception.Message)" -ForegroundColor Red; $errors++ }
 
+        # vscode universal launcher stubs
+        $vscodePsContent = "<#`r`n.SYNOPSIS`r`n    C:\\VSCode Universal Launcher — thin stub.`r`n.DESCRIPTION`r`n    Delegates to Templates\\vscode.ps1 (source of truth).`r`n#>  `$real = Join-Path `$PSScriptRoot ""Templates"" ""vscode.ps1"";`r`nif (Test-Path `$real) { & pwsh -NoProfile -ExecutionPolicy Bypass -File `$real @args; exit `$LASTEXITCODE }`r`nWrite-Host ""[ERROR] Launcher not found: `$real"" -ForegroundColor Red; exit 1`r`n"
+        $vscodePsPath = Join-Path $parentDir "vscode.ps1"
+        try {
+            $vscodePsContent | Set-Content -Path $vscodePsPath -Encoding UTF8 -NoNewline
+            Write-Host "  ✅  vscode.ps1 created" -ForegroundColor Green
+        } catch { Write-Host "  ❌  vscode.ps1: $($_.Exception.Message)" -ForegroundColor Red; $errors++ }
+
+        $vscodeCmdContent = "@echo off`r`nset ""REAL=%~dp0Templates\vscode.cmd""`r`nif not exist ""%REAL%"" (`r`n    echo [ERROR] Launcher not found: %REAL%`r`n    pause`r`n    exit /b 1`r`n)`r`ncall ""%REAL%"" %*`r`n"
+        $vscodeCmdPath = Join-Path $parentDir "vscode.cmd"
+        try {
+            $vscodeCmdContent | Set-Content -Path $vscodeCmdPath -Encoding ASCII -NoNewline
+            Write-Host "  ✅  vscode.cmd created" -ForegroundColor Green
+        } catch { Write-Host "  ❌  vscode.cmd: $($_.Exception.Message)" -ForegroundColor Red; $errors++ }
+
+        $vscodeShContent = "#!/usr/bin/env bash`r`nREAL=""`$(dirname ""`$0"")/Templates/vscode.sh""`r`nif [ ! -f ""`$REAL"" ]; then echo ""[ERROR] Launcher not found: `$REAL"" >&2; exit 1; fi`r`npwsh -NoProfile -ExecutionPolicy Bypass -File ""`$REAL"" ""`$@""`r`nexit `$?`r`n"
+        $vscodeShPath = Join-Path $parentDir "vscode.sh"
+        try {
+            $vscodeShContent | Set-Content -Path $vscodeShPath -Encoding ASCII -NoNewline
+            Write-Host "  ✅  vscode.sh created" -ForegroundColor Green
+        } catch { Write-Host "  ❌  vscode.sh: $($_.Exception.Message)" -ForegroundColor Red; $errors++ }
+
         if ($errors -eq 0) {
             Write-Host "  🎯  Stubs created. Add $parentDir to PATH for 'wsm' from anywhere." -ForegroundColor Green
         }
