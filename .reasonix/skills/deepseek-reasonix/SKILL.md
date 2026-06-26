@@ -1,6 +1,7 @@
 ---
 name: deepseek-reasonix
-description: Tuning Reasonix for DeepSeek models? Load first — model selection, temperature, reasoning, compaction, and prompt patterns.
+description: Optimize Reasonix prompts and configuration for DeepSeek models — model selection, temperature, reasoning, compaction, prompt patterns, and prompt library integration.
+type: global
 runAs: inline
 allowedTools: [read_file, edit_file, bash, ask]
 ---

@@ -1,6 +1,7 @@
 ---
 name: deepseek-byok
-description: Configuring DeepSeek BYOK secrets or KMS? Load first — store only metadata and KMS instructions, never commit real keys.
+description: Manage DeepSeek BYOK metadata — store KMS instructions and key references without committing real secrets. Includes security verification and CI integration.
+type: project
 runAs: inline
 allowedTools: [read_file, write_file, bash, ask]
 ---

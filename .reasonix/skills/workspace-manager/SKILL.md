@@ -1,6 +1,7 @@
 ---
 name: workspace-manager
-description: Working with VS Code workspaces, templates, or profiles? Load first — use the WSM toolkit CLI, never edit files directly.
+description: Manage VS Code workspace templates, profiles, terminal config, tasks, validation, and automation using the Workspace Manager toolkit.
+type: project
 runAs: inline
 allowedTools: [read_file, write_file, edit_file, bash, ask, grep, glob]
 ---

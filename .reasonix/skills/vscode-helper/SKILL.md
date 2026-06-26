@@ -1,6 +1,7 @@
 ---
 name: vscode-helper
 description: Using the C:\VSCode universal launcher? Load first — always dispatch via vscode, never run scripts or edit registry directly.
+type: project
 runAs: inline
 allowedTools: [read_file, write_file, edit_file, bash, ask, grep, glob]
 ---
