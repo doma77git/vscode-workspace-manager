@@ -12,8 +12,8 @@
 #>
 
 $ErrorActionPreference = "Stop"
-$VSCodeRoot = $PSScriptRoot
-$RegistryPath = Join-Path $VSCodeRoot "vscode-tools.json"
+$VSCodeRoot = Split-Path -Parent $PSScriptRoot
+$RegistryPath = Join-Path $PSScriptRoot "vscode-tools.json"
 
 # ── Registry helpers ──────────────────────────────
 
@@ -186,4 +186,98 @@ function Show-Menu($tools) {
     Write-Host "  [0] Exit   ·   ? Help   ·   L List" -ForegroundColor DarkGray
     Write-Host ""
     return $map
+}
+
+# ── Dispatch ───────────────────────────────────────
+
+function Invoke-Tool($tool, $args) {
+    $fullPath = Join-Path $VSCodeRoot $tool.path
+    if (-not (Test-Path $fullPath)) {
+        Write-Host "[ERROR] Tool '$($tool.id)' not found at: $fullPath" -ForegroundColor Red
+        exit 1
+    }
+    & pwsh -NoProfile -ExecutionPolicy Bypass -File $fullPath @args
+    exit $LASTEXITCODE
+}
+
+function Show-Help($tools) {
+    Write-Host ""
+    Write-Host "  C:\VSCode Universal Launcher" -ForegroundColor Cyan
+    Write-Host "  -----------------------------" -ForegroundColor DarkGray
+    Write-Host ""
+    Write-Host "  vscode              Interactive menu"
+    Write-Host "  vscode <id> [args]  Dispatch directly to tool"
+    Write-Host "  vscode list         Compact tool list"
+    Write-Host "  vscode init         Regenerate registry from scan"
+    Write-Host "  vscode help         This help"
+    Write-Host ""
+    if ($tools -and $tools.Count -gt 0) {
+        Write-Host "  Available tools:" -ForegroundColor White
+        foreach ($t in $tools) {
+            Write-Host ("  {0,-16} — {1}" -f $t.id, $t.description) -ForegroundColor DarkGray
+        }
+    }
+    Write-Host ""
+}
+
+# ── Main ───────────────────────────────────────────
+
+$action = $args[0]
+$rest = $args[1..$args.Count]
+
+switch ($action) {
+    "help" {
+        $tools = Get-AllTools
+        Show-Help $tools
+        exit 0
+    }
+    "list" {
+        $tools = Get-AllTools
+        foreach ($t in $tools) {
+            Write-Host ("{0,-16} — {1}" -f $t.id, $t.description)
+        }
+        exit 0
+    }
+    "init" {
+        $tools = Initialize-Registry
+        $count = if ($tools) { $tools.Count } else { 0 }
+        Write-Host "[OK] Registry regenerated with $count tool(s)." -ForegroundColor Green
+        exit 0
+    }
+    { $_ -in @("", $null) } {
+        # Interactive menu
+        $tools = Get-AllTools
+        if ($tools.Count -eq 0) {
+            Write-Host "[WARN] No tools found. Run 'vscode init' to scan for tools." -ForegroundColor Yellow
+            exit 1
+        }
+        do {
+            $map = Show-Menu $tools
+            $choice = Read-Host "▶"
+            if ($choice -eq "0") { Write-Host "Goodbye." -ForegroundColor Green; exit 0 }
+            if ($choice -eq "?" -or $choice -eq "H" -or $choice -eq "h") { Show-Help $tools; Pause; continue }
+            if ($choice -eq "L" -or $choice -eq "l") {
+                foreach ($t in $tools) { Write-Host ("  {0,-16} — {1}" -f $t.id, $t.description) -ForegroundColor DarkGray }
+                Pause; continue
+            }
+            if ($map.ContainsKey($choice)) {
+                $tool = $map[$choice]
+                Invoke-Tool $tool @()
+            } else {
+                Write-Host "  Invalid option." -ForegroundColor Red
+                Start-Sleep -Seconds 1
+            }
+        } while ($true)
+    }
+    default {
+        # Direct dispatch: vscode <tool-id> [args...]
+        $tools = Get-AllTools
+        $tool = $tools | Where-Object { $_.id -eq $action } | Select-Object -First 1
+        if (-not $tool) {
+            Write-Host "[ERROR] Unknown tool: $action" -ForegroundColor Red
+            Write-Host "  Run 'vscode' to see all available tools." -ForegroundColor DarkGray
+            exit 1
+        }
+        Invoke-Tool $tool @rest
+    }
 }
