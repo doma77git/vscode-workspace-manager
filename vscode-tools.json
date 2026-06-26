@@ -20,6 +20,15 @@
       "args": "--list"
     },
     {
+      "id": "pm-import",
+      "name": "Project-Manager Import",
+      "description": "Import/export compatibility with alefragnani/vscode-project-manager",
+      "path": "Templates\\scripts\\Import-Export-PM.ps1",
+      "type": "ps1",
+      "category": "Interop",
+      "args": ""
+    },
+    {
       "id": "multiboot",
       "name": "Build Multiboot",
       "description": "WinPE + Ventoy multiboot USB builder",
