@@ -1,22 +1,9 @@
 {
   "name": "your-profile-name",
-  "version": "1.0",
-  "description": "Describe the purpose and target workflow of this profile.",
-  "tags": [],
-  "theme": "Default Dark+",
-  "settings": {
-    "editor.fontSize": 14,
-    "editor.tabSize": 4,
-    "editor.formatOnSave": true,
-    "editor.minimap.enabled": false,
-    "editor.renderWhitespace": "boundary",
-    "files.autoSave": "onFocusChange",
-    "terminal.integrated.defaultProfile.windows": "PowerShell 7 (full)",
-    "terminal.integrated.shellIntegration.enabled": true,
-    "workbench.colorTheme": "Default Dark+"
-  },
-  "extensions": [
-    "editorconfig.editorconfig",
-    "streetsidesoftware.code-spell-checker"
-  ]
+  "icon": "symbol-class",
+  "settings": "{\"editor.fontSize\":14,\"editor.tabSize\":4,\"editor.formatOnSave\":true,\"editor.minimap.enabled\":false,\"editor.renderWhitespace\":\"boundary\",\"files.autoSave\":\"onFocusChange\",\"terminal.integrated.defaultProfile.windows\":\"PowerShell 7 (full)\",\"terminal.integrated.defaultProfile.osx\":\"zsh\",\"terminal.integrated.defaultProfile.linux\":\"bash\",\"terminal.integrated.shellIntegration.enabled\":true,\"workbench.colorTheme\":\"Default Dark+\"}",
+  "extensions": "[{\"identifier\":{\"id\":\"editorconfig.editorconfig\"}},{\"identifier\":{\"id\":\"streetsidesoftware.code-spell-checker\"}}]",
+  "keybindings": "[]",
+  "globalState": "{}",
+  "version": 1
 }
