@@ -207,7 +207,7 @@ function Show-Help($tools) {
     Write-Host ""
     Write-Host "  vscode              Interactive menu"
     Write-Host "  vscode <id> [args]  Dispatch directly to tool"
-    Write-Host "  vscode list         Compact tool list"
+    Write-Host "  vscode list         Compact tool list (add -Json for JSON output)"
     Write-Host "  vscode init         Regenerate registry from scan"
     Write-Host "  vscode help         This help"
     Write-Host ""
@@ -233,8 +233,13 @@ switch ($action) {
     }
     "list" {
         $tools = Get-AllTools
-        foreach ($t in $tools) {
-            Write-Host ("{0,-16} — {1}" -f $t.id, $t.description)
+        if ($rest -contains "-Json") {
+            $tools | Select-Object id, name, description, path, type, category |
+                ConvertTo-Json -Depth 3 | Write-Host
+        } else {
+            foreach ($t in $tools) {
+                Write-Host ("{0,-16} — {1}" -f $t.id, $t.description)
+            }
         }
         exit 0
     }
@@ -279,5 +284,21 @@ switch ($action) {
             exit 1
         }
         Invoke-Tool $tool @rest
+    }
+}
+
+# ── Tab completion ──────────────────────────────────
+
+Register-ArgumentCompleter -CommandName 'vscode.ps1', 'vscode' -ParameterName 'id' -ScriptBlock {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+    $root = Split-Path -Parent $commandAst.Extent.File
+    $regPath = Join-Path $root "vscode-tools.json"
+    if (Test-Path $regPath) {
+        $tools = (Get-Content $regPath -Raw -Encoding UTF8 | ConvertFrom-Json).tools
+        foreach ($t in $tools) {
+            if ($t.id -like "$wordToComplete*") {
+                [System.Management.Automation.CompletionResult]::new($t.id, $t.id, 'ParameterValue', $t.description)
+            }
+        }
     }
 }
