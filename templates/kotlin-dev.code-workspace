@@ -1,0 +1,70 @@
+{
+    "folders": [
+        { "path": "..", "name": "${PROJECT_NAME}" }
+    ],
+    "settings": {
+        "editor.formatOnSave": true,
+        "editor.tabSize": 4,
+        "editor.rulers": [120],
+        "files.encoding": "utf8",
+        "files.exclude": {
+            "**/.git": true,
+            "**/build": true,
+            "**/.gradle": true,
+            "**/.kotlin": true
+        },
+        "search.exclude": {
+            "**/build": true
+        },
+        "[kotlin]": {
+            "editor.defaultFormatter": "fwcd.kotlin"
+        },
+        "kotlin.languageServer.enabled": true,
+        "terminal.integrated.defaultProfile.windows": "PowerShell 7 (full)",
+        "terminal.integrated.shellIntegration.enabled": true
+    },
+    "extensions": {
+        "recommendations": [
+            "fwcd.kotlin",
+            "mathiasfrohlich.kotlin",
+            "eamodio.gitlens",
+            "editorconfig.editorconfig",
+            "streetsidesoftware.code-spell-checker"
+        ]
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Build",
+                "detail": "gradle build",
+                "type": "shell",
+                "command": "./gradlew",
+                "args": ["build"],
+                "group": "build",
+                "presentation": { "reveal": "always", "panel": "new" },
+                "problemMatcher": []
+            },
+            {
+                "label": "Test",
+                "detail": "gradle test",
+                "type": "shell",
+                "command": "./gradlew",
+                "args": ["test"],
+                "group": "test",
+                "presentation": { "reveal": "always", "panel": "new" },
+                "problemMatcher": []
+            },
+            {
+                "label": "Run",
+                "detail": "gradle run",
+                "type": "shell",
+                "command": "./gradlew",
+                "args": ["run"],
+                "group": "none",
+                "presentation": { "reveal": "always", "panel": "new" }
+            }
+        ]
+    },
+    "git.remote": "${GIT_REMOTE}"
+}

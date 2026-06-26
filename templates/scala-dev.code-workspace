@@ -1,0 +1,80 @@
+{
+    "folders": [
+        { "path": "..", "name": "${PROJECT_NAME}" }
+    ],
+    "settings": {
+        "editor.formatOnSave": true,
+        "editor.tabSize": 2,
+        "editor.rulers": [120],
+        "files.encoding": "utf8",
+        "files.exclude": {
+            "**/.git": true,
+            "**/target": true,
+            "**/.bsp": true,
+            "**/.metals": true,
+            "**/.bloop": true
+        },
+        "search.exclude": {
+            "**/target": true
+        },
+        "[scala]": {
+            "editor.defaultFormatter": "scalameta.metals"
+        },
+        "metals.javaHome": "${env:JAVA_HOME}",
+        "terminal.integrated.defaultProfile.windows": "PowerShell 7 (full)",
+        "terminal.integrated.shellIntegration.enabled": true
+    },
+    "extensions": {
+        "recommendations": [
+            "scalameta.metals",
+            "scala-lang.scala",
+            "eamodio.gitlens",
+            "editorconfig.editorconfig",
+            "streetsidesoftware.code-spell-checker"
+        ]
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Build",
+                "detail": "sbt compile",
+                "type": "shell",
+                "command": "sbt",
+                "args": ["compile"],
+                "group": "build",
+                "presentation": { "reveal": "always", "panel": "new" },
+                "problemMatcher": []
+            },
+            {
+                "label": "Test",
+                "detail": "sbt test",
+                "type": "shell",
+                "command": "sbt",
+                "args": ["test"],
+                "group": "test",
+                "presentation": { "reveal": "always", "panel": "new" },
+                "problemMatcher": []
+            },
+            {
+                "label": "Run",
+                "detail": "sbt run",
+                "type": "shell",
+                "command": "sbt",
+                "args": ["run"],
+                "group": "none",
+                "presentation": { "reveal": "always", "panel": "new" }
+            },
+            {
+                "label": "Format",
+                "detail": "scalafmt",
+                "type": "shell",
+                "command": "sbt",
+                "args": ["scalafmtAll"],
+                "group": "none",
+                "presentation": { "reveal": "always", "panel": "new" }
+            }
+        ]
+    },
+    "git.remote": "${GIT_REMOTE}"
+}

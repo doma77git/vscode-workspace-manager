@@ -1,0 +1,12 @@
+{
+    "name": "cpp-dev",
+    "version": "1.0",
+    "description": "C/C++ development — CMake, CTest, clang-format, IntelliSense",
+    "tags": ["c", "cpp", "systems", "embedded"],
+    "theme": "Default Dark+",
+    "icon": "symbol-method",
+    "settings": "{\"editor.fontSize\":14,\"editor.tabSize\":4,\"editor.formatOnSave\":true,\"editor.rulers\":[120],\"C_Cpp.default.cppStandard\":\"c++20\",\"C_Cpp.default.cStandard\":\"c17\",\"C_Cpp.clang_format_fallbackStyle\":\"Google\",\"cmake.configureOnOpen\":true,\"terminal.integrated.defaultProfile.windows\":\"PowerShell 7 (full)\",\"terminal.integrated.shellIntegration.enabled\":true,\"workbench.colorTheme\":\"Default Dark+\"}",
+    "extensions": "[{\"identifier\":{\"id\":\"ms-vscode.cpptools\"}},{\"identifier\":{\"id\":\"ms-vscode.cmake-tools\"}},{\"identifier\":{\"id\":\"twxs.cmake\"}},{\"identifier\":{\"id\":\"ms-vscode.cpptools-extension-pack\"}}]",
+    "keybindings": "[]",
+    "globalState": "{}"
+}

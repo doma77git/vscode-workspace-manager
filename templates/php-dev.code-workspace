@@ -1,0 +1,79 @@
+{
+    "folders": [
+        { "path": "..", "name": "${PROJECT_NAME}" }
+    ],
+    "settings": {
+        "editor.formatOnSave": true,
+        "editor.tabSize": 4,
+        "editor.rulers": [120],
+        "files.encoding": "utf8",
+        "files.exclude": {
+            "**/.git": true,
+            "**/vendor": true,
+            "**/node_modules": true
+        },
+        "search.exclude": {
+            "**/vendor": true
+        },
+        "php.suggest.basic": false,
+        "php.validate.enable": true,
+        "[php]": {
+            "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+        },
+        "terminal.integrated.defaultProfile.windows": "PowerShell 7 (full)",
+        "terminal.integrated.shellIntegration.enabled": true
+    },
+    "extensions": {
+        "recommendations": [
+            "bmewburn.vscode-intelephense-client",
+            "xdebug.php-debug",
+            "eamodio.gitlens",
+            "editorconfig.editorconfig",
+            "streetsidesoftware.code-spell-checker"
+        ]
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Run Server",
+                "detail": "php -S localhost:8080",
+                "type": "shell",
+                "command": "php",
+                "args": ["-S", "localhost:8080", "-t", "${workspaceFolder}/public"],
+                "group": "none",
+                "presentation": { "reveal": "always", "panel": "new" }
+            },
+            {
+                "label": "Test (PHPUnit)",
+                "detail": "vendor/bin/phpunit",
+                "type": "shell",
+                "command": "php",
+                "args": ["vendor/bin/phpunit"],
+                "group": "test",
+                "presentation": { "reveal": "always", "panel": "new" },
+                "problemMatcher": []
+            },
+            {
+                "label": "Lint (PHPStan)",
+                "detail": "vendor/bin/phpstan analyse",
+                "type": "shell",
+                "command": "php",
+                "args": ["vendor/bin/phpstan", "analyse"],
+                "group": "test",
+                "presentation": { "reveal": "always", "panel": "new" },
+                "problemMatcher": []
+            },
+            {
+                "label": "Install Dependencies",
+                "detail": "composer install",
+                "type": "shell",
+                "command": "composer",
+                "args": ["install"],
+                "group": "none",
+                "presentation": { "reveal": "always", "panel": "new" }
+            }
+        ]
+    },
+    "git.remote": "${GIT_REMOTE}"
+}

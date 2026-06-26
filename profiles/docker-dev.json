@@ -1,0 +1,12 @@
+{
+    "name": "docker-dev",
+    "version": "1.0",
+    "description": "Docker development — containers, compose, registries",
+    "tags": ["docker", "containers", "devops", "infra"],
+    "theme": "Default Dark+",
+    "icon": "symbol-structure",
+    "settings": "{\"editor.fontSize\":14,\"editor.tabSize\":4,\"editor.formatOnSave\":true,\"editor.rulers\":[120],\"docker.explorer.openOnStart\":false,\"terminal.integrated.defaultProfile.windows\":\"PowerShell 7 (full)\",\"terminal.integrated.shellIntegration.enabled\":true,\"workbench.colorTheme\":\"Default Dark+\"}",
+    "extensions": "[{\"identifier\":{\"id\":\"ms-azuretools.vscode-docker\"}},{\"identifier\":{\"id\":\"ms-vscode-remote.remote-containers\"}}]",
+    "keybindings": "[]",
+    "globalState": "{}"
+}

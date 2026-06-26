@@ -1,0 +1,12 @@
+{
+    "name": "java-dev",
+    "version": "1.0",
+    "description": "Java development — IntelliJ-like extensions, Maven, Gradle, JUnit",
+    "tags": ["java", "maven", "gradle", "spring", "backend"],
+    "theme": "Default Dark+",
+    "icon": "symbol-class",
+    "settings": "{\"editor.fontSize\":14,\"editor.tabSize\":4,\"editor.formatOnSave\":true,\"editor.rulers\":[120],\"java.server.launchMode\":\"Standard\",\"java.compile.nullAnalysis.mode\":\"automatic\",\"java.configuration.updateBuildConfiguration\":\"interactive\",\"terminal.integrated.defaultProfile.windows\":\"PowerShell 7 (full)\",\"terminal.integrated.shellIntegration.enabled\":true,\"workbench.colorTheme\":\"Default Dark+\"}",
+    "extensions": "[{\"identifier\":{\"id\":\"vscjava.vscode-java-pack\"}},{\"identifier\":{\"id\":\"vscjava.vscode-maven\"}},{\"identifier\":{\"id\":\"vscjava.vscode-gradle\"}},{\"identifier\":{\"id\":\"vscjava.vscode-spring-initializr\"}}]",
+    "keybindings": "[]",
+    "globalState": "{}"
+}

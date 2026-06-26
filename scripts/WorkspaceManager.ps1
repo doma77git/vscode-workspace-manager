@@ -65,6 +65,8 @@ function Invoke-ScanProject {
         @{ File = "build.sbt";            Stack = "Scala";            Profile = "scala-dev" }
         @{ File = "pom.xml";              Stack = "Java / Maven";     Profile = "java-dev" }
         @{ File = "build.gradle";         Stack = "Java / Gradle";    Profile = "java-dev" }
+        @{ File = "build.gradle.kts";     Stack = "Kotlin";           Profile = "kotlin-dev" }
+        @{ File = "composer.json";        Stack = "PHP";              Profile = "php-dev" }
         @{ File = "Cargo.toml";           Stack = "Rust";             Profile = "rust-dev" }
         @{ File = "go.mod";               Stack = "Go";               Profile = "go-dev" }
         @{ File = "Dockerfile";           Stack = "Docker";           Profile = "docker-dev" }

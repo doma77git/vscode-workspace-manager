@@ -52,6 +52,8 @@ $IndicatorMap = @{
     "build.sbt"       = @{ Stack = "Scala";         Profile = "scala-dev" }
     "pom.xml"         = @{ Stack = "Java / Maven";  Profile = "java-dev" }
     "build.gradle"    = @{ Stack = "Java / Gradle"; Profile = "java-dev" }
+    "build.gradle.kts" = @{ Stack = "Kotlin";       Profile = "kotlin-dev" }
+    "composer.json"   = @{ Stack = "PHP";           Profile = "php-dev" }
     "Cargo.toml"      = @{ Stack = "Rust";          Profile = "rust-dev" }
     "go.mod"          = @{ Stack = "Go";            Profile = "go-dev" }
     "Dockerfile"      = @{ Stack = "Docker";        Profile = "docker-dev" }

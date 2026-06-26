@@ -1,0 +1,12 @@
+{
+    "name": "ruby-dev",
+    "version": "1.0",
+    "description": "Ruby development — Ruby LSP, Solargraph, RuboCop, RSpec",
+    "tags": ["ruby", "rails", "sinatra", "backend"],
+    "theme": "Default Dark+",
+    "icon": "symbol-key",
+    "settings": "{\"editor.fontSize\":14,\"editor.tabSize\":2,\"editor.formatOnSave\":true,\"editor.rulers\":[120],\"rubyLsp.enabled\":true,\"[ruby]\":{\"editor.defaultFormatter\":\"Shopify.ruby-lsp\",\"editor.tabSize\":2},\"terminal.integrated.defaultProfile.windows\":\"PowerShell 7 (full)\",\"terminal.integrated.shellIntegration.enabled\":true,\"workbench.colorTheme\":\"Default Dark+\"}",
+    "extensions": "[{\"identifier\":{\"id\":\"Shopify.ruby-lsp\"}},{\"identifier\":{\"id\":\"castwide.solargraph\"}},{\"identifier\":{\"id\":\"rebornix.ruby\"}}]",
+    "keybindings": "[]",
+    "globalState": "{}"
+}

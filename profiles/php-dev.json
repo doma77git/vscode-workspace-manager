@@ -1,0 +1,12 @@
+{
+    "name": "php-dev",
+    "version": "1.0",
+    "description": "PHP development — Intelephense, Xdebug, PHPUnit, Composer",
+    "tags": ["php", "laravel", "symfony", "wordpress", "web"],
+    "theme": "Default Dark+",
+    "icon": "symbol-value",
+    "settings": "{\"editor.fontSize\":14,\"editor.tabSize\":4,\"editor.formatOnSave\":true,\"editor.rulers\":[120],\"php.suggest.basic\":false,\"php.validate.enable\":true,\"[php]\":{\"editor.defaultFormatter\":\"bmewburn.vscode-intelephense-client\"},\"terminal.integrated.defaultProfile.windows\":\"PowerShell 7 (full)\",\"terminal.integrated.shellIntegration.enabled\":true,\"workbench.colorTheme\":\"Default Dark+\"}",
+    "extensions": "[{\"identifier\":{\"id\":\"bmewburn.vscode-intelephense-client\"}},{\"identifier\":{\"id\":\"xdebug.php-debug\"}},{\"identifier\":{\"id\":\"brapifra.phpserver\"}}]",
+    "keybindings": "[]",
+    "globalState": "{}"
+}

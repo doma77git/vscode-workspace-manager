@@ -1,0 +1,12 @@
+{
+    "name": "scala-dev",
+    "version": "1.0",
+    "description": "Scala development — Metals, sbt, Scala 3",
+    "tags": ["scala", "sbt", "mill", "fp", "big-data"],
+    "theme": "Default Dark+",
+    "icon": "symbol-interface",
+    "settings": "{\"editor.fontSize\":14,\"editor.tabSize\":2,\"editor.formatOnSave\":true,\"editor.rulers\":[120],\"metals.javaHome\":\"${env:JAVA_HOME}\",\"[scala]\":{\"editor.defaultFormatter\":\"scalameta.metals\"},\"terminal.integrated.defaultProfile.windows\":\"PowerShell 7 (full)\",\"terminal.integrated.shellIntegration.enabled\":true,\"workbench.colorTheme\":\"Default Dark+\"}",
+    "extensions": "[{\"identifier\":{\"id\":\"scalameta.metals\"}},{\"identifier\":{\"id\":\"scala-lang.scala\"}}]",
+    "keybindings": "[]",
+    "globalState": "{}"
+}

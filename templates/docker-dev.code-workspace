@@ -1,0 +1,68 @@
+{
+    "folders": [
+        { "path": "..", "name": "${PROJECT_NAME}" }
+    ],
+    "settings": {
+        "editor.formatOnSave": true,
+        "editor.tabSize": 4,
+        "editor.rulers": [120],
+        "files.encoding": "utf8",
+        "files.exclude": {
+            "**/.git": true,
+            "**/node_modules": true
+        },
+        "docker.explorer.openOnStart": false,
+        "terminal.integrated.defaultProfile.windows": "PowerShell 7 (full)",
+        "terminal.integrated.shellIntegration.enabled": true
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-azuretools.vscode-docker",
+            "ms-vscode-remote.remote-containers",
+            "eamodio.gitlens",
+            "editorconfig.editorconfig"
+        ]
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Build Image",
+                "detail": "docker build -t <name> .",
+                "type": "shell",
+                "command": "docker",
+                "args": ["build", "-t", "${workspaceFolderBasename}", "."],
+                "group": "build",
+                "presentation": { "reveal": "always", "panel": "new" }
+            },
+            {
+                "label": "Run Container",
+                "detail": "docker run <image>",
+                "type": "shell",
+                "command": "docker",
+                "args": ["run", "--rm", "-it", "${workspaceFolderBasename}"],
+                "group": "none",
+                "presentation": { "reveal": "always", "panel": "new" }
+            },
+            {
+                "label": "Compose Up",
+                "detail": "docker compose up",
+                "type": "shell",
+                "command": "docker",
+                "args": ["compose", "up", "-d"],
+                "group": "none",
+                "presentation": { "reveal": "always", "panel": "new" }
+            },
+            {
+                "label": "Compose Down",
+                "detail": "docker compose down",
+                "type": "shell",
+                "command": "docker",
+                "args": ["compose", "down"],
+                "group": "none",
+                "presentation": { "reveal": "always", "panel": "new" }
+            }
+        ]
+    },
+    "git.remote": "${GIT_REMOTE}"
+}
