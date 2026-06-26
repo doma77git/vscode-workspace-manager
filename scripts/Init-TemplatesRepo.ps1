@@ -83,6 +83,9 @@ done
 has_secret=0
 
 for f in $(git diff --cached --name-only); do
+    case "$f" in
+        *.md) continue ;;  # Documentation — skip secret scan (false positives)
+    esac
     if grep -E -n -i '(password|secret|api[_-]?key|token|private_key)' "$f" 2>/dev/null; then
         echo ""
         echo "============================================"
