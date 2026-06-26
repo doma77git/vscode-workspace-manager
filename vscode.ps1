@@ -190,7 +190,7 @@ function Show-Menu($tools) {
 
 # ── Dispatch ───────────────────────────────────────
 
-function Invoke-Tool($tool, $args) {
+function Invoke-Tool($tool) {
     $fullPath = Join-Path $VSCodeRoot $tool.path
     if (-not (Test-Path $fullPath)) {
         Write-Host "[ERROR] Tool '$($tool.id)' not found at: $fullPath" -ForegroundColor Red
