@@ -74,6 +74,10 @@ $scriptsDir = Join-Path $moduleDir "scripts"
 . (Join-Path $scriptsDir "Invoke-OpenDocs.ps1")
 . (Join-Path $scriptsDir "Invoke-About.ps1")
 . (Join-Path $scriptsDir "Invoke-ScheduleTasks.ps1")
+. (Join-Path $scriptsDir "Invoke-TemplateOperations.ps1")
+. (Join-Path $scriptsDir "Invoke-ProfileOperations.ps1")
+. (Join-Path $scriptsDir "Invoke-TrustOperations.ps1")
+. (Join-Path $scriptsDir "Invoke-WorkspaceOperations.ps1")
 
 # Aliases
 New-Alias -Name wsm -Value (Join-Path $scriptsDir "WorkspaceManager.ps1") -Force
