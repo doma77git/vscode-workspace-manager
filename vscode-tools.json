@@ -22,11 +22,20 @@
     {
       "id": "pm-import",
       "name": "Project-Manager Import",
-      "description": "Import/export compatibility with alefragnani/vscode-project-manager",
+      "description": "Import/export/scan/sync with alefragnani/vscode-project-manager",
       "path": "Templates\\scripts\\Import-Export-PM.ps1",
       "type": "ps1",
       "category": "Interop",
       "args": ""
+    },
+    {
+      "id": "pm-scan",
+      "name": "PM Repo Scanner",
+      "description": "Auto-discover Git repos and create templates (PM-compatible)",
+      "path": "Templates\\scripts\\Import-Export-PM.ps1",
+      "type": "ps1",
+      "category": "Interop",
+      "args": "-Scan"
     },
     {
       "id": "multiboot",

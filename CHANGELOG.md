@@ -83,6 +83,8 @@ All notable changes to the VS Code Workspace Manager.
 - `docs/TERMINAL.md` — terminal profiles, shell integration, tasks guide
 - Terminal profile configurations in sample workspace (6 profiles)
 - Sample tasks in sample workspace (7 tasks: 6 individual + 1 compound)
+- `scripts/Import-Export-PM.ps1` — full interop with alefragnani/vscode-project-manager: import, export, auto-discover Git repos (scan), watch-projects.json (sync), tag metadata round-trip
+- `vscode-tools.json` — added `pm-import` and `pm-scan` registry entries under Interop category
 
 ### Changed
 - `.github/workflows/validate.yml` — checks `skills/` dir, new required files (`LICENSE`, `.editorconfig`, `SECURITY.md`, `CONTRIBUTING.md`), terminal profile count, task count, required docs

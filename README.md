@@ -25,6 +25,7 @@
 | Self-update from git remote | `scripts/Update-Self.ps1` / `make update` / `npm run update` |
 | Run from any directory | `wsm` / `wsm validate` / `wsm test` (if in PATH, or via `C:\VSCode\wsm.cmd`) |
 | Universal launcher (all tools) | `vscode` / `vscode list` / `vscode wsm validate` (discover + dispatch any tool)
+| Interop with PM extension | `vscode pm-import` / `vscode pm-scan` (import/export/scan/sync with alefragnani/vscode-project-manager)
 
 ## 30-Second Start
 
