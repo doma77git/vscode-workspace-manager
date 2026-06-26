@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "tools": [
+    {
+      "id": "wsm",
+      "name": "Workspace Manager",
+      "description": "Manage VS Code workspaces, profiles, trust, BYOK",
+      "path": "Templates\\wsm.ps1",
+      "type": "ps1",
+      "category": "VS Code",
+      "args": ""
+    },
+    {
+      "id": "multiboot",
+      "name": "Build Multiboot",
+      "description": "WinPE + Ventoy multiboot USB builder",
+      "path": "Build-Multiboot-Final.ps1",
+      "type": "ps1",
+      "category": "System",
+      "args": ""
+    }
+  ]
+}
