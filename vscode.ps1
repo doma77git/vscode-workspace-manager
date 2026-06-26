@@ -120,3 +120,70 @@ function Get-AllTools {
     }
     return $result
 }
+
+# ── Menu rendering ─────────────────────────────────
+
+function Show-Menu($tools) {
+    try { Clear-Host } catch { try { [Console]::Clear() } catch {} }
+    $termWidth = if ($host.UI.RawUI.WindowSize.Width -gt 0) { $host.UI.RawUI.WindowSize.Width } else { 80 }
+    $w = [Math]::Min($termWidth - 2, 72)
+    $bar = "-" * $w
+
+    Write-Host ("╭{0}╮" -f $bar) -ForegroundColor Cyan
+    Write-Host "│" -NoNewline -ForegroundColor Cyan
+    Write-Host "  🏠  C:\VSCode — Universal Launcher" -ForegroundColor White -NoNewline
+    $pad = $w - 32
+    if ($pad -gt 0) { Write-Host (" " * $pad) -NoNewline }
+    Write-Host " │" -ForegroundColor Cyan
+    Write-Host ("├{0}┤" -f $bar) -ForegroundColor Cyan
+
+    # Group by category, preserve registry order (not alphabetical)
+    $categories = [System.Collections.Generic.List[object]]::new()
+    $seenCats = @{}
+    foreach ($tool in $tools) {
+        $cat = if ($tool.category) { $tool.category } else { "Other" }
+        if (-not $seenCats.ContainsKey($cat)) {
+            $seenCats[$cat] = $true
+            $categories.Add(@{ Name = $cat; Tools = @($tools | Where-Object { ($_.category -eq $cat) -or (-not $_.category -and $cat -eq 'Other') }) })
+        }
+    }
+
+    $index = 1
+    $map = @{}
+    foreach ($group in $categories) {
+        $header = "── $($group.Name) "
+        $headerLen = 6 + $group.Name.Length
+        $pad = $w - 2 - $headerLen
+        Write-Host "│" -NoNewline -ForegroundColor Cyan
+        Write-Host "  $header" -NoNewline -ForegroundColor DarkGray
+        if ($pad -gt 0) { Write-Host ("-" * $pad) -NoNewline }
+        Write-Host " │" -ForegroundColor Cyan
+
+        foreach ($tool in $group.Tools) {
+            $fullPath = Join-Path $VSCodeRoot $tool.path
+            $exists = Test-Path $fullPath -ErrorAction SilentlyContinue
+            $marker = if ($exists) { "✅" } else { "⚠️ " }
+            $color = if ($exists) { "Green" } else { "Yellow" }
+            $label = "[$index]$marker $($tool.name)"
+            $rest = $w - 4 - $label.Length
+            Write-Host "│ " -NoNewline -ForegroundColor Cyan
+            Write-Host $label -NoNewline -ForegroundColor White
+            if ($rest -gt 1 -and $tool.description) {
+                Write-Host " " -NoNewline
+                $desc = if ($tool.description.Length -gt $rest - 1) { $tool.description.Substring(0, $rest - 1) } else { $tool.description }
+                Write-Host $desc -NoNewline -ForegroundColor DarkGray
+                $rest = $rest - 1 - $desc.Length
+            }
+            if ($rest -gt 0) { Write-Host (" " * $rest) -NoNewline }
+            Write-Host " │" -ForegroundColor Cyan
+            $map["$index"] = $tool
+            $index++
+        }
+    }
+
+    Write-Host ("╰{0}╯" -f $bar) -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "  [0] Exit   ·   ? Help   ·   L List" -ForegroundColor DarkGray
+    Write-Host ""
+    return $map
+}
