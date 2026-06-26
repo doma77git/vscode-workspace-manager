@@ -52,7 +52,7 @@ function Initialize-Registry {
             if ($line -match 'desc="([^"]*)"') { $tool.desc = $matches[1] }
             if ($line -match 'category="([^"]*)"') { $tool.category = $matches[1] }
             if ($tool.id) {
-                $relPath = $f.FullName.Replace($VSCodeRoot + "\", "").Replace("\", "\\")
+                $relPath = $f.FullName.Replace($VSCodeRoot + "\", "")
                 $tool.path = $relPath
                 $tool.type = $f.Extension.TrimStart('.')
                 $tool.args = ""
