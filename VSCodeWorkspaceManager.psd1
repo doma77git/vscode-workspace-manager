@@ -1,5 +1,5 @@
 @{
-    RootModule        = 'WorkspaceManager.psm1'
+    RootModule        = 'VSCodeWorkspaceManager.psm1'
     ModuleVersion = '1.1.0'
     GUID              = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'
     Author            = 'VS Code Workspace Manager Contributors'
@@ -29,7 +29,20 @@
         'Get-DocCount',
         'Get-ScriptCount',
         'Get-GitRemote',
-        'Get-TemplatesRoot'
+        'Get-TemplatesRoot',
+        'Get-TestCount',
+        'Validate-JsonFile',
+        'New-WorkspaceTemplate',
+        'Save-WorkspaceTemplate',
+        'Search-Templates',
+        'Get-ProfileList',
+        'Import-Profile',
+        'Export-Profile',
+        'Export-AllProfiles',
+        'Set-DeepSeekBYOK',
+        'Set-EmptyWorkspaceTrust',
+        'Check-VSCodeSettings',
+        'Open-Workspace'
     )
     CmdletsToExport   = @()
     VariablesToExport = @()
@@ -43,23 +56,29 @@
         }
     }
     FileList          = @(
-        'WorkspaceManager.ps1',
-        'Helper-Functions.ps1',
-        'Invoke-ValidateChecks.ps1',
-        'Invoke-OpenDocs.ps1',
-        'Invoke-About.ps1',
-        'Invoke-ScheduleTasks.ps1',
-        'Run-Validate.ps1',
-        'Run-Checks.ps1',
-        'Run-Tests.ps1',
-        'Run-All.ps1',
-        'Check-Environment.ps1',
-        'Open-WithProfile.ps1',
-        'Update-Self.ps1',
-        'Auto-Backup.ps1',
-        'Schedule-Tasks.ps1',
-        'Recommend-Extensions.ps1',
-        'Navigate-Project.ps1',
-        'Init-TemplatesRepo.ps1'
+        'VSCodeWorkspaceManager.psm1',
+        'VSCodeWorkspaceManager.psd1',
+        'scripts/WorkspaceManager.ps1',
+        'scripts/Helper-Functions.ps1',
+        'scripts/Invoke-ValidateChecks.ps1',
+        'scripts/Invoke-OpenDocs.ps1',
+        'scripts/Invoke-About.ps1',
+        'scripts/Invoke-ScheduleTasks.ps1',
+        'scripts/Invoke-TemplateOperations.ps1',
+        'scripts/Invoke-ProfileOperations.ps1',
+        'scripts/Invoke-TrustOperations.ps1',
+        'scripts/Invoke-WorkspaceOperations.ps1',
+        'scripts/Run-Validate.ps1',
+        'scripts/Run-Checks.ps1',
+        'scripts/Run-Tests.ps1',
+        'scripts/Run-All.ps1',
+        'scripts/Check-Environment.ps1',
+        'scripts/Open-WithProfile.ps1',
+        'scripts/Update-Self.ps1',
+        'scripts/Auto-Backup.ps1',
+        'scripts/Schedule-Tasks.ps1',
+        'scripts/Recommend-Extensions.ps1',
+        'scripts/Navigate-Project.ps1',
+        'scripts/Init-TemplatesRepo.ps1'
     )
 }
