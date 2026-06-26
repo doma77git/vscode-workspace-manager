@@ -69,3 +69,54 @@ function Initialize-Registry {
     Write-Registry @($found)
     return $found
 }
+
+# ── Tool discovery ─────────────────────────────────
+
+function Get-AllTools {
+    <# Returns all tools: registry entries first, then scan discoveries.
+       Registry wins on duplicate IDs. Scan duplicates get a warning. #>
+    $tools = @(Read-Registry)
+    $seen = @{}
+    $result = @()
+    foreach ($t in $tools) {
+        $seen[$t.id] = $true
+        $result += $t
+    }
+
+    # Scan for unregistered tools
+    $files = Get-ChildItem -Path $VSCodeRoot -Recurse -Include @("*.ps1","*.bat","*.cmd") -ErrorAction SilentlyContinue |
+        Where-Object { $_.FullName -notmatch '\\.git\\' }
+    foreach ($f in $files) {
+        $matches = Select-String -Path $f.FullName -Pattern '### VSCodeTool:' -SimpleMatch -ErrorAction SilentlyContinue
+        foreach ($m in $matches) {
+            $line = $m.Line
+            $id = ""; if ($line -match 'id="([^"]*)"') { $id = $matches[1] }
+            if (-not $id) { continue }
+
+            if ($seen.ContainsKey($id)) {
+                Write-Host "[WARN] Duplicate tool ID '$id' — skipping scan entry" -ForegroundColor Yellow
+                continue
+            }
+            $seen[$id] = $true
+
+            $name = ""; if ($line -match 'name="([^"]*)"') { $name = $matches[1] }
+            $desc = ""; if ($line -match 'desc="([^"]*)"') { $desc = $matches[1] }
+            $cat = "Discovered"
+            if ($line -match 'category="([^"]*)"') { $cat = $matches[1] }
+
+            $relPath = $f.FullName.Replace($VSCodeRoot + "\", "")
+            $ext = $f.Extension.TrimStart('.')
+
+            $result += [PSCustomObject]@{
+                id = $id
+                name = $name
+                description = $desc
+                path = $relPath
+                type = $ext
+                category = $cat
+                args = ""
+            }
+        }
+    }
+    return $result
+}
