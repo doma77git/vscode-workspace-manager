@@ -11,6 +11,8 @@
     pwsh -NoProfile -File scripts\Full-Update.ps1 -DryRun
 #>
 
+[CmdletBinding()]
+
 param([switch]$DryRun)
 
 $ErrorActionPreference = "Stop"

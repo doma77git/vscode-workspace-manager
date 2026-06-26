@@ -12,6 +12,8 @@
     pwsh -NoProfile -File scripts\Maintain-Project.ps1 -Quick
 #>
 
+[CmdletBinding()]
+
 param([switch]$Quick)
 
 $ErrorActionPreference = "Stop"

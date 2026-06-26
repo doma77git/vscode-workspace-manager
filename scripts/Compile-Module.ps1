@@ -20,6 +20,8 @@
     # Also creates exports/compiled/vscode-workspace-manager-v1.1.0.zip
 #>
 
+[CmdletBinding()]
+
 param(
     [string]$OutputPath = "",
     [string]$Version = "",

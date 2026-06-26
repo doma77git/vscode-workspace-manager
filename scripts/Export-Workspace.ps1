@@ -21,6 +21,8 @@
     pwsh -NoProfile -File scripts\Export-Workspace.ps1 -Template my-app.code-workspace -OutputDir ..\my-project
 #>
 
+[CmdletBinding()]
+
 param(
     [string]$Template = "sample-project.code-workspace",
     [string]$OutputDir = ".",

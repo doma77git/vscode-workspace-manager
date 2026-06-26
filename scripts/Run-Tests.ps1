@@ -12,6 +12,8 @@
     pwsh -NoProfile -File scripts\Run-Tests.ps1 -Quiet
 #>
 
+[CmdletBinding()]
+
 param(
     [switch]$Json,
     [switch]$Quiet

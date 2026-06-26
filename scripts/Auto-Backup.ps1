@@ -18,6 +18,8 @@
     # Backs up to D:\backups, keeps last 10 backups
 #>
 
+[CmdletBinding()]
+
 param(
     [string]$OutputPath = "",
     [int]$KeepLast = 5

@@ -17,6 +17,8 @@
     pwsh -File scripts/Runner.ps1                # Interactive
 #>
 
+[CmdletBinding()]
+
 param(
     [ValidateSet("test","validate","checks","all","doctor","backup","repair","compile","export","update","manager","navigate","recommend","ext-check","docs-gen")]
     [string]$Task = "",

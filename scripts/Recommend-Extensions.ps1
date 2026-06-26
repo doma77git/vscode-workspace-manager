@@ -22,6 +22,8 @@
     # Outputs install commands to copy-paste
 #>
 
+[CmdletBinding()]
+
 param(
     [string]$Path = ".",
     [ValidateSet("table", "json", "install")]

@@ -10,6 +10,8 @@
     pwsh -NoProfile -File scripts\Run-Checks.ps1 -Json
 #>
 
+[CmdletBinding()]
+
 param([switch]$Json)
 
 $ErrorActionPreference = "Stop"

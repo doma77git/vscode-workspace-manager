@@ -26,6 +26,23 @@ if command -v pwsh > /dev/null 2>&1; then
             has_error=1
         fi
     fi
+
+    # Auto-update project stats and gists before push
+    if [ $has_error -eq 0 ]; then
+        echo ""
+        echo "  Auto-updating stats and gists..."
+        if [ -f "$TEMPLATES_ROOT/scripts/Generate-Docs.ps1" ]; then
+            pwsh -NoProfile -File "$TEMPLATES_ROOT/scripts/Generate-Docs.ps1" -Quiet
+        fi
+        if [ -f "$TEMPLATES_ROOT/scripts/Update-Gists.ps1" ]; then
+            pwsh -NoProfile -File "$TEMPLATES_ROOT/scripts/Update-Gists.ps1" -Quiet
+        fi
+        # Stage any auto-generated changes
+        if [ -n "$(git status --porcelain -- PROJECT-STATS.md prompts/)" ]; then
+            git add PROJECT-STATS.md prompts/ 2>/dev/null
+            echo "  Staged auto-updated stats and gists."
+        fi
+    fi
 else
     echo "[SKIP] PowerShell (pwsh) not found — skipping."
 fi

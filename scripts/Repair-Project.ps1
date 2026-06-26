@@ -18,6 +18,8 @@
     # Repair everything without asking
 #>
 
+[CmdletBinding()]
+
 param(
     [switch]$DryRun,
     [switch]$Force

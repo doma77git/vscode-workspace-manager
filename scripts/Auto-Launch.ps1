@@ -11,6 +11,8 @@
     pwsh -NoProfile -File scripts\Auto-Launch.ps1 -Action status
 #>
 
+[CmdletBinding()]
+
 param([ValidateSet("install","uninstall","status")][string]$Action = "status")
 
 $ErrorActionPreference = "Stop"

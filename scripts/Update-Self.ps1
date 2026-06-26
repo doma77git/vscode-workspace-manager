@@ -20,6 +20,8 @@
     # Silent update, no confirmation, skip tests.
 #>
 
+[CmdletBinding()]
+
 param(
     [switch]$DryRun,
     [switch]$Force,

@@ -22,6 +22,8 @@
     # Machine-readable output
 #>
 
+[CmdletBinding()]
+
 param(
     [switch]$Quick,
     [switch]$Json

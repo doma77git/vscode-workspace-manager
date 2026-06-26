@@ -13,6 +13,8 @@
     # Checks all extensions in templates/ and profiles/
 #>
 
+[CmdletBinding()]
+
 param([switch]$Json)
 
 $ErrorActionPreference = "Stop"

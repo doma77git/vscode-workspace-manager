@@ -31,6 +31,8 @@
     # Prints what would be done without opening anything.
 #>
 
+[CmdletBinding()]
+
 param(
     [string]$Path = ".",
     [string]$Profile = "",

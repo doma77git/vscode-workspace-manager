@@ -23,6 +23,8 @@
     # Removes all scheduled tasks
 #>
 
+[CmdletBinding()]
+
 param(
     [ValidateSet("install", "uninstall", "list")]
     [string]$Action = "list",

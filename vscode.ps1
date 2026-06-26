@@ -290,6 +290,7 @@ switch ($action) {
 # ── Tab completion ──────────────────────────────────
 
 Register-ArgumentCompleter -CommandName 'vscode.ps1', 'vscode' -ParameterName 'id' -ScriptBlock {
+    [CmdletBinding()]
     param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
     $root = Split-Path -Parent $commandAst.Extent.File
     $regPath = Join-Path $root "vscode-tools.json"
