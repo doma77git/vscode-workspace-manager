@@ -33,9 +33,9 @@ function Set-DeepSeekBYOK {
         notes = "Replace this placeholder with real KMS integration. See docs/BYOK-GUIDE.md"
         kmsInstructions = @{
             description = "This file contains metadata only. Do NOT store real keys here."
-            azureKeyVault = @{ command = 'az keyvault show --vault-name <your-vault> --name deepseek-key --query value -o tsv' }
-            awsKms = @{ command = 'aws kms decrypt --key-id alias/deepseek --ciphertext-blob fileb://encrypted-key.bin --output text --query Plaintext' }
-            hashicorpVault = @{ command = 'vault kv get -field=key <path>/deepseek' }
+            azureKeyVault = @{ command = "az keyvault secret show --vault-name <your-vault> --name deepseek-key --query value -o tsv" }
+            awsKms = @{ command = "aws kms decrypt --key-id alias/deepseek --ciphertext-blob fileb://encrypted-key.bin --output text --query Plaintext" }
+            hashicorpVault = @{ command = "vault kv get -field=key secret/deepseek" }
         }
     }
 
