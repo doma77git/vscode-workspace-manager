@@ -76,9 +76,9 @@ backup:
 schedule:
 	@pwsh -NoProfile -File scripts/Schedule-Tasks.ps1 -Action list
 
-## recommend   Recommend VS Code extensions for a project (set PATH=)
+## recommend   Recommend VS Code extensions for a project (set DIR=)
 recommend:
-	@pwsh -NoProfile -File scripts/Recommend-Extensions.ps1 -Path $(or $(PATH),.)
+	@pwsh -NoProfile -File scripts/Recommend-Extensions.ps1 -Path $(or $(DIR),.)
 
 ## maintain    Full maintenance: test → repair → backup → docs → clean
 maintain:

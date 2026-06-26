@@ -21,7 +21,7 @@ do {
 
     Write-Host "  ── Explore ───────────────────────────────────" -ForegroundColor DarkGray
     Write-Host "  1) 📁  Directory tree"
-    Write-Host "  2) 📄  Script catalog (12 scripts)"
+    Write-Host ("  2) 📄  Script catalog ({0} scripts)" -f (Get-ScriptCount))
     Write-Host "  3) 📚  Documentation index"
     Write-Host "  4) 📋  Menu option map"
     Write-Host ""
