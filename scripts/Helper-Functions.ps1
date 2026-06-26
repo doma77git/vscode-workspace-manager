@@ -13,13 +13,17 @@ function Get-TemplatesRoot {
     if (Test-Path env:TEMPLATES_ROOT) {
         return $env:TEMPLATES_ROOT
     }
-    if ($IsWindows -or (-not (Test-Path variable:IsWindows))) {
-        return "C:\VSCode\Templates"
-    } elseif ($IsLinux) {
-        return "$env:HOME/vscode/Templates"
-    } elseif ($IsMacOS) {
-        return "$env:HOME/vscode/Templates"
+    # Platform-aware fallback
+    if (Test-Path variable:IsWindows) {
+        if ($IsWindows)  { return "C:\VSCode\Templates" }
+        if ($IsLinux)    { return "$env:HOME/vscode/Templates" }
+        if ($IsMacOS)    { return "$env:HOME/vscode/Templates" }
     }
+    # PowerShell 5 on Windows (no $IsWindows variable)
+    if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
+        return "C:\VSCode\Templates"
+    }
+    # Last resort: derive from script location
     return Split-Path -Parent $PSScriptRoot
 }
 

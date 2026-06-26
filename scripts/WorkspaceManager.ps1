@@ -1,4 +1,6 @@
 # Cross-platform root detection
+$ErrorActionPreference = "Stop"
+
 if (-not (Test-Path env:TEMPLATES_ROOT)) {
     if ($IsWindows -or (-not (Test-Path variable:IsWindows))) {
         $TemplatesRoot = "C:\VSCode\Templates"
@@ -53,23 +55,24 @@ function Invoke-ScanProject {
     Write-Host "`nScanning: $scanPath" -ForegroundColor White
     Write-Host ("-" * 50)
 
-    $indicators = @()
-    $indicators += @{ File = "package.json";        Stack = "Node.js / Web";    Profile = "web-dev" }
-    $indicators += @{ File = "tsconfig.json";        Stack = "TypeScript";        Profile = "web-dev" }
-    $indicators += @{ File = "requirements.txt";     Stack = "Python";           Profile = "python-dev" }
-    $indicators += @{ File = "pyproject.toml";       Stack = "Python";           Profile = "python-dev" }
-    $indicators += @{ File = "Pipfile";              Stack = "Python";           Profile = "python-dev" }
-    $indicators += @{ File = "Gemfile";              Stack = "Ruby / Rails";     Profile = "ruby-dev" }
-    $indicators += @{ File = "build.sbt";            Stack = "Scala";            Profile = "scala-dev" }
-    $indicators += @{ File = "pom.xml";              Stack = "Java / Maven";     Profile = "java-dev" }
-    $indicators += @{ File = "build.gradle";         Stack = "Java / Gradle";    Profile = "java-dev" }
-    $indicators += @{ File = "Cargo.toml";           Stack = "Rust";             Profile = "rust-dev" }
-    $indicators += @{ File = "go.mod";               Stack = "Go";               Profile = "go-dev" }
-    $indicators += @{ File = "Dockerfile";           Stack = "Docker";           Profile = "docker-dev" }
-    $indicators += @{ File = "Makefile";             Stack = "C/C++ / General";  Profile = "cpp-dev" }
-    $indicators += @{ File = "CMakeLists.txt";       Stack = "C/C++ / CMake";    Profile = "cpp-dev" }
-    $indicators += @{ File = "*.sln";                Stack = ".NET";             Profile = "dotnet-dev" }
-    $indicators += @{ File = "*.csproj";             Stack = ".NET";             Profile = "dotnet-dev" }
+    $indicators = @(
+        @{ File = "package.json";        Stack = "Node.js / Web";    Profile = "web-dev" }
+        @{ File = "tsconfig.json";        Stack = "TypeScript";        Profile = "web-dev" }
+        @{ File = "requirements.txt";     Stack = "Python";           Profile = "python-dev" }
+        @{ File = "pyproject.toml";       Stack = "Python";           Profile = "python-dev" }
+        @{ File = "Pipfile";              Stack = "Python";           Profile = "python-dev" }
+        @{ File = "Gemfile";              Stack = "Ruby / Rails";     Profile = "ruby-dev" }
+        @{ File = "build.sbt";            Stack = "Scala";            Profile = "scala-dev" }
+        @{ File = "pom.xml";              Stack = "Java / Maven";     Profile = "java-dev" }
+        @{ File = "build.gradle";         Stack = "Java / Gradle";    Profile = "java-dev" }
+        @{ File = "Cargo.toml";           Stack = "Rust";             Profile = "rust-dev" }
+        @{ File = "go.mod";               Stack = "Go";               Profile = "go-dev" }
+        @{ File = "Dockerfile";           Stack = "Docker";           Profile = "docker-dev" }
+        @{ File = "Makefile";             Stack = "C/C++ / General";  Profile = "cpp-dev" }
+        @{ File = "CMakeLists.txt";       Stack = "C/C++ / CMake";    Profile = "cpp-dev" }
+        @{ File = "*.sln";                Stack = ".NET";             Profile = "dotnet-dev" }
+        @{ File = "*.csproj";             Stack = ".NET";             Profile = "dotnet-dev" }
+    )
 
     $found = @()
     foreach ($ind in $indicators) {
@@ -205,7 +208,9 @@ do {
                         }
                     }
                 }
-            } catch { }
+            } catch {
+            Write-Verbose "Auto-update check skipped: $($_.Exception.Message)"
+        }
         }
         $script:updateChecked = $true
     }
