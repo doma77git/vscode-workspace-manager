@@ -232,47 +232,58 @@ do {
         $branch = & git -C $TemplatesRoot rev-parse --abbrev-ref HEAD 2>$null
     } catch { $branch = ""; $gitDot = "○" }
 
-    # ── Modern Header ──────────────────────────
+    # ── Professional Header ─────────────────────
     $bar = "─" * $w
     Write-Host "╭$bar╮" -ForegroundColor Cyan
     Write-Host "│" -NoNewline -ForegroundColor Cyan
-    Write-Host "  Workspace Manager" -ForegroundColor White -NoNewline
-    Write-Host " · v1.1.0" -ForegroundColor DarkGray -NoNewline
-    $right = "$time  $gitDot $branch"
-    $pad = $w - 33 - $right.Length
-    if ($pad -gt 0) { Write-Host (" " * $pad) -NoNewline }
-    Write-Host " $right │" -ForegroundColor $(if ($gitDot -eq "●") { "Yellow" } else { "DarkGray" })
-    Write-Host "├$bar┤" -ForegroundColor Cyan
-    Write-Host "│" -NoNewline -ForegroundColor Cyan
-    Write-Host ("  $tCount templates  ·  $pCount profiles  ·  $sCount scripts") -ForegroundColor White -NoNewline
-    $pad = $w - 2 - 40
-    if ($pad -gt 0) { Write-Host (" " * $pad) -NoNewline }
-    Write-Host " │" -ForegroundColor Cyan
+    Write-Host "  ⚡ VS Code Workspace Manager" -ForegroundColor White -NoNewline
+    $right = "v1.1.0  $time  $gitDot $branch"
+    $pad = $w - 30 - $right.Length
+    if ($pad -gt 2) { Write-Host (" " * $pad) -NoNewline }
+    Write-Host " $right │" -ForegroundColor DarkGray
     Write-Host "╰$bar╯" -ForegroundColor Cyan
+
+    # Live stats line
+    Write-Host "  $tCount templates  ·  $pCount profiles  ·  $sCount scripts" -ForegroundColor DarkGray
+    if ($script:lastAction) {
+        Write-Host "  ◄  Last: $($script:lastAction)" -ForegroundColor Green
+    }
     Write-Host ""
 
-    # ── Tab bar ────────────────────────────────
-    Write-Host "  🏠  Workspaces" -ForegroundColor Cyan -NoNewline
-    Write-Host "   │   " -NoNewline -ForegroundColor DarkGray
-    Write-Host "🔧 Operations" -ForegroundColor Green -NoNewline
-    Write-Host "   │   " -NoNewline -ForegroundColor DarkGray
-    Write-Host "🛡️  Security" -ForegroundColor Magenta
+    # ── Section tabs ────────────────────────────
+    Write-Host "  ┌─ Workspaces ──┐  ┌─ Operations ──┐  ┌─ Security ──┐" -ForegroundColor DarkGray
+    Write-Host "  │" -NoNewline -ForegroundColor DarkGray
+    Write-Host " 🏠  New · Save" -ForegroundColor Cyan -NoNewline
+    Write-Host " │  " -NoNewline -ForegroundColor DarkGray
+    Write-Host "│" -NoNewline -ForegroundColor DarkGray
+    Write-Host " 🔧  Validate · Scan" -ForegroundColor Green -NoNewline
+    Write-Host " │  " -NoNewline -ForegroundColor DarkGray
+    Write-Host "│" -NoNewline -ForegroundColor DarkGray
+    Write-Host " 🛡️  BYOK · Trust" -ForegroundColor Magenta -NoNewline
+    Write-Host " │" -ForegroundColor DarkGray
+    Write-Host "  │" -NoNewline -ForegroundColor DarkGray
+    Write-Host " Open · Profiles    " -ForegroundColor Cyan -NoNewline
+    Write-Host " │  " -NoNewline -ForegroundColor DarkGray
+    Write-Host "│" -NoNewline -ForegroundColor DarkGray
+    Write-Host "  Init · Docs      " -ForegroundColor Green -NoNewline
+    Write-Host " │  " -NoNewline -ForegroundColor DarkGray
+    Write-Host "│" -NoNewline -ForegroundColor DarkGray
+    Write-Host "                    " -ForegroundColor Magenta -NoNewline
+    Write-Host " │" -ForegroundColor DarkGray
+    Write-Host "  └───────────────┘  └──────────────┘  └────────────┘" -ForegroundColor DarkGray
     Write-Host ""
 
     # ── Menu grid (sequential, grouped) ────────
-    Write-Host "  [1] 🆕 New template         [5] ✅ Validate checks"
-    Write-Host "  [2] 💾 Save template         [6] 🔬 Scan project"
-    Write-Host "  [3] 🚀 Open workspace        [7] 🏗️  Init new repo"
-    Write-Host "  [4] 👤 Profiles & export      [8] 📖 Open docs"
-    Write-Host "  [9] 🔑 DeepSeek BYOK         [10] 🛡️  Workspace trust"
-    Write-Host "  [13] 🔬 Scan project          [14] 🔄 Updates"
-    Write-Host "  [15] ⏰ Schedule"
+    Write-Host "  ► 1  🆕 New template         ► 5  ✅ Validate checks"
+    Write-Host "  ► 2  💾 Save template         ► 6  🔬 Scan project"
+    Write-Host "  ► 3  🚀 Open workspace        ► 7  🏗️  Init new repo"
+    Write-Host "  ► 4  👤 Profiles & export     ► 8  📖 Open docs"
+    Write-Host "  ► 9  🔑 DeepSeek BYOK         ► 10 🛡️  Workspace trust"
     Write-Host ""
 
     # ── Footer ─────────────────────────────────
     Write-Host "  $(('─' * $w))" -ForegroundColor DarkGray
-    $last = if ($script:lastAction) { "  ← $($script:lastAction)" } else { "" }
-    Write-Host "  [0] Exit   ·   R: Repair   ·   T: Test   ·   ?: Help & About   ·   U: Updates" -ForegroundColor DarkGray
+    Write-Host "  [0] Exit   ·   R: Repair   ·   T: Test   ·   ?: Help & About   ·   U: Updates   ·   S: Schedule" -ForegroundColor DarkGray
     Write-Host ""
 
     $choice = Read-Host "▶"
@@ -285,16 +296,20 @@ do {
             $script:lastAction = "Profiles"
             do {
                 Clear-Host
-                Write-Host "=== Profiles ===" -ForegroundColor Cyan
+                Write-Host "╭───────────────────╮" -ForegroundColor Cyan
+                Write-Host "│  👤 Profiles" -ForegroundColor Cyan -NoNewline
+                Write-Host "                     │" -ForegroundColor Cyan
+                Write-Host "╰───────────────────╯" -ForegroundColor Cyan
                 Write-Host ""
                 Get-ProfileList
                 Write-Host ""
-                Write-Host "  1) List profiles"
-                Write-Host "  2) Import profile"
-                Write-Host "  3) Export single profile"
-                Write-Host "  4) Export all profiles"
-                Write-Host "  0) Back"
-                $pChoice = Read-Host "Select"
+                Write-Host "  ► 1  List profiles"
+                Write-Host "  ► 2  Import profile"
+                Write-Host "  ► 3  Export single profile"
+                Write-Host "  ► 4  Export all profiles"
+                Write-Host "  ► 0  Back"
+                Write-Host ""
+                $pChoice = Read-Host "  ▶"
                 switch ($pChoice) {
                     "1" { Get-ProfileList; Pause }
                     "2" { Import-Profile }
