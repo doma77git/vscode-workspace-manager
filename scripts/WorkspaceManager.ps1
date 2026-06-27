@@ -188,10 +188,11 @@ function Invoke-UpdateCheck {
 # ==========================================
 $script:lastAction = ""
 do {
-    Clear-Host
+    try { Clear-Host } catch { Write-Host "" }
 
     # Terminal width detection
-    $termWidth = if ($host.UI.RawUI.WindowSize.Width -gt 0) { $host.UI.RawUI.WindowSize.Width } else { 80 }
+    try { $termWidth = $host.UI.RawUI.WindowSize.Width } catch { $termWidth = 80 }
+    if ($termWidth -le 0) { $termWidth = 80 }
     $w = [Math]::Min($termWidth - 2, 72)
 
     # Auto-update check (once per session)
@@ -295,7 +296,7 @@ do {
         "4"  {
             $script:lastAction = "Profiles"
             do {
-                Clear-Host
+                try { Clear-Host } catch { Write-Host "" }
                 Write-Host "╭───────────────────╮" -ForegroundColor Cyan
                 Write-Host "│  👤 Profiles" -ForegroundColor Cyan -NoNewline
                 Write-Host "                     │" -ForegroundColor Cyan
