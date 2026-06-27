@@ -66,25 +66,25 @@ You see a box-drawn menu with 15 options organized into sections:
 ╔════════════════════════════════════════════════╗
 ║  ⚙️  VS Code Workspace Manager v1.1.0         ║
 ╠════════════════════════════════════════════════╣
-║  📁 Templates: 1  │  📋 Profiles: 1            ║
+║  📁 Templates: 13 │ 📋 Profiles: 14           ║
 ╚════════════════════════════════════════════════╝
 
-  ── Workspace ──    ── Profiles ──    ── Security ──    ── Tools ──
-  1) 📄 Settings     7) 👤 Profiles    4) 🔑 BYOK        8) 🏗️  Init
-  2) 🆕 New template 13) 🔬 Scan      5) 🛡️  Trust      10) ✅ Validate
-  3) 💾 Save                                                11) 📖 Docs
-  6) 🚀 Open                                                12) ℹ️  About
-  9) 🔍 Search                                              14) 🔄 Updates
-                                                            15) ⏰ Schedule
+  🏠 Workspaces      🔧 Operations      🛡️ Security
+  1) 🆕 New template  5) ✅ Validate     9) 🔑 BYOK
+  2) 💾 Save          6) 🔬 Scan        10) 🛡️ Trust
+  3) 🚀 Open          7) 🏗️ Init
+  4) 👤 Profiles      8) 📖 Docs
+
+  R: Settings  ·  T: Test  ·  ?: Help  ·  U: Updates
 ```
 
-Pick **1** — it shows your VS Code environment health. Pick **12** — see project stats.
+Pick **1** — create a template. Pick **5** — run validation. Pick **8** — browse docs.
 
 ---
 
 ## Minute 3 — Create Your First Template
 
-Select **2 → New workspace template**:
+Select **[1] New template**:
 
 ```
 Template name: quick-test

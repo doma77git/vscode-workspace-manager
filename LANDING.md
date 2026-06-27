@@ -16,7 +16,6 @@
 ║  📋 6 profiles    │  python-dev · web-dev · go-dev      ║
 ║                    │  rust-dev · sample · template       ║
 ║  ⚡ 34 scripts     │  runners · checkers · helpers       ║
-║                    │  backup · scheduler · compiler      ║
 ║                    │  launchers · update · repair        ║
 ║  📖 21 docs        │  guides · UML · PRD · HOWTO         ║
 ║  💬 13 prompts     │  goals · flows · gists · recipes    ║

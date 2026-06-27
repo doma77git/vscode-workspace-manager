@@ -16,7 +16,7 @@
 | Templates | 13 |
 | Profiles | 14 |
 | Test checks | 94 |
-| Menu options | 15 |
+| Menu options | 10 |
 | Makefile targets | 26 |
 | npm scripts | 29 |
 | Total tracked files | 182 |

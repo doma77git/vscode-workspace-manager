@@ -252,22 +252,19 @@ do {
     Write-Host ""
 
     # ── Tab bar ────────────────────────────────
-    Write-Host "  ⚒️  Workspace" -ForegroundColor Blue -NoNewline
+    Write-Host "  🏠  Workspaces" -ForegroundColor Cyan -NoNewline
     Write-Host "   │   " -NoNewline -ForegroundColor DarkGray
-    Write-Host "👤 Profiles" -ForegroundColor Magenta -NoNewline
+    Write-Host "🔧 Operations" -ForegroundColor Green -NoNewline
     Write-Host "   │   " -NoNewline -ForegroundColor DarkGray
-    Write-Host "🛡️  Security" -ForegroundColor Red -NoNewline
-    Write-Host "   │   " -NoNewline -ForegroundColor DarkGray
-    Write-Host "🔧 Tools" -ForegroundColor Green
+    Write-Host "🛡️  Security" -ForegroundColor Magenta
     Write-Host ""
 
-    # ── Menu grid ──────────────────────────────
-    Write-Host "  [1] 📄 Check settings       [2] 🆕 New template"
-    Write-Host "  [3] 💾 Save template         [6] 🚀 Open workspace"
-    Write-Host "  [9] 🔍 Search templates      [7] 👤 Profiles"
-    Write-Host "  [4] 🔑 DeepSeek BYOK         [5] 🛡️  Trust"
-    Write-Host "  [8] 🏗️  Init repo             [10] ✅ Validate"
-    Write-Host "  [11] 📖 Open docs             [12] ℹ️  About"
+    # ── Menu grid (sequential, grouped) ────────
+    Write-Host "  [1] 🆕 New template         [5] ✅ Validate checks"
+    Write-Host "  [2] 💾 Save template         [6] 🔬 Scan project"
+    Write-Host "  [3] 🚀 Open workspace        [7] 🏗️  Init new repo"
+    Write-Host "  [4] 👤 Profiles & export      [8] 📖 Open docs"
+    Write-Host "  [9] 🔑 DeepSeek BYOK         [10] 🛡️  Workspace trust"
     Write-Host "  [13] 🔬 Scan project          [14] 🔄 Updates"
     Write-Host "  [15] ⏰ Schedule"
     Write-Host ""
@@ -275,30 +272,27 @@ do {
     # ── Footer ─────────────────────────────────
     Write-Host "  $(('─' * $w))" -ForegroundColor DarkGray
     $last = if ($script:lastAction) { "  ← $($script:lastAction)" } else { "" }
-    Write-Host "  [0] Exit   ·   R: Repair   ·   T: Test   ·   ?: Help$last" -ForegroundColor DarkGray
+    Write-Host "  [0] Exit   ·   R: Repair   ·   T: Test   ·   ?: Help & About   ·   U: Updates" -ForegroundColor DarkGray
     Write-Host ""
 
     $choice = Read-Host "▶"
 
     switch ($choice) {
-        "1" { $script:lastAction = "Checked settings"; Check-VSCodeSettings }
-        "2" { $script:lastAction = "Created template"; New-WorkspaceTemplate }
-        "3" { $script:lastAction = "Saved template"; Save-WorkspaceTemplate }
-        "4" { $script:lastAction = "Set BYOK"; Set-DeepSeekBYOK }
-        "5" { $script:lastAction = "Set trust"; Set-EmptyWorkspaceTrust }
-        "6" { $script:lastAction = "Opened workspace"; Open-Workspace }
-        "7" {
+        "1"  { $script:lastAction = "Created template"; New-WorkspaceTemplate }
+        "2"  { $script:lastAction = "Saved template"; Save-WorkspaceTemplate }
+        "3"  { $script:lastAction = "Opened workspace"; Open-Workspace }
+        "4"  {
             $script:lastAction = "Profiles"
             do {
                 Clear-Host
-                Write-Host "=== Profiles Management ===" -ForegroundColor Cyan
+                Write-Host "=== Profiles ===" -ForegroundColor Cyan
                 Write-Host ""
                 Get-ProfileList
                 Write-Host ""
                 Write-Host "  1) List profiles"
                 Write-Host "  2) Import profile"
-                Write-Host "  3) Export single profile (instructions)"
-                Write-Host "  4) Export all profiles (bulk archive)"
+                Write-Host "  3) Export single profile"
+                Write-Host "  4) Export all profiles"
                 Write-Host "  0) Back"
                 $pChoice = Read-Host "Select"
                 switch ($pChoice) {
@@ -309,34 +303,24 @@ do {
                 }
             } while ($pChoice -ne "0")
         }
-        "8" { $script:lastAction = "Init repo"; Init-TemplatesRepo }
-        "9" { $script:lastAction = "Searched templates"; Search-Templates }
-        "10" { $script:lastAction = "Validation"; Invoke-ValidateChecks }
-        "11" { $script:lastAction = "Opened docs"; Invoke-OpenDocs }
-        "12" { $script:lastAction = "About"; Invoke-About }
-        "13" { $script:lastAction = "Scanned project"; Invoke-ScanProject }
-        "14" { $script:lastAction = "Checked updates"; Invoke-UpdateCheck }
-        "15" { $script:lastAction = "Scheduled tasks"; Invoke-ScheduleTasks }
-        "R" { $script:lastAction = "Repair"; Invoke-ValidateChecks }
-        "r" { $script:lastAction = "Repair"; Invoke-ValidateChecks }
-        "T" {
-            $script:lastAction = "Tests"
-            $testScript = Join-Path $TemplatesRoot "scripts\Run-All.ps1"
-            if (Test-Path $testScript) { & pwsh -NoProfile -File $testScript -Quick }
-            else { Write-Host "Run-All.ps1 not found" -ForegroundColor Red }
-            Pause
-        }
-        "t" {
-            $script:lastAction = "Tests"
-            $testScript = Join-Path $TemplatesRoot "scripts\Run-All.ps1"
-            if (Test-Path $testScript) { & pwsh -NoProfile -File $testScript -Quick }
-            else { Write-Host "Run-All.ps1 not found" -ForegroundColor Red }
-            Pause
-        }
-        "?" { $script:lastAction = "Help"; Invoke-OpenDocs }
-        "h" { $script:lastAction = "Help"; Invoke-OpenDocs }
-        "H" { $script:lastAction = "Help"; Invoke-OpenDocs }
-        "0" { Write-Host "Goodbye." -ForegroundColor Green }
-        default { Write-Host "Invalid option." -ForegroundColor Red; Start-Sleep -Seconds 1 }
+        "5"  { $script:lastAction = "Validation"; Invoke-ValidateChecks }
+        "6"  { $script:lastAction = "Scanned project"; Invoke-ScanProject }
+        "7"  { $script:lastAction = "Init repo"; Init-TemplatesRepo }
+        "8"  { $script:lastAction = "Opened docs"; Invoke-OpenDocs }
+        "9"  { $script:lastAction = "Set BYOK"; Set-DeepSeekBYOK }
+        "10" { $script:lastAction = "Set trust"; Set-EmptyWorkspaceTrust }
+        "R"  { $script:lastAction = "Checked settings"; Check-VSCodeSettings }
+        "r"  { $script:lastAction = "Checked settings"; Check-VSCodeSettings }
+        "T"  { $script:lastAction = "Tests"; & pwsh -NoProfile -File (Join-Path $TemplatesRoot "scripts\Run-All.ps1") -Quick; Pause }
+        "t"  { $script:lastAction = "Tests"; & pwsh -NoProfile -File (Join-Path $TemplatesRoot "scripts\Run-All.ps1") -Quick; Pause }
+        "?"  { $script:lastAction = "Help"; Invoke-About; Invoke-OpenDocs }
+        "h"  { $script:lastAction = "Help"; Invoke-About; Invoke-OpenDocs }
+        "H"  { $script:lastAction = "Help"; Invoke-About; Invoke-OpenDocs }
+        "U"  { $script:lastAction = "Checked updates"; Invoke-UpdateCheck }
+        "u"  { $script:lastAction = "Checked updates"; Invoke-UpdateCheck }
+        "S"  { $script:lastAction = "Scheduled tasks"; Invoke-ScheduleTasks }
+        "s"  { $script:lastAction = "Scheduled tasks"; Invoke-ScheduleTasks }
+        "0"  { Write-Host "Goodbye." -ForegroundColor Green }
+        default { Write-Host "Invalid option — try 1-10 or R/T/?/U/S" -ForegroundColor Red; Start-Sleep -Seconds 1 }
     }
 } while ($choice -ne "0")
