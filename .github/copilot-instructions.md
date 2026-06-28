@@ -1,10 +1,10 @@
 # VS Code Workspace Manager — Copilot Instructions
 
-* [Product Vision and Goals](docs/PRD.md): Understand the high-level product vision, target users, and feature set.
-* [System Architecture and Design](docs/ARCHITECTURE.md): Overall architecture, design patterns, and layer diagram.
-* [Contributing Guidelines](CONTRIBUTING.md): Development workflow, code conventions, and review process.
-* [Agent Flows](prompts/agent-flows.md): Decision trees for common agent tasks.
-* [Agent Memories](prompts/agent-memories.md): Key facts agents should retain across sessions.
+* [Product Vision and Goals](../docs/PRD.md): Understand the high-level product vision, target users, and feature set.
+* [System Architecture and Design](../docs/ARCHITECTURE.md): Overall architecture, design patterns, and layer diagram.
+* [Contributing Guidelines](../CONTRIBUTING.md): Development workflow, code conventions, and review process.
+* [Agent Flows](../prompts/agent-flows.md): Decision trees for common agent tasks.
+* [Agent Memories](../prompts/agent-memories.md): Key facts agents should retain across sessions.
 
 ## Critical Rules
 - **Always run `make test` before and after any code change**

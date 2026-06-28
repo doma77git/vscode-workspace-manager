@@ -16,7 +16,7 @@ $root = Get-TemplatesRoot
 $choice = ""
 
 do {
-    Clear-Host
+    try { Clear-Host } catch { Write-Host "" }
     Write-Banner "VS Code Workspace Manager — Navigator" "🧭"
 
     Write-Host "  ── Explore ───────────────────────────────────" -ForegroundColor DarkGray
@@ -205,7 +205,7 @@ function Invoke-ReadFile {
     $file = Read-Host "Enter file path (relative to project root)"
     $fullPath = Join-Path $root $file
     if (Test-Path $fullPath) {
-        Clear-Host
+        try { Clear-Host } catch { Write-Host "" }
         Write-Host "  📖  $file" -ForegroundColor Cyan
         Write-Host ("─" * 60) -ForegroundColor DarkGray
         Get-Content $fullPath | Select-Object -First 40 | ForEach-Object { Write-Host $_ -ForegroundColor DarkGray }

@@ -22,7 +22,7 @@ param(
 $ErrorActionPreference = "Stop"
 $TemplatesRoot = Split-Path -Parent $PSScriptRoot
 $exitCode = 0
-$psOk = 0; $psFail = 0; $jsonOk = 0; $jsonFail = 0; $yamlOk = 0; $yamlFail = 0; $intOk = 0; $intFail = 0; $benchMs = 0
+$psOk = 0; $psFail = 0; $jsonOk = 0; $jsonFail = 0; $yamlOk = 0; $yamlFail = 0; $mdOk = 0; $mdFail = 0; $intOk = 0; $intFail = 0; $benchMs = 0
 
 if (-not $Quiet -and -not $Json) {
     Write-Host ""
@@ -125,6 +125,36 @@ foreach ($f in $yamlFiles) {
     }
 }
 
+# Markdown link check
+Write-Host ""
+Write-Host "  ── Markdown Link Check ───────────────────────" -ForegroundColor DarkGray
+$mdFiles = Get-ChildItem -Path $TemplatesRoot -Recurse -Include "*.md" -ErrorAction SilentlyContinue |
+    Where-Object { $_.FullName -notmatch '\\.git\\' }
+
+foreach ($f in $mdFiles) {
+    $content = Get-Content $f.FullName -Raw -ErrorAction SilentlyContinue
+    $dir = Split-Path $f.FullName -Parent
+    $links = [regex]::Matches($content, '\[([^\]]*)\]\(([^)]+)\)')
+    $broken = @()
+    foreach ($m in $links) {
+        $href = $m.Groups[2].Value.Trim()
+        if ($href -match '^(https?://|mailto:|#|ftp://)') { continue }
+        $href = ($href -split '#')[0].TrimEnd('/')
+        if ([string]::IsNullOrWhiteSpace($href)) { continue }
+        $target = Join-Path $dir $href
+        if (-not (Test-Path $target)) { $broken += $href }
+    }
+    if ($broken.Count -eq 0) {
+        Write-Host ("    {0}  {1,-30} PASS" -f "✅", $f.Name) -ForegroundColor Green
+        $mdOk++
+    } else {
+        Write-Host ("    {0}  {1,-30} FAIL" -f "❌", $f.Name) -ForegroundColor Red
+        foreach ($b in $broken) { Write-Host "         → broken: $b" -ForegroundColor Red }
+        $mdFail++
+        $script:exitCode = 1
+    }
+}
+
 # Integration tests
 Write-Host ""
 Write-Host "  ── Integration Tests ─────────────────────────" -ForegroundColor DarkGray
@@ -169,7 +199,8 @@ if ($Json) {
             PowerShell = @{ passed = $psOk; failed = $psFail }
             JSON       = @{ passed = $jsonOk; failed = $jsonFail }
             YAML       = @{ passed = $yamlOk; failed = $yamlFail }
-            total      = ($psOk + $psFail + $jsonOk + $jsonFail + $yamlOk + $yamlFail)
+            Markdown   = @{ passed = $mdOk; failed = $mdFail }
+            total      = ($psOk + $psFail + $jsonOk + $jsonFail + $yamlOk + $yamlFail + $mdOk + $mdFail)
         }
     }
     $result | ConvertTo-Json -Depth 3 -Compress | Write-Host
@@ -179,9 +210,10 @@ if ($Json) {
     Write-Host ("    PowerShell : {0} passed, {1} failed" -f $psOk, $psFail) -ForegroundColor $(if ($psFail -eq 0) { "Green" } else { "Red" })
     Write-Host ("    JSON       : {0} passed, {1} failed" -f $jsonOk, $jsonFail) -ForegroundColor $(if ($jsonFail -eq 0) { "Green" } else { "Red" })
     Write-Host ("    YAML       : {0} passed, {1} failed" -f $yamlOk, $yamlFail) -ForegroundColor $(if ($yamlFail -eq 0) { "Green" } else { "Red" })
+    Write-Host ("    Markdown   : {0} passed, {1} failed" -f $mdOk, $mdFail) -ForegroundColor $(if ($mdFail -eq 0) { "Green" } else { "Red" })
     Write-Host ("    Integration: {0} passed, {1} failed" -f $intOk, $intFail) -ForegroundColor $(if ($intFail -eq 0) { "Green" } else { "Red" })
     Write-Host ("    Perf       : {0}ms file scan" -f $benchMs) -ForegroundColor $(if ($benchMs -lt 1000) { "Green" } else { "Yellow" })
-    Write-Host ("    Total      : {0} checks" -f ($psOk + $psFail + $jsonOk + $jsonFail + $yamlOk + $yamlFail + $intOk + $intFail)) -ForegroundColor White
+    Write-Host ("    Total      : {0} checks" -f ($psOk + $psFail + $jsonOk + $jsonFail + $yamlOk + $yamlFail + $mdOk + $mdFail + $intOk + $intFail)) -ForegroundColor White
 
     Write-Host ""
     if ($exitCode -eq 0) {

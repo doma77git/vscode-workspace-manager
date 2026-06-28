@@ -68,7 +68,7 @@ if ($Task) {
 
 # Interactive mode
 do {
-    Clear-Host
+    try { Clear-Host } catch { Write-Host "" }
     Write-Host "╭──────────────────────────────────────╮" -ForegroundColor Cyan
     Write-Host "│  🏃  Runner — What to run?           │" -ForegroundColor Cyan
     Write-Host "╰──────────────────────────────────────╯" -ForegroundColor Cyan

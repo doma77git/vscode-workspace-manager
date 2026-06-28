@@ -62,7 +62,7 @@
 ## Testing
 
 - [x] Add YAML validation to `Run-Tests.ps1` (CI workflows)
-- [ ] Add Markdown linting to `Run-Tests.ps1` (broken links)
+- [x] Add Markdown linting to `Run-Tests.ps1` (broken links)
 - [ ] Add integration test: create template, assign profile, validate
 - [ ] Add mock-mode to menu for automated testing
 - [ ] Add performance benchmarks (startup time, scan time)

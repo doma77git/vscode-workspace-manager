@@ -47,6 +47,15 @@
       "args": ""
     },
     {
+      "id": "mx-bcd",
+      "name": "MX BCD Editor",
+      "description": "Boot Configuration Data editor for multiboot USB",
+      "path": "mx-bcd.ps1",
+      "type": "ps1",
+      "category": "System",
+      "args": ""
+    },
+    {
       "id": "test-backup",
       "name": "Test Backup",
       "description": "Test backup tool for scan discovery",

@@ -2,6 +2,12 @@
 
 All notable changes to the VS Code Workspace Manager.
 
+## [Unreleased]
+
+### Added
+- Markdown broken-link checker in `Run-Tests.ps1` — 69 `.md` files now checked, totalling 168 test checks
+- Fixed broken relative links in `.github/copilot-instructions.md` (missing `../` prefix)
+
 ## [1.1.0] — 2026-06-23
 
 ### Added
